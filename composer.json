@@ -21,7 +21,7 @@
     "objective-php/services-factory": "~0.9",
     "objective-php/events-handler": "~0.9.0",
     "objective-php/workflow": "~1.0",
-    "objective-php/message": "dev-master"
+    "objective-php/message": "~0.1"
   },
   "require-dev": {
     "objective-php/phpunit-extension": "1.0",
