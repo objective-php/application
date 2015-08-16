@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5166a9e9acb6a9da1c635b57dc420f74",
+    "hash": "af911b7c535e0109d7aed2402e1339e3",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -129,6 +129,54 @@
             "time": "2014-09-09 13:34:57"
         },
         {
+            "name": "objective-php/config",
+            "version": "v0.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/objective-php/config.git",
+                "reference": "44bbb3830bf7d5a4f848b10de145dc1567ca86a6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/objective-php/config/zipball/44bbb3830bf7d5a4f848b10de145dc1567ca86a6",
+                "reference": "44bbb3830bf7d5a4f848b10de145dc1567ca86a6",
+                "shasum": ""
+            },
+            "require": {
+                "objective-php/matcher": "~1.0",
+                "objective-php/primitives": "dev-master",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "objective-php/phpunit-extension": "1.0",
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ObjectivePHP\\Config\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Gauthier 'Rusty' Delamarre",
+                    "email": "gauthier@objective-php.org",
+                    "role": "lead"
+                }
+            ],
+            "description": "Config component for ObjectivePHP",
+            "homepage": "https://github.com/objective-php/config",
+            "keywords": [
+                "config",
+                "objective-php"
+            ],
+            "time": "2015-08-16 12:37:46"
+        },
+        {
             "name": "objective-php/events-handler",
             "version": "v0.9.1",
             "source": {
@@ -226,7 +274,7 @@
         },
         {
             "name": "objective-php/message",
-            "version": "dev-master",
+            "version": "0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/message.git",
@@ -414,54 +462,6 @@
                 "services"
             ],
             "time": "2015-08-09 09:17:58"
-        },
-        {
-            "name": "objective-php/workflow",
-            "version": "v1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/objective-php/workflow.git",
-                "reference": "10e510418f3827aa83c251fc75c1beb56d54071c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/workflow/zipball/10e510418f3827aa83c251fc75c1beb56d54071c",
-                "reference": "10e510418f3827aa83c251fc75c1beb56d54071c",
-                "shasum": ""
-            },
-            "require": {
-                "objective-php/events-handler": "~0.9",
-                "objective-php/primitives": "~1.2",
-                "php": ">=5.6.0"
-            },
-            "require-dev": {
-                "objective-php/phpunit-extension": "1.0",
-                "phpunit/phpunit": "4.*"
-            },
-            "type": "component",
-            "autoload": {
-                "psr-4": {
-                    "ObjectivePHP\\Workflow\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "Gauthier 'Rusty' Delamarre",
-                    "email": "gauthier@objective-php.org",
-                    "role": "lead"
-                }
-            ],
-            "description": "Workflow engine for Objective PHP",
-            "homepage": "https://github.com/objective-php/workflow",
-            "keywords": [
-                "objective php",
-                "workflow"
-            ],
-            "time": "2015-08-15 08:41:27"
         },
         {
             "name": "psr/http-message",
@@ -1518,22 +1518,15 @@
     ],
     "aliases": [
         {
-            "alias": "1.2.0",
+            "alias": "1.2",
             "alias_normalized": "1.2.0.0",
             "version": "9999999-dev",
             "package": "objective-php/primitives"
-        },
-        {
-            "alias": "1.0",
-            "alias_normalized": "1.0.0.0",
-            "version": "9999999-dev",
-            "package": "objective-php/message"
         }
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "objective-php/primitives": 20,
-        "objective-php/message": 20
+        "objective-php/primitives": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

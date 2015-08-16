@@ -3,10 +3,18 @@
     namespace ObjectivePHP\Application;
     
     
+    use ObjectivePHP\Config\Config;
+    use ObjectivePHP\Config\Loader\DirectoryLoader;
     use ObjectivePHP\Events\EventsHandler;
+    use ObjectivePHP\Message\Request\RequestInterface;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
-    use ObjectivePHP\Workflow\WorkflowInterface;
+    use ObjectivePHP\Application\Workflow\WorkflowInterface;
 
+    /**
+     * Class AbstractApplication
+     *
+     * @package ObjectivePHP\Application
+     */
     abstract class AbstractApplication implements ApplicationInterface
     {
         /**
@@ -29,6 +37,20 @@
          */
         protected $env;
 
+        /**
+         * @var Config
+         */
+        protected $config;
+
+        /**
+         * @var RequestInterface
+         */
+        protected $request;
+
+        public function __construct()
+        {
+            $this->init();
+        }
 
         public function run()
         {
@@ -103,6 +125,10 @@
          */
         public function setWorkflow(WorkflowInterface $workflow)
         {
+
+            // inject application
+            $workflow->setApplication($this);
+
             $this->workflow = $workflow;
 
             return $this;
@@ -128,6 +154,55 @@
             return $this;
         }
 
+        /**
+         *
+         */
+        public function loadConfig($path)
+        {
+            $configLoader = new DirectoryLoader();
+
+            $this->config = $configLoader->load($path);
+        }
+
+        /**
+         * @return Config
+         */
+        public function getConfig()
+        {
+            return $this->config;
+        }
+
+        /**
+         * @param Config $config
+         *
+         * @return $this
+         */
+        public function setConfig($config)
+        {
+            $this->config = $config;
+
+            return $this;
+        }
+
+        /**
+         * @return RequestInterface
+         */
+        public function getRequest()
+        {
+            return $this->request;
+        }
+
+        /**
+         * @param RequestInterface $request
+         *
+         * @return $this
+         */
+        public function setRequest(RequestInterface $request)
+        {
+            $this->request = $request;
+
+            return $this;
+        }
 
 
     }
