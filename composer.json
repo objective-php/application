@@ -1,9 +1,8 @@
 {
   "name": "objective-php/application",
-  "description": "Objective PHP Web application skeleton",
-  "type": "skeleton",
+  "description": "Objective PHP Web application ",
+  "type": "component",
   "keywords": [
-    "primitives",
     "framework",
     "objective php"
   ],
@@ -21,7 +20,8 @@
     "objective-php/primitives": "dev-master as 1.2.0",
     "objective-php/services-factory": "~0.9",
     "objective-php/events-handler": "~0.9.0",
-    "objective-php/message": "dev-master"
+    "objective-php/workflow": "~1.0",
+    "objective-php/message": "dev-master as 1.0"
   },
   "require-dev": {
     "objective-php/phpunit-extension": "1.0",
