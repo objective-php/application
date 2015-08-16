@@ -43,6 +43,12 @@
          */
         public function getEventsHandler()
         {
+
+            if(is_null($this->eventsHandler))
+            {
+                $this->eventsHandler = new EventsHandler();
+            }
+
             return $this->eventsHandler;
         }
 
@@ -63,6 +69,10 @@
          */
         public function getServicesFactory()
         {
+            if(is_null($this->servicesFactory))
+            {
+                $this->servicesFactory = new ServicesFactory();
+            }
             return $this->servicesFactory;
         }
 
