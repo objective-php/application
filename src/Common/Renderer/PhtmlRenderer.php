@@ -22,7 +22,7 @@
             $this->application = $application = $event->getApplication();
 
             // get action
-            $action = $application->getWorkflow()->getStep('run')->getPassedEvent('route')->getResults()[0];
+            $action = $application->getWorkflow()->getStep('run')->getEarlierEvent('route')->getResults()[0];
 
 
 
@@ -51,7 +51,7 @@
 
             }
 
-            $context = $application->getWorkflow()->getStep('run')->getPassedEvent('execute')->getResults()[0];
+            $context = $application->getWorkflow()->getStep('run')->getEarlierEvent('execute')->getResults()[0];
 
             return $this->renderView($viewName, $context);
 
