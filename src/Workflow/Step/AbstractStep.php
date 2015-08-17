@@ -20,11 +20,6 @@
         protected $name;
 
         /**
-         * @var bool
-         */
-        protected $doesSharePreviousEvent = true;
-
-        /**
          * @param $name
          */
         public function __construct($name)
@@ -53,24 +48,5 @@
 
             return $this;
         }
-
-        /**
-         * @return boolean
-         */
-        public function doesSharePreviousEvent()
-        {
-            return $this->doesSharePreviousEvent;
-        }
-
-        /**
-         * @return $this
-         */
-        public function sharePreviousEvent($switch)
-        {
-            $this->doesSharePreviousEvent = $switch;
-
-            return $this;
-        }
-
 
     }

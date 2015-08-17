@@ -4,9 +4,10 @@
 
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Workflow\Step\Step;
-    use ObjectivePHP\Events\Event;
     use ObjectivePHP\Events\EventInterface;
     use ObjectivePHP\Events\EventsHandler;
+    use ObjectivePHP\Events\Exception as EventsException;
+    use ObjectivePHP\Application\Exception;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Application\Workflow\Step\AbstractStep;
     use ObjectivePHP\Application\Workflow\Step\StepInterface;
@@ -97,7 +98,11 @@
         {
             $event = (new WorkflowEvent())->setApplication($this->getApplication());
 
-            $this->getEvents()->append($this->getEventsHandler()->trigger($this->computeEventFullyQualifiedName($step), $this, null, $event));
+            $eventName = $this->computeEventFullyQualifiedName($step);
+
+            $this->getEventsHandler()->trigger($eventName, $this, [], $event);
+
+            $this->getEvents()->set($eventName, $event);
         }
 
         protected function computeEventFullyQualifiedName($step)
@@ -131,7 +136,7 @@
                 {
                     $step = new Step($step);
                 }
-                $this->steps->append($step);
+                $this->steps->set($step->getName(), $step);
             }
 
             return $this;
@@ -143,6 +148,11 @@
         public function getSteps()
         {
             return $this->steps;
+        }
+
+        public function getStep($step)
+        {
+            return isset($this->steps[$step]) ? $this->steps[$step] : null;
         }
 
         /**
@@ -237,9 +247,29 @@
         {
             $eventFullyQualifiedName = $this->computeEventFullyQualifiedName($event);
 
-            $this->getEventsHandler()->bind($eventFullyQualifiedName, $callback, $mode);
+            try
+            {
+                $this->getEventsHandler()->bind($eventFullyQualifiedName, $callback, $mode);
+            } catch(EventsException $e)
+            {
+                throw new \ObjectivePHP\Application\Exception('An error occurred while binding a callback to ' . $eventFullyQualifiedName, Exception::INVALID_EVENT_BINDING, $e);
+            }
 
             return $this;
+        }
+
+        /**
+         * Return an Event object related to a previously ran step
+         *
+         * @param $step
+         *
+         * @return WorkflowEvent|null
+         */
+        public function getEarlierEvent($step)
+        {
+            $fullyQualifiedEventName = $this->computeEventFullyQualifiedName($step);
+
+            return $this->events->get($fullyQualifiedEventName);
         }
 
     }

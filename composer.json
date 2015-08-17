@@ -21,7 +21,8 @@
     "objective-php/services-factory": "dev-master",
     "objective-php/events-handler": "dev-master",
     "objective-php/config": "dev-master",
-    "objective-php/message": "dev-master"
+    "objective-php/message": "dev-master",
+    "objective-php/matcher": "dev-master"
   },
   "require-dev": {
     "objective-php/phpunit-extension": "1.0",

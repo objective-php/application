@@ -6,48 +6,64 @@
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\String;
+    use ObjectivePHP\Application\Exception;
 
     class RtaRouter
     {
+        /**
+         * @var ApplicationInterface
+         */
+        protected $application;
+
         public function __invoke(WorkflowEvent $event)
         {
 
-            $application = $event->getApplication();
+            $this->application = $application = $event->getApplication();
 
             $path = $event->getApplication()->getRequest()->getUri()->getPath();
 
 
-            if($alias = $this->resolveAlias($application, $path))
+            if($alias = $this->resolveAlias($path))
             {
                 $path = $alias;
             }
 
-            $action = $this->computeClassFullyQualifiedName($path);
+            $action = $this->resolveActionClassName($path);
 
-            $application->getWorkflow()->bind('run.execute', new $action);
+            if(!$action)
+            {
+                throw new Exception(sprintf('No callback found to map "%s" requested action', $path), Exception::ACTION_NOT_FOUND);
+            }
 
+            $application->getWorkflow()->bind('run.execute', $action);
+
+            // store action in event result for further reference
+            return $action;
         }
 
-        protected function resolveAlias(ApplicationInterface $application, $path)
+        protected function resolveAlias($path)
         {
-            if($application->getConfig()->has('router.aliases'))
+            if($this->application->getConfig()->has('router.aliases'))
             {
-                $aliases = Collection::cast($application->getConfig()->get('router.aliases'));
+                $aliases = Collection::cast($this->application->getConfig()->get('router.aliases'));
 
                 return $aliases->get($path);
             }
         }
 
-        protected function computeClassFullyQualifiedName($path)
+        /**
+         * @param $path
+         *
+         * @return callable
+         */
+        protected function resolveActionClassName($path)
         {
-            // prefix path with 'action' to force Action namespace
 
+            // clean path name
             $path = String::cast($path);
-
-            $path->prepend('poc/action/')->trim('/');
+            $path->trim('/');
 
             $namespaces = $path->split('/');
-
 
             $namespaces->each(function(&$namespace)
             {
@@ -62,9 +78,34 @@
 
             $backslash = '\\';
 
-            return  str_replace('\\\\', '\\', implode($backslash, $namespaces->toArray()));
+            $className = str_replace('\\\\', '\\', implode($backslash, $namespaces->toArray()));
 
+            $actionsPathsStack = array_reverse($this->application->getConfig()->app->actions);
 
+            foreach($actionsPathsStack as $nsPrefix => $pathStackEntry)
+            {
+                if(!is_int($nsPrefix))
+                {
+                    // only one action path has been set
+                    $pathStackEntry = [$nsPrefix => $pathStackEntry];
+                }
 
+                foreach($pathStackEntry as $nsPrefix => $path)
+                {
+                    $fullClassName = $nsPrefix . $className;
+
+                    $fullPath = $path . '/' . str_replace('\\', '/', $className) . '.php';
+                    if (file_exists($fullPath) && !class_exists($fullClassName, false))
+                    {
+                        require_once $fullPath;
+                        if (class_exists('\\' . $fullClassName))
+                        {
+                            return new $fullClassName;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
     }

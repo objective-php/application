@@ -10,8 +10,5 @@
          */
         public function getName();
 
-        /**
-         * @return boolean
-         */
-        public function doesSharePreviousEvent();
+
     }
