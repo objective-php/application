@@ -119,6 +119,15 @@
 
             $prefix = array_reverse($prefix);
 
+            // if step starts with path root, return it as is
+            if($stepParts = explode('.', $step))
+            {
+                if($stepParts[0] == $prefix[0])
+                {
+                    return $step;
+                }
+            }
+
             return  implode('.', $prefix) . '.' . $step;
 
         }
@@ -254,6 +263,15 @@
             {
                 throw new \ObjectivePHP\Application\Exception('An error occurred while binding a callback to ' . $eventFullyQualifiedName, Exception::INVALID_EVENT_BINDING, $e);
             }
+
+            return $this;
+        }
+
+        public function unbind($event)
+        {
+            $eventFullyQualifiedName = $this->computeEventFullyQualifiedName($event);
+
+            $this->getEventsHandler()->unbind($eventFullyQualifiedName);
 
             return $this;
         }

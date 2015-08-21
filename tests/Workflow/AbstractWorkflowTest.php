@@ -160,5 +160,25 @@
             $this->assertInstanceOf(WorkflowEvent::class, $workflow->getEarlierEvent('second-step'));
 
         }
+
+        public function testUnbindingEvents()
+        {
+            $workflow = new Workflow('main');
+            $callback = function() {};
+            $eventsHandler = $this->getMock(EventsHandler::class);
+            $eventsHandler->expects($this->once())->method('bind')
+                          ->with('main.init', $callback, EventsHandler::BINDING_MODE_LAST);
+
+            $eventsHandler->expects($this->once())->method('unbind')
+                          ->with('main.init');
+
+            $workflow->setEventsHandler($eventsHandler);
+
+            $workflow->bind('main.init', $callback);
+            $workflow->unbind('init');
+
+            // without mock
+
+        }
     }
 
