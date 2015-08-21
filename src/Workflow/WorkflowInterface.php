@@ -34,7 +34,20 @@
         public function getApplication();
 
         /**
+         * Bind a callback to workflow event
+         *
          * @return $this
          */
         public function bind($eventName, $callback, $mode = EventsHandler::BINDING_MODE_LAST);
+
+
+        /**
+         * Unbind all callbacks from a workflow event
+         *
+         * @param $eventName
+         *
+         * @return $this
+         */
+        public function unbind($eventName);
+
     }

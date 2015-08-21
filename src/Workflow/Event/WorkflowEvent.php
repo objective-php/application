@@ -3,6 +3,7 @@
     namespace ObjectivePHP\Application\Workflow\Event;
 
     use ObjectivePHP\Application\ApplicationInterface;
+    use ObjectivePHP\Application\Workflow\WorkflowInterface;
     use ObjectivePHP\Events\Event;
 
 
@@ -31,6 +32,15 @@
             $this->application = $application;
 
             return $this;
+        }
+
+        /**
+         * @codeAssist
+         * @return WorkflowInterface
+         */
+        public function getWorkflow()
+        {
+            return $this->getOrigin();
         }
 
 
