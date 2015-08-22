@@ -128,6 +128,7 @@
 
             // inject application
             $workflow->setApplication($this);
+            $workflow->setEventsHandler($this->getEventsHandler());
 
             $this->workflow = $workflow;
 

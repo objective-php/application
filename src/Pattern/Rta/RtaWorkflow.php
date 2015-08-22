@@ -19,7 +19,7 @@
          *
          * @throws \ObjectivePHP\Primitives\Exception
          */
-        public function __construct($name = 'workflow')
+        public function __construct($name = 'rta')
         {
             parent::__construct($name);
 

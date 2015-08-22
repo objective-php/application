@@ -8,7 +8,7 @@
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\String;
 
-    class PhtmlRenderer
+    class ViewRenderer
     {
 
         /**
@@ -19,39 +19,11 @@
         public function __invoke(WorkflowEvent $event)
         {
 
-            $this->application = $application = $event->getApplication();
+            $this->setApplication($application = $event->getApplication());
 
-            // get action
-            $action = $application->getWorkflow()->getStep('run')->getEarlierEvent('route')->getResults()[0];
+            $viewName = $this->getViewName();
 
-
-
-            if(is_object($action))
-            {
-                // look for getViewPath() method
-                // TODO create ActionInterface to define such methods
-
-                if(method_exists($action, 'getViewName') && $viewName = $action->getViewName())
-                {
-                    goto render;
-                }
-            }
-
-            render:
-
-            if(!isset($viewName))
-            {
-                $viewName = $path = $event->getApplication()->getRequest()->getUri()->getPath();
-                if ($alias = $this->resolveAlias($path))
-                {
-                    $viewName = $alias;
-                }
-
-                $viewName = String::cast($viewName)->trim('/');
-
-            }
-
-            $context = $application->getWorkflow()->getStep('run')->getEarlierEvent('execute')->getResults()[0];
+            $context = $this->getContext();
 
             return $this->renderView($viewName, $context);
 
@@ -102,8 +74,7 @@
 
         protected function getViewsLocations()
         {
-            $viewLocations = array_reverse($this->application->getConfig()->get('app.views.locations'));
-
+            $viewLocations = array_reverse($this->application->getConfig()->get('views.locations'));
 
             $locations = [];
             foreach ($viewLocations as $paths)
@@ -131,6 +102,37 @@
             }
         }
 
+        protected function getContext()
+        {
+            $context = $this->getApplication()->getWorkflow()->getStep('run')->getEarlierEvent('execute')->getResults()[0];
+
+            // unset context specific variables
+            unset($context['layout']);
+
+            return $context;
+        }
+
+        public function getViewName()
+        {
+            // get action
+            $action = $this->getApplication()->getWorkflow()->getStep('run')->getEarlierEvent('route')->getResults()[0];
+
+            if (is_object($action))
+            {
+                if (method_exists($action, 'getViewName') && $viewName = $action->getViewName())
+                {
+                    return $viewName;
+                }
+            }
+
+            $viewName = $path = $this->getApplication()->getRequest()->getUri()->getPath();
+            if ($alias = $this->resolveAlias($path))
+            {
+                $viewName = $alias;
+            }
+
+            return String::cast($viewName)->trim('/');
+        }
         /**
          * @return ApplicationInterface
          */
