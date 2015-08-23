@@ -51,11 +51,11 @@
             $this->setEventsHandler($event->getApplication()->getEventsHandler());
 
             // get expectations
-            if($expectations = $this->expects())
-            {
-                $expectations = Collection::cast($expectations)->toArray();
-                $this->setExpectation(...$expectations);
-            }
+            $expectations = $this->expects();
+
+            $expectations = Collection::cast($expectations)->toArray();
+            $this->setExpectation(...$expectations);
+
 
             // set params
             $this->params = new Collection();
@@ -122,7 +122,7 @@
          */
         public function expects()
         {
-
+            return [];
         }
 
         /**
