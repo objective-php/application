@@ -105,7 +105,7 @@
             $this->getEvents()->set($eventName, $event);
         }
 
-        protected function computeEventFullyQualifiedName($step)
+        public function computeEventFullyQualifiedName($step)
         {
 
             $prefix = [$this->getName()];

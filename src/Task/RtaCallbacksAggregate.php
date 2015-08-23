@@ -16,7 +16,7 @@
             $workflow->bind('bootstrap', Common\WrapRequest::class);
 
             // load initial services
-            $workflow->bind('bootstrap', Common\LoadServices::class);
+            $workflow->bind('bootstrap', ['services-loader' => Common\LoadServices::class]);
 
             // bind packages to packages.load
             $workflow->bind('packages.pre', Common\BootstrapPackages::class);
