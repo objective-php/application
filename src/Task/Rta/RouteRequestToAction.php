@@ -1,5 +1,5 @@
 <?php
-    namespace ObjectivePHP\Application\Pattern\Rta\Router;
+    namespace ObjectivePHP\Application\Task\Rta;
 
 
     use ObjectivePHP\Application\ApplicationInterface;
@@ -8,7 +8,7 @@
     use ObjectivePHP\Primitives\String\String;
     use ObjectivePHP\Application\Exception;
 
-    class RtaRouter
+    class RouteRequestToAction
     {
         /**
          * @var ApplicationInterface
@@ -35,7 +35,7 @@
                 throw new Exception(sprintf('No callback found to map "%s" requested action', $path), Exception::ACTION_NOT_FOUND);
             }
 
-            $application->getWorkflow()->bind('run.execute', $action);
+            $application->getWorkflow()->bind('run.execute', ['action' => $action]);
 
             // store action in event result for further reference
             return $action;
@@ -80,7 +80,7 @@
 
             $className = str_replace('\\\\', '\\', implode($backslash, $namespaces->toArray()));
 
-            $actionsPathsStack = array_reverse($this->application->getConfig()->app->actions);
+            $actionsPathsStack = array_reverse(Collection::cast($this->application->getConfig()->app->actions)->toArray());
 
             foreach($actionsPathsStack as $nsPrefix => $pathStackEntry)
             {

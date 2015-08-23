@@ -1,17 +1,17 @@
 <?php
 
-    namespace ObjectivePHP\Application\Common;
+    namespace ObjectivePHP\Application\Task\Common;
     
     
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Message\Request\HttpRequest;
 
-    class RequestFactory
+    class WrapRequest
     {
         public function __invoke(WorkflowEvent $event)
         {
-                $request = new HttpRequest($_SERVER['REQUEST_URI']);
+            $request = new HttpRequest($_SERVER['REQUEST_URI']);
 
-                $event->getApplication()->setRequest($request);
+            $event->getApplication()->setRequest($request);
         }
     }

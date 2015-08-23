@@ -20,6 +20,20 @@
         protected $name;
 
         /**
+         * Short description
+         *
+         * @var string Step description (for documentation purpose)
+         */
+        protected $description;
+
+        /**
+         * Detailed information about step role in workflow
+         *
+         * @var string
+         */
+        protected $documentation;
+
+        /**
          * @param $name
          */
         public function __construct($name)
@@ -48,5 +62,46 @@
 
             return $this;
         }
+
+        /**
+         * @return string
+         */
+        public function getDescription()
+        {
+            return $this->description;
+        }
+
+        /**
+         * @param string $description
+         *
+         * @return $this
+         */
+        public function setDescription($description)
+        {
+            $this->description = $description;
+
+            return $this;
+        }
+
+        /**
+         * @return string
+         */
+        public function getDocumentation()
+        {
+            return $this->documentation;
+        }
+
+        /**
+         * @param string $documentation
+         *
+         * @return $this
+         */
+        public function setDocumentation($documentation)
+        {
+            $this->documentation = $documentation;
+
+            return $this;
+        }
+
 
     }

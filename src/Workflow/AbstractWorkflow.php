@@ -159,6 +159,11 @@
             return $this->steps;
         }
 
+        /**
+         * @param $step
+         *
+         * @return StepInterface
+         */
         public function getStep($step)
         {
             return isset($this->steps[$step]) ? $this->steps[$step] : null;

@@ -13,6 +13,8 @@
 
         public function getSteps();
 
+        public function getStep($step);
+
         public function doesAutoTriggerPrePostEvents();
 
         public function run();

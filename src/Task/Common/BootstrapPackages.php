@@ -1,11 +1,11 @@
 <?php
 
-    namespace ObjectivePHP\Application\Common;
+    namespace ObjectivePHP\Application\Task\Common;
     
     
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
 
-    class PackagesLoader
+    class BootstrapPackages
     {
         public function __invoke(WorkflowEvent $event)
         {
@@ -13,12 +13,10 @@
             $application = $event->getApplication();
 
             $appConfig = $application->getConfig();
-            $eventsHandler = $application->getEventsHandler();
 
             foreach($appConfig->packages->registered as $packageClass)
             {
-                $eventsHandler->bind($application->getWorkflow()->getName() . '.packages.load', $packageClass);
+                $application->getWorkflow()->bind('packages.load', $packageClass);
             }
-
         }
     }
