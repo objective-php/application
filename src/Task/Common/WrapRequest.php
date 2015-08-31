@@ -10,8 +10,15 @@
     {
         public function __invoke(WorkflowEvent $event)
         {
-            $request = new HttpRequest($_SERVER['REQUEST_URI']);
+            if(isset($_SERVER['REQUEST_URI']))
+            {
+                $request = new HttpRequest($_SERVER['REQUEST_URI']);
 
-            $event->getApplication()->setRequest($request);
+                $event->getApplication()->setRequest($request);
+            }
+            else
+            {
+                // TODO handle cli requests
+            }
         }
     }

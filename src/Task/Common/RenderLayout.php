@@ -17,11 +17,11 @@
             return $layout;
         }
 
-        public function getContext()
+        public function getContext(WorkflowEvent $event)
         {
 
             // insert view
-            $context['content'] = ob_get_clean();
+            $context['content'] = $event->getResults()['view-renderer'];
 
             // inject config
             $context['config'] = $this->getApplication()->getConfig();

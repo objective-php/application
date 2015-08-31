@@ -25,7 +25,7 @@
 
             $viewName = $this->getViewName($event);
 
-            $context = $this->getContext();
+            $context = $this->getContext($event);
 
             return $this->render($viewName, $context);
 
@@ -37,7 +37,7 @@
             return $event->getResults()['view-resolver'];
         }
 
-        protected function getContext()
+        protected function getContext(WorkflowEvent $event)
         {
 
             $viewVars = $this->getApplication()->getWorkflow()->getStep('run')->getEarlierEvent('execute')->getResults()['action'];
@@ -77,6 +77,16 @@
         {
             $viewPath = $this->resolveViewPath($viewName);
 
+            // make view and layout path available to the rest of the application
+            if($this instanceof RenderLayout)
+            {
+                Vars::set('layout.path', $viewPath);
+            }
+            else
+            {
+                Vars::set('view.path', $viewPath);
+            }
+
             if (is_null($viewPath))
             {
                 throw new Exception(sprintf('Unable to resolve view "%s" to a file path (views locations: %s)', $viewName, implode(', ', $this->getViewsLocations())));
@@ -88,9 +98,11 @@
                 unset($context);
             }
 
+            ob_start();
             include $viewPath;
+            $view = ob_get_clean();
 
-            return $viewPath;
+            return $view;
         }
 
         /**
