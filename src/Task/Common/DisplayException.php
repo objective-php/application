@@ -24,7 +24,7 @@
             $div->append(Tag::h2('File'), Tag::pre($exception->getFile())->append(':', $exception->getLine())->setSeparator(''));
 
             // shorten Trace
-            $trace = String::cast($exception->getTraceAsString())->replace(getcwd(), '');
+            $trace = String::cast($exception->getTraceAsString())->replace(getcwd() . '/', '');
 
             $div->append(Tag::h2('Trace'), Tag::pre($trace));
 
