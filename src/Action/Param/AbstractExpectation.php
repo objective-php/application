@@ -44,7 +44,7 @@
             $this->setAlias($alias);
 
             // set default message
-            if($mandatory && is_null($message))
+            if(is_null($message))
             {
                 $this->setMessage(new String('Missing mandatory parameter ":param"'));
             }
@@ -103,7 +103,8 @@
          */
         public function setMessage($message)
         {
-            $this->message = String::cast($message)->setVariable('param', $this->getReference());
+            $paramName = $this->getAlias() ? $this->getAlias() . ' (#' . $this->getReference() . ')' : $this->getReference();
+            $this->message = String::cast($message)->setVariable('param', $paramName);
 
             return $this;
         }

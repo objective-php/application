@@ -40,6 +40,10 @@
          */
         protected $events;
 
+        /**
+         * @var bool
+         */
+        protected $isHalted = true;
 
         /**
          * @var ApplicationInterface
@@ -65,6 +69,8 @@
          */
         public function run()
         {
+            $this->isHalted = false;
+
             if ($this->doesAutoTriggerPrePostEvents())
             {
                 $this->triggerStep('pre');
@@ -72,6 +78,10 @@
 
             foreach ($this->steps as $step)
             {
+
+                // stop execution if the Workflow has been stopped
+                if($this->isHalted()) break;
+
                 if ($step instanceof WorkflowInterface)
                 {
                     $step->setEventsHandler($this->getEventsHandler());
@@ -96,13 +106,18 @@
 
         protected function triggerStep($step)
         {
+            // shunt event execution if workflow isHalted
+            if($this->isHalted) return;
+
             $event = (new WorkflowEvent())->setApplication($this->getApplication());
 
             $eventName = $this->computeEventFullyQualifiedName($step);
 
+            // store event in stack
+            $this->getEvents()->set($eventName, $event);
+
             $this->getEventsHandler()->trigger($eventName, $this, [], $event);
 
-            $this->getEvents()->set($eventName, $event);
         }
 
         public function computeEventFullyQualifiedName($step)
@@ -295,4 +310,22 @@
             return $this->events->get($fullyQualifiedEventName);
         }
 
+        public function halt()
+        {
+            $this->isHalted = true;
+
+            // propagate to parents
+            $parent = $this;
+            while ($parent = $parent->getParent())
+            {
+                $parent->halt();
+            }
+
+            return $this;
+        }
+
+        public function isHalted()
+        {
+            return $this->isHalted;
+        }
     }

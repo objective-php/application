@@ -11,6 +11,8 @@
         public function __invoke(WorkflowEvent $event)
         {
             $application = $event->getApplication();
+
+            // Main workflow
             $workflow = $application->getWorkflow();
 
             $workflow->bind('bootstrap', Common\WrapRequest::class);
@@ -26,9 +28,6 @@
 
             // define what action to execute
             $workflow->bind('route.resolve', ['action-resolver' => Rta\RouteRequestToAction::class]);
-
-            // capture output
-            $workflow->bind('bootstrap', function() { ob_start(); });
 
             // handle rendering
             $workflow->bind('response.generate', ['view-resolver' => Rta\ResolveView::class]);

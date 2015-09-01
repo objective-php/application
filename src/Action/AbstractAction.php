@@ -136,16 +136,16 @@
 
 
             // fulfill expectations
-            $this->getExpectations()->each(function($expectation) use($params)
+            $this->getExpectations()->each(function(ExpectationInterface $expectation) use($params)
             {
 
                 $expectationValue = $params->get($expectation->getReference());
 
-                if(is_null($params->lacks($expectation->getReference())) && $expectation->isMandatory())
+                if($expectation->isMandatory() && is_null($expectationValue))
                 {
                    throw new Exception($expectation->getMessage());
                 }
-                elseif($expectationValue)
+                else
                 {
                     $this->setParam($expectation->getReference(), $expectationValue);
                 }
