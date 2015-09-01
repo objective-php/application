@@ -2,6 +2,7 @@
     namespace ObjectivePHP\Application\Action\Param;
     
     use ObjectivePHP\Primitives\String\String;
+    use ObjectivePHP\Application\ApplicationInterface;
 
     abstract class AbstractExpectation implements ExpectationInterface
     {
@@ -19,6 +20,11 @@
          * @var bool
          */
         protected $mandatory = false;
+
+        /**
+         * @var ApplicationInterface
+         */
+        protected $application;
 
         protected $message;
 
@@ -125,6 +131,26 @@
         public function setAlias($alias)
         {
             $this->alias = $alias;
+
+            return $this;
+        }
+
+        /**
+         * @return ApplicationInterface
+         */
+        public function getApplication()
+        {
+            return $this->application;
+        }
+
+        /**
+         * @param ApplicationInterface $application
+         *
+         * @return $this
+         */
+        public function setApplication(ApplicationInterface $application)
+        {
+            $this->application = $application;
 
             return $this;
         }

@@ -86,7 +86,7 @@
 
             if ($expectedParams->has($name))
             {
-                $processedValue = $expectedParams->get($name)->process($value);
+                $processedValue = $expectedParams->get($name)->setApplication($this->getApplication())->process($value);
 
                 // use alias as name if any
                 $name = $expectedParams->get($name)->getAlias() ?: $name;
