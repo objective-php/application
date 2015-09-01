@@ -1,11 +1,5 @@
 <?php
-    /**
-     * Created by PhpStorm.
-     * User: gauthier
-     * Date: 01/09/15
-     * Time: 15:12
-     */
-    
+
     namespace ObjectivePHP\Application\Task\Common;
     
     
@@ -32,7 +26,7 @@
             // shorten Trace
             $trace = String::cast($exception->getTraceAsString())->replace(getcwd(), '');
 
-            $div->append(Tag::h2('Trace'), Tag::pre($trace)->append(':', $exception->getLine()));
+            $div->append(Tag::h2('Trace'), Tag::pre($trace));
 
             echo $div;
 
