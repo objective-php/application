@@ -52,4 +52,17 @@
          */
         public function unbind($eventName);
 
+        /**
+         * Interrupt workflow execution
+         *
+         * @return mixed
+         */
+        public function halt();
+
+        /**
+         * Return the top parent
+         *
+         * @return WorkflowInterface
+         */
+        public function getRoot();
     }

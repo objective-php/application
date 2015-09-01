@@ -32,7 +32,7 @@
 
             if(!$action)
             {
-                throw new Exception(sprintf('No callback found to map "%s" requested action', $path), Exception::ACTION_NOT_FOUND);
+                throw new Exception(sprintf('No callback found to map the requested action "%s"', $path), Exception::ACTION_NOT_FOUND);
             }
 
             $application->getWorkflow()->bind('run.execute', ['action' => $action]);

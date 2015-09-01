@@ -2,6 +2,7 @@
 
     namespace ObjectivePHP\Application\Workflow;
 
+    use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Html\Tag\Tag;
     use ObjectivePHP\Primitives\String\String;
 
@@ -35,29 +36,9 @@
                 $this->halt();
 
                 // display information about Exception
-                $this->displayException($e);
+                $event = (new WorkflowEvent())->setApplication($this->getApplication());
+                $this->getEventsHandler()->trigger('workflow.exception', $this, ['exception' => $e], $event);
             }
-
-        }
-
-
-        protected function displayException(\Exception $exception)
-        {
-            $div = Tag::div(Tag::h1('An exception has been thrown'), 'errors');
-
-
-            $div->append(Tag::h2('Event'), Tag::pre($this->getEvents()->last()->getNAme()));
-            $div->append(Tag::h2('Message'), Tag::pre($exception->getMessage()));
-            $div->append(Tag::h2('File'), Tag::pre($exception->getFile())->append(':', $exception->getLine())->setSeparator(''));
-
-            // shorten Trace
-            $trace = String::cast($exception->getTraceAsString())->replace(getcwd(), '');
-
-            $div->append(Tag::h2('Trace'), Tag::pre($trace)->append(':', $exception->getLine()));
-
-            echo $div;
-
-            flush();
 
         }
 

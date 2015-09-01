@@ -328,4 +328,15 @@
         {
             return $this->isHalted;
         }
+
+        public function getRoot()
+        {
+            $parent = $this;
+
+            while(true) {
+                $lastParent = $parent->getParent();
+                if(!$lastParent) return $parent;
+                else $parent = $lastParent;
+            }
+        }
     }
