@@ -86,7 +86,15 @@
 
             if ($expectedParams->has($name))
             {
-                $processedValue = $expectedParams->get($name)->setApplication($this->getApplication())->process($value);
+                $expectation = $expectedParams->get($name);
+                $processedValue = $expectation->setApplication($this->getApplication())->process($value);
+
+                // check that processed value is not empty if expected param is mandatory
+                if($expectation->isMandatory() && !$processedValue)
+                {
+                    throw new Exception($expectation->getMessage() . ' (Note that value was empty after processing -  was "' . $value . '" before)');
+                }
+
 
                 // use alias as name if any
                 $name = $expectedParams->get($name)->getAlias() ?: $name;

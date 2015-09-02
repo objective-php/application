@@ -33,27 +33,14 @@
          * @param bool|false $mandatory
          * @param null       $message
          */
-        public function __construct($reference, $mandatory = false, $message = null)
+        public function __construct($reference, $alias = null)
         {
 
-            if(is_array($reference))
-            {
-                list($reference, $alias) = each($reference);
-            }
-            else
-            {
-                $alias = null;
-            }
-
             $this->setReference($reference);
-            $this->setMandatory($mandatory);
             $this->setAlias($alias);
 
             // set default message
-            if(is_null($message))
-            {
-                $this->setMessage(new String('Missing mandatory parameter ":param"'));
-            }
+            $this->setMessage(new String('Missing mandatory parameter ":param"'));
         }
 
         /**
