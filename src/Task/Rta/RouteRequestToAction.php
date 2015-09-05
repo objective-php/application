@@ -7,6 +7,7 @@
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\String;
     use ObjectivePHP\Application\Exception;
+    use ObjectivePHP\ServicesFactory\Reference;
 
     class RouteRequestToAction
     {
@@ -33,6 +34,16 @@
             if(!$action)
             {
                 throw new Exception(sprintf('No callback found to map the requested action "%s"', $path), Exception::ACTION_NOT_FOUND);
+            }
+
+            // if action is a class, register it as service
+            if(is_string($action) && class_exists($action))
+            {
+                $serviceId = $this->computeServiceName($path);
+                $this->application->getServicesFactory()->registerService(['id' => $serviceId, 'class' => $action]);
+
+                // replace action by serviceId to ensure it will be fetched using the ServicesFactory
+                $action = new Reference($serviceId);
             }
 
             $application->getWorkflow()->bind('run.execute', ['action' => $action]);
@@ -100,12 +111,24 @@
                         require_once $fullPath;
                         if (class_exists('\\' . $fullClassName))
                         {
-                            return new $fullClassName;
+                            return  $fullClassName;
                         }
                     }
                 }
             }
 
             return null;
+        }
+
+        /**
+         * Return normalized service name reflecting path
+         *
+         * This will use to auto-register action as a service
+         *
+         * @param $path
+         */
+        protected function computeServiceName($path)
+        {
+            return (string) String::cast($path)->trim('/')->replace('/', '.')->prepend('action.');
         }
     }

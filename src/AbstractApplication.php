@@ -54,6 +54,10 @@
 
         public function run()
         {
+            // let ServicesFactory and EventsHandler know each other
+            $this->getEventsHandler()->setServicesFactory($this->getServicesFactory());
+            $this->getServicesFactory()->setEventsHandler($this->getEventsHandler());
+
             $this->getWorkflow()->setEventsHandler($this->getEventsHandler());
 
 

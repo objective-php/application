@@ -29,8 +29,13 @@
             $div->append(Tag::h2('Trace'), Tag::pre($trace));
 
             echo $div;
-
             flush();
+
+            if($previousException = $exception->getPrevious())
+            {
+                $event->getContext()->set('exception', $previousException);
+                $this($event);
+            }
 
         }
     }
