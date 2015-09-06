@@ -2,6 +2,7 @@
 
     namespace ObjectivePHP\Application\Action;
 
+    use ObjectivePHP\Application\Action\Parameter\ActionParameter;
     use ObjectivePHP\Application\Action\Parameter\ParameterProcessorInterface;
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Exception;
@@ -95,9 +96,7 @@
                     throw new Exception($expectation->getMessage() . ' (Note that value was empty after processing -  was "' . $value . '" before)');
                 }
 
-
-                // use alias as name if any
-                $name = $expectedParams->get($name)->getAlias() ?: $name;
+                $name = $expectedParams->get($name)->getReference();
             }
             else
             {
@@ -159,11 +158,11 @@
             $this->getExpectations()->each(function(ParameterProcessorInterface $expectation) use($params)
             {
 
-                $expectationValue = $params->get($expectation->getReference());
+                $expectationValue = $params->get($expectation->getQueryParameterMapping());
 
                 if($expectation->isMandatory() && is_null($expectationValue))
                 {
-                   throw new Exception($expectation->getMessage());
+                   throw new Exception($expectation->getMessage(ActionParameter::IS_MISSING));
                 }
                 else
                 {
