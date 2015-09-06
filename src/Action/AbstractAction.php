@@ -134,6 +134,19 @@
         }
 
         /**
+         * Return the given service
+         *
+         * @param $serviceId
+         *
+         * @return mixed|null
+         * @throws \ObjectivePHP\ServicesFactory\Exception
+         */
+        public function getService($serviceId)
+        {
+            return $this->getServicesFactory()->get($serviceId);
+        }
+
+        /**
          * @param $params
          *
          * @throws \ObjectivePHP\Primitives\Exception
@@ -141,7 +154,6 @@
         public function setParams($params)
         {
             $params = Collection::cast($params)->copy();
-
 
             // fulfill expectations
             $this->getExpectations()->each(function(ParameterInterface $expectation) use($params)
