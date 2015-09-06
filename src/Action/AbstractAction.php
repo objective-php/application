@@ -2,8 +2,8 @@
 
     namespace ObjectivePHP\Application\Action;
 
+    use ObjectivePHP\Application\Action\Parameter\ParameterProcessorInterface;
     use ObjectivePHP\Application\ApplicationInterface;
-    use ObjectivePHP\Application\Action\Param\ParameterInterface;
     use ObjectivePHP\Application\Exception;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Events\EventsHandler;
@@ -126,7 +126,7 @@
          * This should be implemented in inherited classes, but
          * is not mandatory
          *
-         * @return ParameterInterface[]
+         * @return ParameterProcessorInterface[]
          */
         public function expects()
         {
@@ -156,7 +156,7 @@
             $params = Collection::cast($params)->copy();
 
             // fulfill expectations
-            $this->getExpectations()->each(function(ParameterInterface $expectation) use($params)
+            $this->getExpectations()->each(function(ParameterProcessorInterface $expectation) use($params)
             {
 
                 $expectationValue = $params->get($expectation->getReference());
@@ -194,7 +194,7 @@
          *
          * @return $this
          */
-        public function setExpectation(ParameterInterface ...$expectations)
+        public function setExpectation(ParameterProcessorInterface ...$expectations)
         {
             $this->expectations = Collection::cast($expectations);
 
