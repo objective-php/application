@@ -1,11 +1,11 @@
 <?php
 
-    namespace ObjectivePHP\Application\Action\Param;
+    namespace ObjectivePHP\Application\Action\Parameter;
     
     
     use ObjectivePHP\Primitives\Numeric\Numeric;
 
-    class NumericParameter extends AbstractExpectation
+    class NumericParameter extends AbstractParameterProcessor
     {
 
         /**

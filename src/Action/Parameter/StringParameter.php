@@ -1,11 +1,11 @@
 <?php
 
-    namespace ObjectivePHP\Application\Action\Param;
+    namespace ObjectivePHP\Application\Action\Parameter;
     
     
     use ObjectivePHP\Primitives\String\String;
 
-    class StringParameter extends AbstractExpectation
+    class StringParameter extends AbstractParameterProcessor
     {
 
         /**

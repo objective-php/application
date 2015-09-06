@@ -3,7 +3,7 @@
     namespace ObjectivePHP\Application\Action;
 
     use ObjectivePHP\Application\ApplicationInterface;
-    use ObjectivePHP\Application\Action\Param\ExpectationInterface;
+    use ObjectivePHP\Application\Action\Param\ParameterInterface;
     use ObjectivePHP\Application\Exception;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Events\EventsHandler;
@@ -50,7 +50,7 @@
             $this->setApplication($event->getApplication());
             $this->setEventsHandler($event->getApplication()->getEventsHandler());
 
-            // get expectations
+            // get parameters expectations
             $expectations = $this->expects();
 
             $expectations = Collection::cast($expectations)->toArray();
@@ -126,7 +126,7 @@
          * This should be implemented in inherited classes, but
          * is not mandatory
          *
-         * @return ExpectationInterface[]
+         * @return ParameterInterface[]
          */
         public function expects()
         {
@@ -144,7 +144,7 @@
 
 
             // fulfill expectations
-            $this->getExpectations()->each(function(ExpectationInterface $expectation) use($params)
+            $this->getExpectations()->each(function(ParameterInterface $expectation) use($params)
             {
 
                 $expectationValue = $params->get($expectation->getReference());
@@ -182,7 +182,7 @@
          *
          * @return $this
          */
-        public function setExpectation(ExpectationInterface ...$expectations)
+        public function setExpectation(ParameterInterface ...$expectations)
         {
             $this->expectations = Collection::cast($expectations);
 

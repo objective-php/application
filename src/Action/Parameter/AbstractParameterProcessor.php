@@ -1,10 +1,11 @@
 <?php
-    namespace ObjectivePHP\Application\Action\Param;
+    namespace ObjectivePHP\Application\Action\Parameter;
     
+    use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\String;
     use ObjectivePHP\Application\ApplicationInterface;
 
-    abstract class AbstractExpectation implements ExpectationInterface
+    abstract class AbstractParameterProcessor implements ParameterProcessorInterface
     {
         /**
          * @var mixed   Parameter name or position
@@ -14,7 +15,7 @@
         /**
          * @var string Alias for positioned parameters (or not)
          */
-        protected $alias;
+        protected $queryParameterMapping;
 
         /**
          * @var bool
@@ -26,23 +27,33 @@
          */
         protected $application;
 
-        protected $message;
+        /**
+         * Error message templates
+         *
+         * @var Collection
+         */
+        protected $messages = [ActionParameter::IS_MISSING => 'Missing mandatory parameter ":reference"'];
 
         /**
-         * @param            $reference
-         * @param bool|false $mandatory
-         * @param null       $message
+         * Constructor
+         *
+         * @param string     $reference Parameter reference
+         * @param int|string $mapping   Query parameter name or position. If none provided, $reference is used as mapping.
          */
-        public function __construct($reference, $alias = null)
+        public function __construct($reference, $mapping = null)
         {
 
             $this->setReference($reference);
-            $this->setAlias($alias);
 
-            // set default message
-            $this->setMessage(new String('Missing mandatory parameter ":param"'));
+            // if no mapping is defined, use $reference as mapping
+            if(is_null($mapping))
+            {
+                $mapping = $reference;
+            }
+
+            $this->setQueryParameterMapping($mapping);
+
         }
-
         /**
          * @return string|int
          */
@@ -82,11 +93,21 @@
         }
 
         /**
+         * Return all defined messages
+         *
+         * @return Collection
+         */
+        public function getMessages()
+        {
+            return Collection::cast($this->messages);
+        }
+
+        /**
          * @return string
          */
-        public function getMessage()
+        public function getMessage($code = ActionParameter::IS_MISSING)
         {
-            return $this->message;
+            return $this->getMessages()->get($code);
         }
 
         /**
@@ -94,10 +115,10 @@
          *
          * @return $this
          */
-        public function setMessage($message)
+        public function setMessage($code, $message)
         {
-            $paramName = $this->getAlias() ? $this->getAlias() . ' (#' . $this->getReference() . ')' : $this->getReference();
-            $this->message = String::cast($message)->setVariable('param', $paramName);
+            $paramName = $this->getQueryParameterMapping() ? $this->getQueryParameterMapping() . ' (#' . $this->getReference() . ')' : $this->getReference();
+            $this->messages[$code] = String::cast($message)->setVariable('param', $paramName);
 
             return $this;
         }
@@ -105,19 +126,19 @@
         /**
          * @return string
          */
-        public function getAlias()
+        public function getQueryParameterMapping()
         {
-            return $this->alias;
+            return $this->queryParameterMapping;
         }
 
         /**
-         * @param string $alias
+         * @param string $queryParameterMapping
          *
          * @return $this
          */
-        public function setAlias($alias)
+        public function setQueryParameterMapping($queryParameterMapping)
         {
-            $this->alias = $alias;
+            $this->queryParameterMapping = $queryParameterMapping;
 
             return $this;
         }

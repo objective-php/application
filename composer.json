@@ -1,7 +1,7 @@
 {
   "name": "objective-php/application",
-  "description": "Objective PHP application framework",
-  "type": "component",
+  "description": "Objective PHP applicative framework",
+  "type": "framework",
   "keywords": [
     "framework",
     "objective php"
