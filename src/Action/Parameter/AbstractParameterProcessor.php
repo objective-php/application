@@ -54,6 +54,7 @@
             $this->setQueryParameterMapping($mapping);
 
         }
+
         /**
          * @return string|int
          */

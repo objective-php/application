@@ -3,6 +3,7 @@
     namespace ObjectivePHP\Application\Action\Parameter;
     
     
+    use ObjectivePHP\Application\Exception;
     use ObjectivePHP\Primitives\String\String;
 
     class StringParameter extends AbstractParameterProcessor
@@ -15,6 +16,11 @@
          */
         public function process($value)
         {
+            if ($this->isMandatory() && is_null($value))
+            {
+                throw new Exception($this->getMessage(ActionParameter::IS_MISSING));
+            }
+
             return String::cast($value);
         }
 

@@ -88,4 +88,9 @@
          * @return mixed
          */
         public function setMessage($code, $message);
+
+        /**
+         * @return string
+         */
+        public function getQueryParameterMapping();
     }

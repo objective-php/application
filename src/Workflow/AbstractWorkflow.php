@@ -12,6 +12,9 @@
     use ObjectivePHP\Events\EventsHandler;
     use ObjectivePHP\Events\Exception as EventsException;
     use ObjectivePHP\Primitives\Collection\Collection;
+    use ObjectivePHP\Application\Workflow\Step\AbstractStep;
+    use ObjectivePHP\Application\Workflow\Step\StepInterface;
+    use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
 
     /**
      * Class AbstractWorkflow
@@ -100,13 +103,7 @@
         {
             $eventFullyQualifiedName = $this->computeEventFullyQualifiedName($event);
 
-            try
-            {
-                $this->getEventsHandler()->bind($eventFullyQualifiedName, $callback, $mode);
-            } catch (EventsException $e)
-            {
-                throw new \ObjectivePHP\Application\Exception('An error occurred while binding a callback to ' . $eventFullyQualifiedName, Exception::INVALID_EVENT_BINDING, $e);
-            }
+            $event = (new WorkflowEvent())->setApplication($this->getApplication());
 
             return $this;
         }
@@ -171,10 +168,13 @@
                 $lastParent = $parent->getParent();
                 if (!$lastParent)
                 {
-                    return $parent;
+                    break;
                 }
                 else $parent = $lastParent;
             }
+
+            return $parent;
+
         }
 
         /**
@@ -196,6 +196,8 @@
         }
 
         /**
+         * Halt current workflow execution
+         *
          * @return $this
          */
         public function halt()
@@ -208,6 +210,9 @@
             {
                 $parent->halt();
             }
+
+            // also halt current event
+            $this->getRoot()->getEvents()->last()->halt();
 
             return $this;
         }
@@ -226,8 +231,9 @@
 
             foreach ($this->steps as $step)
             {
+
                 // stop execution if the Workflow has been stopped
-                if ($this->isHalted()) break;
+                if ($this->isHalted()) goto shunt;
 
                 if ($step instanceof WorkflowInterface)
                 {
@@ -240,14 +246,22 @@
                 }
                 else
                 {
+                    //run current step
                     $this->triggerStep($step->getName());
                 }
+
             }
 
             if ($this->doesAutoTriggerPrePostEvents())
             {
                 $this->triggerStep('post');
             }
+
+            return true;
+
+            // workflow has been halted
+            shunt:
+                return false;
         }
 
         /**
@@ -272,17 +286,15 @@
          */
         protected function triggerStep($step)
         {
-            // shunt event execution if workflow isHalted
-            if ($this->isHalted) return;
-
-            $event = (new WorkflowEvent())->setApplication($this->getApplication());
-
+            $event     = (new WorkflowEvent())->setApplication($this->getApplication());
             $eventName = $this->computeEventFullyQualifiedName($step);
 
             // store event in stack
-            $this->getEvents()->set($eventName, $event);
+            $this->getRoot()->getEvents()->set($eventName, $event);
 
+            // actually triggers related event
             $this->getEventsHandler()->trigger($eventName, $this, [], $event);
+
         }
 
         /**
@@ -376,6 +388,8 @@
         {
             $fullyQualifiedEventName = $this->computeEventFullyQualifiedName($step);
 
-            return $this->events->get($fullyQualifiedEventName);
+            $event = $this->getRoot()->events->get($fullyQualifiedEventName);
+
+            return $event;
         }
     }

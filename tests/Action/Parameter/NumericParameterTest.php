@@ -4,9 +4,11 @@
     
     
     use ObjectivePHP\Application\Action\Parameter\NumericParameter;
+    use ObjectivePHP\Application\Exception;
+    use ObjectivePHP\PHPUnit\TestCase;
     use ObjectivePHP\Primitives\Numeric\Numeric;
 
-    class NumericParameterTest extends \PHPUnit_Framework_TestCase
+    class NumericParameterTest extends TestCase
     {
 
         public function testValueProcessing()
@@ -20,4 +22,13 @@
 
         }
 
+        public function testMandatoryCheck()
+        {
+            $processor = (new NumericParameter('reference'))->setMandatory();
+
+            $this->expectsException(function() use($processor)
+            {
+                $processor->process(null);
+            }, Exception::class);
+        }
     }

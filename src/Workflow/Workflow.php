@@ -30,15 +30,18 @@
                 ob_get_clean();
 
                 // halt current event
-                $this->getEvents()->last()->halt();
+                $currentEvent = $this->getRoot()->getEvents()->last();
+                if($currentEvent)
+                {
+                    $currentEvent->halt();
+                    // halt complete workflow
+                    $this->halt();
+                }
 
-                // halt complete workflow
-                $this->halt();
 
-                // display information about Exception
-                $event = (new WorkflowEvent())->setApplication($this->getApplication());
-                $this->getEventsHandler()->trigger('workflow.error', $this, ['exception' => $e], $event);
-
+                // trigger dedicated event
+                $event = (new WorkflowEvent())->setApplication($this->getRoot()->getApplication());
+                $this->getEventsHandler()->trigger('workflow.exception', $this, ['exception' => $e], $event);
             }
 
         }

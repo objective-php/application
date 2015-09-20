@@ -159,6 +159,22 @@
             $this->assertInstanceOf(WorkflowEvent::class, $workflow->getEarlierEvent('first-step'));
             $this->assertInstanceOf(WorkflowEvent::class, $workflow->getEarlierEvent('second-step'));
 
+
+
+        }
+
+        public function testEarlierEventAccessWithSubWorkflows()
+        {
+            $workflow = new Workflow();
+            $workflow->setApplication($app = $this->getMock(ApplicationInterface::class));
+            $workflow->setEventsHandler(new EventsHandler);
+
+            $workflow->addStep('first-step', 'second-step', (new Workflow('sub'))->addStep('third-step'));
+
+            $workflow->run();
+
+            $this->assertInstanceOf(WorkflowEvent::class, $workflow->getEarlierEvent('sub.third-step'));
+
         }
 
         public function testUnbindingEvents()
@@ -176,9 +192,69 @@
 
             $workflow->bind('main.init', $callback);
             $workflow->unbind('init');
-
-            // without mock
-
         }
+
+        public function testHaltingWorkflow()
+        {
+            $workflow = new Workflow();
+            $workflow->setApplication($this->getMockForAbstractClass(ApplicationInterface::class));
+            $workflow->setEventsHandler($eventsHandler = new EventsHandler);
+            $workflow->addStep('first-step', 'second-step');
+
+            $workflow->bind('first-step', function($event) {
+                return 'first-step.0';
+
+            });
+            $workflow->bind('first-step', function(WorkflowEvent $event) {
+                $event->getWorkflow()->halt();
+                return 'first-step.1';
+            });
+            $workflow->bind('first-step', function ($event)
+            {
+                return 'first-step.2';
+            });
+
+
+            $workflow->run();
+
+            $this->assertTrue($workflow->isHalted());
+            $this->assertCount(2, $workflow->getEarlierEvent('first-step')->getResults());
+        }
+
+        public function testHaltingSubWorkflow()
+        {
+
+            $workflow = new Workflow();
+            $workflow->setApplication($this->getMockForAbstractClass(ApplicationInterface::class));
+            $subWorkflow = new Workflow('sub');
+            $workflow->addStep($subWorkflow);
+
+            $workflow->setEventsHandler($eventsHandler = new EventsHandler);
+
+            $subWorkflow->addStep('first-step', 'second-step');
+
+            $workflow->bind('sub.first-step', function ($event)
+            {
+                return 'first-step.0';
+
+            });
+            $workflow->bind('sub.first-step', function (WorkflowEvent $event)
+            {
+                $event->getWorkflow()->halt();
+
+                return 'first-step.1';
+            });
+            $workflow->bind('sub.first-step', function ($event)
+            {
+                return 'first-step.2';
+            });
+
+            $workflow->run();
+
+            $this->assertTrue($workflow->isHalted());
+            $this->assertTrue($subWorkflow->isHalted());
+            $this->assertCount(2, $subWorkflow->getEarlierEvent('first-step')->getResults());
+        }
+
     }
 
