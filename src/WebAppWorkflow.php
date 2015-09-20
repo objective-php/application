@@ -25,6 +25,8 @@
             parent::__construct($name);
 
 
+            // $this->autoTriggerPrePostEvents(false);
+
             /**
              * Application initialization
              */
@@ -65,6 +67,7 @@
              */
             $response = (new Workflow('response'))->setDescription('Send response to the client');
             $response->addStep((new Step('generate'))->setDescription('Produce response content'));
+            $response->addStep((new Step('send'))->setDescription('Send response to client'));
             $this->addStep($response);
 
         }
@@ -106,27 +109,5 @@
 
 
             return $run;
-        }
-
-        public function getRenderingSubWorkflow()
-        {
-            $rendering = (new Workflow('render'))->setDescription('Generate displayable content');
-
-            $resolve = (new Step('view.resolve'))
-                ->setDescription('Compute information needed for the renderer (like a view script name)')
-                ->setDocumentation('The default callback bound to this event is named `view-resolver`, to ease getting what it returns later in the workflow')
-            ;
-            $rendering->addStep($resolve);
-
-            $view = (new Step('view.generate'))->setDescription('Actually renders the displayable content');
-            $rendering->addStep($view);
-
-            $layoutResolver = (new Step('layout.resolve'))->setDescription('Same as `view.resolve` but for the layout script');
-            $rendering->addStep($layoutResolver);
-
-            $layoutRenderer = (new Step('layout.generate'))->setDescription('Wrap displayable content in a layout');
-            $rendering->addStep($layoutRenderer);
-
-            return $rendering;
         }
     }

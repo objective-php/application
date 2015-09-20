@@ -6,6 +6,7 @@
     use ObjectivePHP\Config\Config;
     use ObjectivePHP\Events\EventsHandler;
     use ObjectivePHP\Message\Request\RequestInterface;
+    use ObjectivePHP\Message\Response\ResponseInterface;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
 
     interface ApplicationInterface
@@ -46,6 +47,20 @@
          * @return RequestInterface
          */
         public function getRequest();
+
+        /**
+         * @param ResponseInterface $request
+         *
+         * @return $this
+         */
+        public function setResponse(ResponseInterface $request);
+
+        /**
+         * @return ResponseInterface
+         */
+        public function getResponse();
+
+
 
 
     }

@@ -4,6 +4,7 @@
 
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
+    use ObjectivePHP\Events\Callback\AliasedCallback;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\String;
     use ObjectivePHP\Application\Exception;
@@ -46,7 +47,7 @@
                 $action = new Reference($serviceId);
             }
 
-            $application->getWorkflow()->bind('run.execute', ['action' => $action]);
+            $application->getWorkflow()->bind('run.execute', new AliasedCallback('action', $action));
 
             // store action in event result for further reference
             return $action;

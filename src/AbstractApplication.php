@@ -7,6 +7,7 @@
     use ObjectivePHP\Config\Loader\DirectoryLoader;
     use ObjectivePHP\Events\EventsHandler;
     use ObjectivePHP\Message\Request\RequestInterface;
+    use ObjectivePHP\Message\Response\ResponseInterface;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
     use ObjectivePHP\Application\Workflow\WorkflowInterface;
 
@@ -47,6 +48,14 @@
          */
         protected $request;
 
+        /**
+         * @var ResponseInterface
+         */
+        protected $response;
+
+        /**
+         *
+         */
         public function __construct()
         {
             $this->init();
@@ -59,7 +68,6 @@
             $this->getServicesFactory()->setEventsHandler($this->getEventsHandler());
 
             $this->getWorkflow()->setEventsHandler($this->getEventsHandler());
-
 
             $this->getWorkflow()->run();
         }
@@ -205,6 +213,26 @@
         public function setRequest(RequestInterface $request)
         {
             $this->request = $request;
+
+            return $this;
+        }
+
+        /**
+         * @return ResponseInterface
+         */
+        public function getResponse()
+        {
+            return $this->response;
+        }
+
+        /**
+         * @param ResponseInterface $response
+         *
+         * @return $this
+         */
+        public function setResponse(ResponseInterface $response)
+        {
+            $this->response = $response;
 
             return $this;
         }

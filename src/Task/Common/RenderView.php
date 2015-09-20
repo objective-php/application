@@ -27,9 +27,9 @@
 
             $context = $this->getContext($event);
 
-            return $this->render($viewName, $context);
-
-
+            $output = $this->render($viewName, $context);
+            $this->getApplication()->getResponse()->getBody()->rewind();
+            $this->getApplication()->getResponse()->getBody()->write($output);
         }
 
         protected function getViewName(WorkflowEvent $event)
@@ -41,6 +41,12 @@
         {
 
             $viewVars = $this->getApplication()->getWorkflow()->getStep('run')->getEarlierEvent('execute')->getResults()['action'];
+
+            // default to empty array
+            if(is_null($viewVars))
+            {
+                $viewVars = [];
+            }
 
             // inject config
             $context['config'] = $this->getApplication()->getConfig();
