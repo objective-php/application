@@ -37,7 +37,8 @@
 
                 // display information about Exception
                 $event = (new WorkflowEvent())->setApplication($this->getApplication());
-                $this->getEventsHandler()->trigger('workflow.exception', $this, ['exception' => $e], $event);
+                $this->getEventsHandler()->trigger('workflow.error', $this, ['exception' => $e], $event);
+
             }
 
         }

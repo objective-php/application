@@ -4,23 +4,57 @@
     
     
     use ObjectivePHP\Application\ApplicationInterface;
-    use ObjectivePHP\Events\EventsHandler;
     use ObjectivePHP\Application\Workflow\Step\StepInterface;
+    use ObjectivePHP\Events\EventsHandler;
 
+    /**
+     * Interface WorkflowInterface
+     *
+     * @package ObjectivePHP\Application\Workflow
+     */
     interface WorkflowInterface extends StepInterface
     {
+        /**
+         * @param ...$steps
+         *
+         * @return mixed
+         */
         public function addStep(...$steps);
 
+        /**
+         * @return mixed
+         */
         public function getSteps();
 
+        /**
+         * @param $step
+         *
+         * @return mixed
+         */
         public function getStep($step);
 
+        /**
+         * @return mixed
+         */
         public function doesAutoTriggerPrePostEvents();
 
+        /**
+         * @return mixed
+         */
         public function run();
 
+        /**
+         * @param WorkflowInterface $workflow
+         *
+         * @return mixed
+         */
         public function setParent(WorkflowInterface $workflow);
 
+        /**
+         * @param EventsHandler $eventsHandler
+         *
+         * @return mixed
+         */
         public function setEventsHandler(EventsHandler $eventsHandler);
 
         /**
@@ -28,6 +62,11 @@
          */
         public function getParent();
 
+        /**
+         * @param ApplicationInterface $application
+         *
+         * @return mixed
+         */
         public function setApplication(ApplicationInterface $application);
 
         /**

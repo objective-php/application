@@ -3,16 +3,21 @@
     namespace ObjectivePHP\Application\Workflow;
 
     use ObjectivePHP\Application\ApplicationInterface;
+    use ObjectivePHP\Application\Exception;
+    use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
+    use ObjectivePHP\Application\Workflow\Step\AbstractStep;
     use ObjectivePHP\Application\Workflow\Step\Step;
+    use ObjectivePHP\Application\Workflow\Step\StepInterface;
     use ObjectivePHP\Events\EventInterface;
     use ObjectivePHP\Events\EventsHandler;
     use ObjectivePHP\Events\Exception as EventsException;
-    use ObjectivePHP\Application\Exception;
     use ObjectivePHP\Primitives\Collection\Collection;
-    use ObjectivePHP\Application\Workflow\Step\AbstractStep;
-    use ObjectivePHP\Application\Workflow\Step\StepInterface;
-    use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
 
+    /**
+     * Class AbstractWorkflow
+     *
+     * @package ObjectivePHP\Application\Workflow
+     */
     abstract class AbstractWorkflow extends AbstractStep implements WorkflowInterface
     {
         /**
@@ -59,91 +64,8 @@
         {
             parent::__construct($name);
 
-            $this->steps = (new Collection())->restrictTo(StepInterface::class);
+            $this->steps  = (new Collection())->restrictTo(StepInterface::class);
             $this->events = (new Collection())->restrictTo(EventInterface::class);
-
-        }
-
-        /**
-         * Actually runs the workflow
-         */
-        public function run()
-        {
-            $this->isHalted = false;
-
-            if ($this->doesAutoTriggerPrePostEvents())
-            {
-                $this->triggerStep('pre');
-            }
-
-            foreach ($this->steps as $step)
-            {
-
-                // stop execution if the Workflow has been stopped
-                if($this->isHalted()) break;
-
-                if ($step instanceof WorkflowInterface)
-                {
-                    $step->setEventsHandler($this->getEventsHandler());
-                    $step->setApplication($this->getApplication());
-                    $step->setParent($this);
-
-                    // run sub workflow
-                    $step->run();
-                }
-                else
-                {
-                    $this->triggerStep($step->getName());
-                }
-
-            }
-
-            if ($this->doesAutoTriggerPrePostEvents())
-            {
-                $this->triggerStep('post');
-            }
-        }
-
-        protected function triggerStep($step)
-        {
-            // shunt event execution if workflow isHalted
-            if($this->isHalted) return;
-
-            $event = (new WorkflowEvent())->setApplication($this->getApplication());
-
-            $eventName = $this->computeEventFullyQualifiedName($step);
-
-            // store event in stack
-            $this->getEvents()->set($eventName, $event);
-
-            $this->getEventsHandler()->trigger($eventName, $this, [], $event);
-
-        }
-
-        public function computeEventFullyQualifiedName($step)
-        {
-
-            $prefix = [$this->getName()];
-            $parent = $this->getParent();
-
-            while($parent)
-            {
-                $prefix[] = $parent->getName();
-                $parent = $parent->getParent();
-            }
-
-            $prefix = array_reverse($prefix);
-
-            // if step starts with path root, return it as is
-            if($stepParts = explode('.', $step))
-            {
-                if($stepParts[0] == $prefix[0])
-                {
-                    return $step;
-                }
-            }
-
-            return  implode('.', $prefix) . '.' . $step;
 
         }
 
@@ -154,9 +76,9 @@
          */
         public function addStep(...$steps)
         {
-            foreach($steps as $step)
+            foreach ($steps as $step)
             {
-                if(!$step instanceof StepInterface)
+                if (!$step instanceof StepInterface)
                 {
                     $step = new Step($step);
                 }
@@ -167,21 +89,26 @@
         }
 
         /**
-         * @return Collection
-         */
-        public function getSteps()
-        {
-            return $this->steps;
-        }
-
-        /**
-         * @param $step
+         * @param        $event
+         * @param        $callback
+         * @param string $mode
          *
-         * @return StepInterface
+         * @return $this
+         * @throws Exception
          */
-        public function getStep($step)
+        public function bind($event, $callback, $mode = EventsHandler::BINDING_MODE_LAST)
         {
-            return isset($this->steps[$step]) ? $this->steps[$step] : null;
+            $eventFullyQualifiedName = $this->computeEventFullyQualifiedName($event);
+
+            try
+            {
+                $this->getEventsHandler()->bind($eventFullyQualifiedName, $callback, $mode);
+            } catch (EventsException $e)
+            {
+                throw new \ObjectivePHP\Application\Exception('An error occurred while binding a callback to ' . $eventFullyQualifiedName, Exception::INVALID_EVENT_BINDING, $e);
+            }
+
+            return $this;
         }
 
         /**
@@ -193,33 +120,21 @@
         }
 
         /**
-         * @param boolean $autoTriggerPrePostEvents
-         *
-         * @return $this
+         * @return ApplicationInterface
          */
-        public function autoTriggerPrePostEvents($autoTriggerPrePostEvents)
+        public function getApplication()
         {
-            $this->autoTriggerPrePostEvents = (bool) $autoTriggerPrePostEvents;
-
-            return $this;
+            return $this->application;
         }
 
         /**
-         * @return EventsHandler
-         */
-        public function getEventsHandler()
-        {
-            return $this->eventsHandler;
-        }
-
-        /**
-         * @param EventsHandler $eventsHandler
+         * @param ApplicationInterface $application
          *
          * @return $this
          */
-        public function setEventsHandler(EventsHandler $eventsHandler)
+        public function setApplication(ApplicationInterface $application)
         {
-            $this->eventsHandler = $eventsHandler;
+            $this->application = $application;
 
             return $this;
         }
@@ -245,6 +160,164 @@
         }
 
         /**
+         * @return WorkflowInterface
+         */
+        public function getRoot()
+        {
+            $parent = $this;
+
+            while (true)
+            {
+                $lastParent = $parent->getParent();
+                if (!$lastParent)
+                {
+                    return $parent;
+                }
+                else $parent = $lastParent;
+            }
+        }
+
+        /**
+         * @param $step
+         *
+         * @return StepInterface
+         */
+        public function getStep($step)
+        {
+            return isset($this->steps[$step]) ? $this->steps[$step] : null;
+        }
+
+        /**
+         * @return Collection
+         */
+        public function getSteps()
+        {
+            return $this->steps;
+        }
+
+        /**
+         * @return $this
+         */
+        public function halt()
+        {
+            $this->isHalted = true;
+
+            // propagate to parents
+            $parent = $this;
+            while ($parent = $parent->getParent())
+            {
+                $parent->halt();
+            }
+
+            return $this;
+        }
+
+        /**
+         * Actually runs the workflow
+         */
+        public function run()
+        {
+            $this->isHalted = false;
+
+            if ($this->doesAutoTriggerPrePostEvents())
+            {
+                $this->triggerStep('pre');
+            }
+
+            foreach ($this->steps as $step)
+            {
+                // stop execution if the Workflow has been stopped
+                if ($this->isHalted()) break;
+
+                if ($step instanceof WorkflowInterface)
+                {
+                    $step->setEventsHandler($this->getEventsHandler());
+                    $step->setApplication($this->getApplication());
+                    $step->setParent($this);
+
+                    // run sub workflow
+                    $step->run();
+                }
+                else
+                {
+                    $this->triggerStep($step->getName());
+                }
+            }
+
+            if ($this->doesAutoTriggerPrePostEvents())
+            {
+                $this->triggerStep('post');
+            }
+        }
+
+        /**
+         * @param $event
+         *
+         * @return $this
+         */
+        public function unbind($event)
+        {
+            $eventFullyQualifiedName = $this->computeEventFullyQualifiedName($event);
+
+            $this->getEventsHandler()->unbind($eventFullyQualifiedName);
+
+            return $this;
+        }
+
+        /**
+         * @param $step
+         *
+         * @throws EventsException
+         * @throws \ObjectivePHP\Primitives\Exception
+         */
+        protected function triggerStep($step)
+        {
+            // shunt event execution if workflow isHalted
+            if ($this->isHalted) return;
+
+            $event = (new WorkflowEvent())->setApplication($this->getApplication());
+
+            $eventName = $this->computeEventFullyQualifiedName($step);
+
+            // store event in stack
+            $this->getEvents()->set($eventName, $event);
+
+            $this->getEventsHandler()->trigger($eventName, $this, [], $event);
+        }
+
+        /**
+         * @param $step
+         *
+         * @return string
+         */
+        public function computeEventFullyQualifiedName($step)
+        {
+
+            $prefix = [$this->getName()];
+            $parent = $this->getParent();
+
+            while ($parent)
+            {
+                $prefix[] = $parent->getName();
+                $parent   = $parent->getParent();
+            }
+
+            $prefix = array_reverse($prefix);
+
+            // if step starts with path root, return it as is
+            if ($stepParts = explode('.', $step))
+            {
+                if ($stepParts[0] == $prefix[0])
+                {
+                    return $step;
+                }
+            }
+
+            return implode('.', $prefix) . '.' . $step;
+
+        }
+
+        /**
          * @return Collection
          */
         public function getEvents()
@@ -253,45 +326,41 @@
         }
 
         /**
-         * @return ApplicationInterface
+         * @return EventsHandler
          */
-        public function getApplication()
+        public function getEventsHandler()
         {
-            return $this->application;
+            return $this->eventsHandler;
         }
 
         /**
-         * @param ApplicationInterface $application
+         * @param EventsHandler $eventsHandler
          *
          * @return $this
          */
-        public function setApplication(ApplicationInterface $application)
+        public function setEventsHandler(EventsHandler $eventsHandler)
         {
-            $this->application = $application;
+            $this->eventsHandler = $eventsHandler;
 
             return $this;
         }
 
-        public function bind($event, $callback, $mode = EventsHandler::BINDING_MODE_LAST)
+        /**
+         * @return bool
+         */
+        public function isHalted()
         {
-            $eventFullyQualifiedName = $this->computeEventFullyQualifiedName($event);
-
-            try
-            {
-                $this->getEventsHandler()->bind($eventFullyQualifiedName, $callback, $mode);
-            } catch(EventsException $e)
-            {
-                throw new \ObjectivePHP\Application\Exception('An error occurred while binding a callback to ' . $eventFullyQualifiedName, Exception::INVALID_EVENT_BINDING, $e);
-            }
-
-            return $this;
+            return $this->isHalted;
         }
 
-        public function unbind($event)
+        /**
+         * @param boolean $autoTriggerPrePostEvents
+         *
+         * @return $this
+         */
+        public function autoTriggerPrePostEvents($autoTriggerPrePostEvents)
         {
-            $eventFullyQualifiedName = $this->computeEventFullyQualifiedName($event);
-
-            $this->getEventsHandler()->unbind($eventFullyQualifiedName);
+            $this->autoTriggerPrePostEvents = (bool) $autoTriggerPrePostEvents;
 
             return $this;
         }
@@ -308,35 +377,5 @@
             $fullyQualifiedEventName = $this->computeEventFullyQualifiedName($step);
 
             return $this->events->get($fullyQualifiedEventName);
-        }
-
-        public function halt()
-        {
-            $this->isHalted = true;
-
-            // propagate to parents
-            $parent = $this;
-            while ($parent = $parent->getParent())
-            {
-                $parent->halt();
-            }
-
-            return $this;
-        }
-
-        public function isHalted()
-        {
-            return $this->isHalted;
-        }
-
-        public function getRoot()
-        {
-            $parent = $this;
-
-            while(true) {
-                $lastParent = $parent->getParent();
-                if(!$lastParent) return $parent;
-                else $parent = $lastParent;
-            }
         }
     }

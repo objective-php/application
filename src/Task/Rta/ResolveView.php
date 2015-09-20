@@ -8,6 +8,11 @@
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\String;
 
+    /**
+     * Class ResolveView
+     *
+     * @package ObjectivePHP\Application\Task\Rta
+     */
     class ResolveView
     {
         /**
@@ -15,6 +20,11 @@
          */
         protected $application;
 
+        /**
+         * @param WorkflowEvent $event
+         *
+         * @return $this|mixed|null
+         */
         public function __invoke(WorkflowEvent $event)
         {
 
@@ -23,17 +33,14 @@
             return $this->getViewName();
         }
 
-        protected function resolveAlias($path)
-        {
-            $config = $this->getApplication()->getConfig();
-
-            return Collection::cast($config->router->aliases)->get($path);
-        }
-
+        /**
+         * @return $this|mixed|null
+         */
         public function getViewName()
         {
             // get action
-            $action = $this->getApplication()->getWorkflow()->getStep('route')->getEarlierEvent('resolve')->getResults()['action-resolver'];
+            $action = $this->getApplication()->getWorkflow()->getStep('route')->getEarlierEvent('resolve')
+                           ->getResults()['action-resolver'];
 
             if (is_object($action))
             {
@@ -70,6 +77,19 @@
             $this->application = $application;
 
             return $this;
+        }
+
+        /**
+         * @param $path
+         *
+         * @return mixed|null
+         * @throws \ObjectivePHP\Primitives\Exception
+         */
+        protected function resolveAlias($path)
+        {
+            $config = $this->getApplication()->getConfig();
+
+            return Collection::cast($config->router->aliases)->get($path);
         }
 
 

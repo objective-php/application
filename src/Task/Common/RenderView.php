@@ -8,9 +8,17 @@
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Primitives\Collection\Collection;
 
+    /**
+     * Class RenderView
+     *
+     * @package ObjectivePHP\Application\Task\Common
+     */
     class RenderView
     {
 
+        /**
+         * @var string
+         */
         protected $locationDirective = 'views.locations';
 
         /**
@@ -18,6 +26,11 @@
          */
         protected $application;
 
+        /**
+         * @param WorkflowEvent $event
+         *
+         * @throws Exception
+         */
         public function __invoke(WorkflowEvent $event)
         {
 
@@ -28,22 +41,35 @@
             $context = $this->getContext($event);
 
             $output = $this->render($viewName, $context);
+
             $this->getApplication()->getResponse()->getBody()->rewind();
             $this->getApplication()->getResponse()->getBody()->write($output);
         }
 
+        /**
+         * @param WorkflowEvent $event
+         *
+         * @return mixed|null
+         * @throws \ObjectivePHP\Events\Exception
+         */
         protected function getViewName(WorkflowEvent $event)
         {
             return $event->getResults()['view-resolver'];
         }
 
+        /**
+         * @param WorkflowEvent $event
+         *
+         * @return mixed
+         */
         protected function getContext(WorkflowEvent $event)
         {
 
-            $viewVars = $this->getApplication()->getWorkflow()->getStep('run')->getEarlierEvent('execute')->getResults()['action'];
+            $viewVars = $this->getApplication()->getWorkflow()->getStep('run')->getEarlierEvent('execute')
+                             ->getResults()['action'];
 
             // default to empty array
-            if(is_null($viewVars))
+            if (is_null($viewVars))
             {
                 $viewVars = [];
             }
@@ -51,7 +77,7 @@
             // inject config
             $context['config'] = $this->getApplication()->getConfig();
 
-            foreach($viewVars as $reference => $value)
+            foreach ($viewVars as $reference => $value)
             {
                 Vars::set($reference, $value);
             }
@@ -79,12 +105,19 @@
             return $this;
         }
 
+        /**
+         * @param       $viewName
+         * @param array $context
+         *
+         * @return string
+         * @throws Exception
+         */
         public function render($viewName, $context = [])
         {
             $viewPath = $this->resolveViewPath($viewName);
 
             // make view and layout path available to the rest of the application
-            if($this instanceof RenderLayout)
+            if ($this instanceof RenderLayout)
             {
                 Vars::set('layout.path', $viewPath);
             }
@@ -133,6 +166,9 @@
             return null;
         }
 
+        /**
+         * @return array
+         */
         protected function getViewsLocations()
         {
             $config = $this->getApplication()->getConfig();

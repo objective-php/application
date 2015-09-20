@@ -24,7 +24,7 @@
             $application = $event->getApplication();
 
             // Main workflow
-            $workflow = $application->getWorkflow()->getRoot();
+            $workflow = $application->getWorkflow();
 
             // bootstrap application
             $workflow->bind('bootstrap', new AliasedCallback('request-wrapper', Common\WrapRequest::class));
@@ -46,10 +46,12 @@
             $workflow->bind('response.generate', new AliasedCallback('view-resolver', Rta\ResolveView::class));
             $workflow->bind('response.generate', new AliasedCallback('view-renderer', Common\RenderView::class));
             $workflow->bind('response.generate', new AliasedCallback('layout-renderer', Common\RenderLayout::class));
+
+            // return response
             $workflow->bind('response.send', new AliasedCallback('response-emitter', Common\SendResponse::class));
 
             // exception handling
-            $application->getEventsHandler()->bind('workflow.exception', new AliasedCallback('exception-reporter', Common\DisplayException::class));
+            $application->getEventsHandler()->bind('workflow.error', new AliasedCallback('exception-reporter', Common\DisplayException::class));
 
 
         }
