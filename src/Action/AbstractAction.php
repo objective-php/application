@@ -119,7 +119,8 @@
             // fulfill expectations
             $this->getParameterProcessors()->each(function (ParameterProcessorInterface $parameterProcessor)
             {
-
+                // inject application
+                $parameterProcessor->setApplication($this->getApplication());
                 $rawValue       = $this->params->get($parameterProcessor->getQueryParameterMapping());
                 $processedValue = $parameterProcessor->process($rawValue);
                 $this->setParam($parameterProcessor->getReference(), $processedValue);
@@ -143,7 +144,7 @@
          *
          * @return $this
          */
-        public function setParameterProcessors(ParameterProcessorInterface ...$processors)
+        public function setParameterProcessor(ParameterProcessorInterface ...$processors)
         {
             Collection::cast($processors)->each(function(ParameterProcessorInterface $processor){
                 $this->parameterProcessors->set($processor->getReference(), $processor);

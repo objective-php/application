@@ -106,9 +106,21 @@
         /**
          * @return string
          */
-        public function getMessage($code = ActionParameter::IS_MISSING)
+        public function getMessage($code = ActionParameter::IS_MISSING, $values = [])
         {
-            return $this->getMessages()->get($code);
+            $message = $this->getMessages()->get($code);
+
+            $paramName = $this->getReference();
+            if ($this->getQueryParameterMapping()) $paramName .= ' ("' . $this->getQueryParameterMapping() . ' in query)';
+
+            $message->setValue('param', $paramName);
+
+            foreach($values as $placeHolder => $value)
+            {
+                $message->setValue($placeHolder, $value);
+            }
+
+            return $message;
         }
 
         /**
@@ -118,8 +130,7 @@
          */
         public function setMessage($code, $message)
         {
-            $paramName = $this->getQueryParameterMapping() ? $this->getQueryParameterMapping() . ' (#' . $this->getReference() . ')' : $this->getReference();
-            $this->messages[$code] = String::cast($message)->setVariable('param', $paramName);
+            $this->messages[$code] = String::cast($message);
 
             return $this;
         }
