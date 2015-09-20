@@ -12,9 +12,6 @@
     use ObjectivePHP\Events\EventsHandler;
     use ObjectivePHP\Events\Exception as EventsException;
     use ObjectivePHP\Primitives\Collection\Collection;
-    use ObjectivePHP\Application\Workflow\Step\AbstractStep;
-    use ObjectivePHP\Application\Workflow\Step\StepInterface;
-    use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
 
     /**
      * Class AbstractWorkflow
