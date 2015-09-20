@@ -102,9 +102,10 @@
 
         }
 
-        public function testBindPrefixesEventNameWithCurrentWorkflowFQN()
+        public function testBindPrefixedEventNameWithCurrentWorkflowFQN()
         {
             $workflow = (new Workflow('main'))->autoTriggerPrePostEvents(false);
+            $workflow->setApplication($this->getMockForAbstractClass(ApplicationInterface::class));
 
             $callback = function ()
             {
@@ -121,7 +122,7 @@
 
         }
 
-        public function testBindingAnInvalidCallbackTOAnEventFailsWithAnException()
+        public function testBindingAnInvalidCallbackToAnEventFailsWithAnException()
         {
             $workflow      = new Workflow();
             $eventsHandler = $this->getMock(EventsHandler::class);
@@ -159,8 +160,6 @@
             $this->assertInstanceOf(WorkflowEvent::class, $workflow->getEarlierEvent('first-step'));
             $this->assertInstanceOf(WorkflowEvent::class, $workflow->getEarlierEvent('second-step'));
 
-
-
         }
 
         public function testEarlierEventAccessWithSubWorkflows()
@@ -180,6 +179,8 @@
         public function testUnbindingEvents()
         {
             $workflow = new Workflow('main');
+            $workflow->setApplication($app = $this->getMock(ApplicationInterface::class));
+
             $callback = function() {};
             $eventsHandler = $this->getMock(EventsHandler::class);
             $eventsHandler->expects($this->once())->method('bind')

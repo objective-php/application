@@ -100,7 +100,15 @@
         {
             $eventFullyQualifiedName = $this->computeEventFullyQualifiedName($event);
 
-            $event = (new WorkflowEvent())->setApplication($this->getApplication());
+            try
+            {
+                $this->getEventsHandler()->bind($eventFullyQualifiedName, $callback, $mode);
+            } catch (EventsException $e)
+            {
+                throw new Exception('An error occurred while binding a callback to ' . $eventFullyQualifiedName, Exception::INVALID_EVENT_BINDING, $e);
+            }
+
+
 
             return $this;
         }
