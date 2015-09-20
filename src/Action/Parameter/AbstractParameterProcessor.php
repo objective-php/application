@@ -108,12 +108,12 @@
          */
         public function getMessage($code = ActionParameter::IS_MISSING, $values = [])
         {
-            $message = $this->getMessages()->get($code);
+            $message = String::cast($this->getMessages()->get($code));
 
             $paramName = $this->getReference();
             if ($this->getQueryParameterMapping()) $paramName .= ' ("' . $this->getQueryParameterMapping() . ' in query)';
 
-            $message->setValue('param', $paramName);
+            $message->setVariable('param', $paramName);
 
             foreach($values as $placeHolder => $value)
             {

@@ -33,7 +33,7 @@
             $event = $this->getEvent(['param1_value', 'param2' => 12]);
 
             $action = $this->getAction();
-            $action->setParameterProcessors(new StringParameter('param1', 0), new NumericParameter('param2'));
+            $action->setParameterProcessor(new StringParameter('param1', 0), new NumericParameter('param2'));
             $action->expects($this->at(0))->method('processParameters');
 
             call_user_func($action, $event);
