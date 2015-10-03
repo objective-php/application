@@ -71,12 +71,6 @@
             $this->assertSame($eventsHandler, $action->getEventsHandler());
         }
 
-        public function testViewNameAccessors()
-        {
-            $action = $this->getAction();
-            $action->setViewName('view/name');
-            $this->assertEquals('view/name', $action->getViewName());
-        }
 
         protected function getAction()
         {
