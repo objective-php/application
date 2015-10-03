@@ -25,12 +25,9 @@
             $path = $event->getApplication()->getRequest()->getUri()->getPath();
 
 
-            if($alias = $this->resolveAlias($path))
-            {
-                $path = $alias;
-            }
+            $actionClass = $this->resolveActionClassName($path);
 
-            $action = $this->resolveActionClassName($path);
+            $action = $this->resolveActionFullyQualifiedName($actionClass);
 
             if(!$action)
             {
@@ -53,23 +50,20 @@
             return $action;
         }
 
-        protected function resolveAlias($path)
-        {
-            if($this->application->getConfig()->has('router.aliases'))
-            {
-                $aliases = Collection::cast($this->application->getConfig()->get('router.aliases'));
-
-                return $aliases->get($path);
-            }
-        }
-
         /**
          * @param $path
          *
-         * @return callable
+         * @return string
          */
         protected function resolveActionClassName($path)
         {
+            // check if path is routed
+            if ($this->application->getConfig()->has('router.routes'))
+            {
+                $routes = Collection::cast($this->application->getConfig()->get('router.routes'));
+
+                if($action = $routes->get($path)) return $action;
+            }
 
             // clean path name
             $path = String::cast($path);
@@ -92,29 +86,26 @@
 
             $className = str_replace('\\\\', '\\', implode($backslash, $namespaces->toArray()));
 
-            $actionsPathsStack = array_reverse(Collection::cast($this->application->getConfig()->app->actions)->toArray());
+            return $className;
+        }
 
-            foreach($actionsPathsStack as $nsPrefix => $pathStackEntry)
+        /**
+         * @param $className
+         *
+         * @return null|string
+         */
+        public function resolveActionFullyQualifiedName($className)
+        {
+            $registeredActionNamespaces = array_reverse(Collection::cast($this->application->getConfig()->actions->namespaces)
+                                                                  ->toArray());
+
+            foreach ($registeredActionNamespaces as $namespace)
             {
-                if(!is_int($nsPrefix))
-                {
-                    // only one action path has been set
-                    $pathStackEntry = [$nsPrefix => $pathStackEntry];
-                }
+                $fullClassName = $namespace . '\\' . $className;
 
-                foreach($pathStackEntry as $nsPrefix => $path)
+                if (class_exists('\\' . $fullClassName))
                 {
-                    $fullClassName = $nsPrefix . $className;
-
-                    $fullPath = $path . '/' . str_replace('\\', '/', $className) . '.php';
-                    if (file_exists($fullPath) && !class_exists($fullClassName, false))
-                    {
-                        require_once $fullPath;
-                        if (class_exists('\\' . $fullClassName))
-                        {
-                            return  $fullClassName;
-                        }
-                    }
+                    return $fullClassName;
                 }
             }
 

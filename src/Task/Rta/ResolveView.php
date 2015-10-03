@@ -3,10 +3,12 @@
     namespace ObjectivePHP\Application\Task\Rta;
     
     
+    use ObjectivePHP\Application\Action\RenderableActionInterface;
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\String;
+    use ObjectivePHP\ServicesFactory\Reference;
 
     /**
      * Class ResolveView
@@ -30,33 +32,32 @@
 
             $this->setApplication($event->getApplication());
 
-            return $this->getViewName();
+            return $this->getViewTemplate();
         }
 
         /**
          * @return $this|mixed|null
          */
-        public function getViewName()
+        public function getViewTemplate()
         {
             // get action
             $action = $this->getApplication()->getWorkflow()->getStep('route')->getEarlierEvent('resolve')
                            ->getResults()['action-resolver'];
 
-            if (is_object($action))
+
+            if($action instanceof Reference)
             {
-                if (method_exists($action, 'getViewName') && $viewName = $action->getViewName())
-                {
-                    return $viewName;
-                }
+                $action = $this->getApplication()->getServicesFactory()->get($action->getId());
             }
 
-            $viewName = $path = $this->getApplication()->getRequest()->getUri()->getPath();
-            if ($alias = $this->resolveAlias($path))
+            if (!$action instanceof RenderableActionInterface)
             {
-                $viewName = $alias;
+                return null;
             }
 
-            return String::cast($viewName)->trim('/');
+            return $action->getViewTemplate();
+
+
         }
 
         /**
@@ -78,19 +79,5 @@
 
             return $this;
         }
-
-        /**
-         * @param $path
-         *
-         * @return mixed|null
-         * @throws \ObjectivePHP\Primitives\Exception
-         */
-        protected function resolveAlias($path)
-        {
-            $config = $this->getApplication()->getConfig();
-
-            return Collection::cast($config->router->aliases)->get($path);
-        }
-
 
     }

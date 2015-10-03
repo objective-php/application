@@ -7,6 +7,7 @@
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Events\EventsHandler;
     use ObjectivePHP\Primitives\Collection\Collection;
+    use ObjectivePHP\Primitives\String\String;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
 
     /**
@@ -14,7 +15,7 @@
      *
      * @package ObjectivePHP\Application\Action
      */
-    abstract class AbstractAction
+    abstract class AbstractAction implements ActionInterface
     {
 
         /**
@@ -41,11 +42,6 @@
          * @var Collection
          */
         protected $params;
-
-        /**
-         * @var string
-         */
-        protected $viewName;
 
         /**
          *
@@ -273,24 +269,5 @@
             return $this;
         }
 
-        /**
-         * @return string
-         */
-        public function getViewName()
-        {
-            return $this->viewName;
-        }
-
-        /**
-         * @param string $viewName
-         *
-         * @return $this
-         */
-        public function setViewName($viewName)
-        {
-            $this->viewName = $viewName;
-
-            return $this;
-        }
 
     }

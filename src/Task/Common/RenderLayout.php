@@ -28,6 +28,29 @@
         }
 
         /**
+         * @param $viewName
+         *
+         * @return callable
+         */
+        protected function resolveViewPath($viewName)
+        {
+
+            $viewLocations = $this->getViewsLocations();
+
+            foreach ($viewLocations as $location)
+            {
+                $fullPath = $location . '/' . $viewName . '.phtml';
+                if (file_exists($fullPath))
+                {
+                    return $fullPath;
+                }
+            }
+
+            return null;
+        }
+
+
+        /**
          * @param WorkflowEvent $event
          *
          * @return mixed

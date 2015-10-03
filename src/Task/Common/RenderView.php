@@ -38,6 +38,12 @@
 
             $viewName = $this->getViewName($event);
 
+
+            if(!$viewName)
+            {
+                return;
+            }
+
             $context = $this->getContext($event);
 
             $output = $this->render($viewName, $context);
@@ -128,7 +134,12 @@
 
             if (is_null($viewPath))
             {
-                throw new Exception(sprintf('Unable to resolve view "%s" to a file path (views locations: %s)', $viewName, implode(', ', $this->getViewsLocations())));
+                throw new Exception(sprintf('Unable to resolve view "%s" to a file path', $viewName));
+            }
+
+            if (!file_exists($viewPath))
+            {
+                throw new Exception(sprintf('Resolved view script "%s" does not exist', $viewPath));
             }
 
             if ($context)
@@ -152,18 +163,7 @@
         protected function resolveViewPath($viewName)
         {
 
-            $viewLocations = $this->getViewsLocations();
-
-            foreach ($viewLocations as $location)
-            {
-                $fullPath = $location . '/' . $viewName . '.phtml';
-                if (file_exists($fullPath))
-                {
-                    return $fullPath;
-                }
-            }
-
-            return null;
+            return $viewName . '.phtml';
         }
 
         /**
