@@ -3,6 +3,7 @@
     namespace ObjectivePHP\Application;
     
     
+    use Composer\Autoload\ClassLoader;
     use ObjectivePHP\Config\Config;
     use ObjectivePHP\Config\Loader\DirectoryLoader;
     use ObjectivePHP\Events\EventsHandler;
@@ -34,6 +35,11 @@
         protected $workflow;
 
         /**
+         * @var ClassLoader
+         */
+        protected $autoloader;
+
+        /**
          * @var string
          */
         protected $env;
@@ -56,8 +62,10 @@
         /**
          *
          */
-        public function __construct()
+        public function __construct(ClassLoader $autoloader = null)
         {
+            if ($autoloader) $this->setAutoloader($autoloader);
+
             $this->init();
         }
 
@@ -78,7 +86,7 @@
         public function getEventsHandler()
         {
 
-            if(is_null($this->eventsHandler))
+            if (is_null($this->eventsHandler))
             {
                 $this->eventsHandler = new EventsHandler();
             }
@@ -103,10 +111,11 @@
          */
         public function getServicesFactory()
         {
-            if(is_null($this->servicesFactory))
+            if (is_null($this->servicesFactory))
             {
                 $this->servicesFactory = new ServicesFactory();
             }
+
             return $this->servicesFactory;
         }
 
@@ -237,5 +246,24 @@
             return $this;
         }
 
+        /**
+         * @return ClassLoader
+         */
+        public function getAutoloader()
+        {
+            return $this->autoloader;
+        }
+
+        /**
+         * @param ClassLoader $autoloader
+         *
+         * @return $this
+         */
+        public function setAutoloader(ClassLoader $autoloader)
+        {
+            $this->autoloader = $autoloader;
+
+            return $this;
+        }
 
     }
