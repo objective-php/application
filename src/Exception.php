@@ -10,4 +10,7 @@
 
         // Action
         const ACTION_NOT_FOUND = 0x20;
+
+        // Session
+        const SESSION_DISABLED = 0x30;
     }
