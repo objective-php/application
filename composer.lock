@@ -5,6 +5,7 @@
         "This file is @generated automatically"
     ],
     "hash": "b2be06e14255d84e0f2462bb0b9d71b9",
+    "content-hash": "5bc35fa96072a8a9f689ddf2980eac1c",
     "packages": [
         {
             "name": "objective-php/config",
@@ -12,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/config.git",
-                "reference": "fdd78a8ae1891ab8509b607a9ea5806e765d4e09"
+                "reference": "3621adb0a3f64addf86b228cac65a72f386e4e9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/config/zipball/fdd78a8ae1891ab8509b607a9ea5806e765d4e09",
-                "reference": "fdd78a8ae1891ab8509b607a9ea5806e765d4e09",
+                "url": "https://api.github.com/repos/objective-php/config/zipball/3621adb0a3f64addf86b228cac65a72f386e4e9c",
+                "reference": "3621adb0a3f64addf86b228cac65a72f386e4e9c",
                 "shasum": ""
             },
             "require": {
@@ -52,7 +53,7 @@
                 "config",
                 "objective-php"
             ],
-            "time": "2015-08-30 15:53:31"
+            "time": "2015-09-20 15:14:40"
         },
         {
             "name": "objective-php/events-handler",
@@ -60,12 +61,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/events-handler.git",
-                "reference": "f92344691387dc99ac91e2c2eaed8fb7ac1ead23"
+                "reference": "4c80a9c5c2f1676c86cb2504e7de068bf4894f5c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/events-handler/zipball/f92344691387dc99ac91e2c2eaed8fb7ac1ead23",
-                "reference": "f92344691387dc99ac91e2c2eaed8fb7ac1ead23",
+                "url": "https://api.github.com/repos/objective-php/events-handler/zipball/4c80a9c5c2f1676c86cb2504e7de068bf4894f5c",
+                "reference": "4c80a9c5c2f1676c86cb2504e7de068bf4894f5c",
                 "shasum": ""
             },
             "require": {
@@ -104,7 +105,7 @@
                 "events handler",
                 "objective php"
             ],
-            "time": "2015-09-08 22:00:08"
+            "time": "2015-09-20 15:16:29"
         },
         {
             "name": "objective-php/matcher",
@@ -112,12 +113,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/matcher.git",
-                "reference": "321d27bcb933f62d2784e7e49411e4bc7fab3433"
+                "reference": "df818982e9c12e5742fe5ad3fdb8e67ade3eb9b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/matcher/zipball/321d27bcb933f62d2784e7e49411e4bc7fab3433",
-                "reference": "321d27bcb933f62d2784e7e49411e4bc7fab3433",
+                "url": "https://api.github.com/repos/objective-php/matcher/zipball/df818982e9c12e5742fe5ad3fdb8e67ade3eb9b0",
+                "reference": "df818982e9c12e5742fe5ad3fdb8e67ade3eb9b0",
                 "shasum": ""
             },
             "require": {
@@ -150,7 +151,7 @@
                 "matcher",
                 "objective php"
             ],
-            "time": "2015-09-07 23:45:46"
+            "time": "2015-09-20 15:17:38"
         },
         {
             "name": "objective-php/message",
@@ -158,12 +159,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/message.git",
-                "reference": "e60e36c9b9713270c88319916b9b81a5603ebdab"
+                "reference": "393d43c5d56a2d76575c250417beac69e8917198"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/message/zipball/e60e36c9b9713270c88319916b9b81a5603ebdab",
-                "reference": "e60e36c9b9713270c88319916b9b81a5603ebdab",
+                "url": "https://api.github.com/repos/objective-php/message/zipball/393d43c5d56a2d76575c250417beac69e8917198",
+                "reference": "393d43c5d56a2d76575c250417beac69e8917198",
                 "shasum": ""
             },
             "require": {
@@ -191,7 +192,7 @@
                 }
             ],
             "description": "ObjectivePHP implementation for PSR-7",
-            "time": "2015-09-11 13:54:51"
+            "time": "2015-10-19 15:20:38"
         },
         {
             "name": "objective-php/phpunit-extension",
@@ -244,12 +245,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/primitives.git",
-                "reference": "a578f0b07931f551f4ee74ad9bc6657a9113b5a8"
+                "reference": "49b26c81d8b16943a668cbf1511275a8e371bfc8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/primitives/zipball/a578f0b07931f551f4ee74ad9bc6657a9113b5a8",
-                "reference": "a578f0b07931f551f4ee74ad9bc6657a9113b5a8",
+                "url": "https://api.github.com/repos/objective-php/primitives/zipball/49b26c81d8b16943a668cbf1511275a8e371bfc8",
+                "reference": "49b26c81d8b16943a668cbf1511275a8e371bfc8",
                 "shasum": ""
             },
             "require": {
@@ -290,7 +291,7 @@
                 "objective php",
                 "primitives"
             ],
-            "time": "2015-09-08 22:03:11"
+            "time": "2015-09-20 15:04:12"
         },
         {
             "name": "objective-php/services-factory",
@@ -298,12 +299,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/services-factory.git",
-                "reference": "f5b99bee6b5985312c10a16b6bab897e1df5c92e"
+                "reference": "e083f3eccc5dd470a3de6685417c23536ce9d861"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/services-factory/zipball/f5b99bee6b5985312c10a16b6bab897e1df5c92e",
-                "reference": "f5b99bee6b5985312c10a16b6bab897e1df5c92e",
+                "url": "https://api.github.com/repos/objective-php/services-factory/zipball/e083f3eccc5dd470a3de6685417c23536ce9d861",
+                "reference": "e083f3eccc5dd470a3de6685417c23536ce9d861",
                 "shasum": ""
             },
             "require": {
@@ -340,7 +341,7 @@
                 "objective php",
                 "services"
             ],
-            "time": "2015-08-17 17:33:03"
+            "time": "2015-09-27 08:26:34"
         },
         {
             "name": "psr/http-message",
@@ -393,16 +394,16 @@
         },
         {
             "name": "zendframework/zend-diactoros",
-            "version": "1.1.3",
+            "version": "1.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-diactoros.git",
-                "reference": "e2f5c12916c74da384058d0dfbc7fbc0b03d1181"
+                "reference": "3f0ce6c0ba2106e018fb514a9f09dbb91eb6bfd0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/e2f5c12916c74da384058d0dfbc7fbc0b03d1181",
-                "reference": "e2f5c12916c74da384058d0dfbc7fbc0b03d1181",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/3f0ce6c0ba2106e018fb514a9f09dbb91eb6bfd0",
+                "reference": "3f0ce6c0ba2106e018fb514a9f09dbb91eb6bfd0",
                 "shasum": ""
             },
             "require": {
@@ -439,7 +440,7 @@
                 "psr",
                 "psr-7"
             ],
-            "time": "2015-08-10 20:04:20"
+            "time": "2015-10-16 15:24:05"
         }
     ],
     "packages-dev": [
@@ -608,16 +609,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.2.2",
+            "version": "2.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "2d7c03c0e4e080901b8f33b2897b0577be18a13c"
+                "reference": "eabf68b476ac7d0f73793aada060f1c1a9bf8979"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/2d7c03c0e4e080901b8f33b2897b0577be18a13c",
-                "reference": "2d7c03c0e4e080901b8f33b2897b0577be18a13c",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/eabf68b476ac7d0f73793aada060f1c1a9bf8979",
+                "reference": "eabf68b476ac7d0f73793aada060f1c1a9bf8979",
                 "shasum": ""
             },
             "require": {
@@ -666,7 +667,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-08-04 03:42:39"
+            "time": "2015-10-06 15:47:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -799,16 +800,16 @@
         },
         {
             "name": "phpunit/php-token-stream",
-            "version": "1.4.6",
+            "version": "1.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-token-stream.git",
-                "reference": "3ab72c62e550370a6cd5dc873e1a04ab57562f5b"
+                "reference": "3144ae21711fb6cac0b1ab4cbe63b75ce3d4e8da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/3ab72c62e550370a6cd5dc873e1a04ab57562f5b",
-                "reference": "3ab72c62e550370a6cd5dc873e1a04ab57562f5b",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/3144ae21711fb6cac0b1ab4cbe63b75ce3d4e8da",
+                "reference": "3144ae21711fb6cac0b1ab4cbe63b75ce3d4e8da",
                 "shasum": ""
             },
             "require": {
@@ -844,20 +845,20 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2015-08-16 08:51:00"
+            "time": "2015-09-15 10:49:45"
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.6",
+            "version": "4.8.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "2246830f4a1a551c67933e4171bf2126dc29d357"
+                "reference": "625f8c345606ed0f3a141dfb88f4116f0e22978e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2246830f4a1a551c67933e4171bf2126dc29d357",
-                "reference": "2246830f4a1a551c67933e4171bf2126dc29d357",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/625f8c345606ed0f3a141dfb88f4116f0e22978e",
+                "reference": "625f8c345606ed0f3a141dfb88f4116f0e22978e",
                 "shasum": ""
             },
             "require": {
@@ -916,20 +917,20 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-08-24 04:09:38"
+            "time": "2015-10-23 06:48:33"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "2.3.7",
+            "version": "2.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "5e2645ad49d196e020b85598d7c97e482725786a"
+                "reference": "ac8e7a3db35738d56ee9a76e78a4e03d97628983"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/5e2645ad49d196e020b85598d7c97e482725786a",
-                "reference": "5e2645ad49d196e020b85598d7c97e482725786a",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/ac8e7a3db35738d56ee9a76e78a4e03d97628983",
+                "reference": "ac8e7a3db35738d56ee9a76e78a4e03d97628983",
                 "shasum": ""
             },
             "require": {
@@ -972,7 +973,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-08-19 09:14:08"
+            "time": "2015-10-02 06:51:40"
         },
         {
             "name": "sebastian/comparator",
@@ -1208,16 +1209,16 @@
         },
         {
             "name": "sebastian/global-state",
-            "version": "1.0.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/global-state.git",
-                "reference": "c7428acdb62ece0a45e6306f1ae85e1c05b09c01"
+                "reference": "bc37d50fea7d017d3d340f230811c9f1d7280af4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/global-state/zipball/c7428acdb62ece0a45e6306f1ae85e1c05b09c01",
-                "reference": "c7428acdb62ece0a45e6306f1ae85e1c05b09c01",
+                "url": "https://api.github.com/repos/sebastianbergmann/global-state/zipball/bc37d50fea7d017d3d340f230811c9f1d7280af4",
+                "reference": "bc37d50fea7d017d3d340f230811c9f1d7280af4",
                 "shasum": ""
             },
             "require": {
@@ -1255,7 +1256,7 @@
             "keywords": [
                 "global state"
             ],
-            "time": "2014-10-06 09:23:50"
+            "time": "2015-10-12 03:26:01"
         },
         {
             "name": "sebastian/recursion-context",
@@ -1347,23 +1348,20 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.7.4",
+            "version": "v2.7.6",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Yaml.git",
-                "reference": "2dc7b06c065df96cc686c66da2705e5e18aef661"
+                "url": "https://github.com/symfony/yaml.git",
+                "reference": "eca9019c88fbe250164affd107bc8057771f3f4d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/2dc7b06c065df96cc686c66da2705e5e18aef661",
-                "reference": "2dc7b06c065df96cc686c66da2705e5e18aef661",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/eca9019c88fbe250164affd107bc8057771f3f4d",
+                "reference": "eca9019c88fbe250164affd107bc8057771f3f4d",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.9"
-            },
-            "require-dev": {
-                "symfony/phpunit-bridge": "~2.7"
             },
             "type": "library",
             "extra": {
@@ -1392,7 +1390,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2015-08-24 07:13:45"
+            "time": "2015-10-11 09:39:48"
         }
     ],
     "aliases": [],
