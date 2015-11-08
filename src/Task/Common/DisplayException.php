@@ -30,7 +30,7 @@
             $div = Tag::div(Tag::h1('An exception has been thrown'), 'errors');
 
 
-            $div->append(Tag::h2('Event'), Tag::pre($workflow->getEvents()->last()->getName()));
+            $div->append(Tag::h2('Event'), Tag::pre($event->getPrevious()->getName()));
             $div->append(Tag::h2('Message'), Tag::pre($exception->getMessage()));
             $div->append(Tag::h2('File'), Tag::pre($exception->getFile())->append(':', $exception->getLine())->setSeparator(''));
 

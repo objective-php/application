@@ -51,7 +51,7 @@
             $workflow->bind('response.send', new AliasedCallback('response-emitter', Common\SendResponse::class));
 
             // exception handling
-            $application->getEventsHandler()->bind('workflow.error', new AliasedCallback('exception-reporter', Common\DisplayException::class));
+            $application->getEventsHandler()->bind('workflow.exception', new AliasedCallback('exception-reporter', Common\DisplayException::class));
 
 
         }
