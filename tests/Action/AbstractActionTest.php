@@ -11,6 +11,7 @@
     use ObjectivePHP\Message\Request\Parameter\Container\HttpParameterContainer;
     use ObjectivePHP\Message\Request\RequestInterface;
     use ObjectivePHP\PHPUnit\TestCase;
+    use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\Numeric\Numeric;
     use ObjectivePHP\Primitives\String\String;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
@@ -87,7 +88,7 @@
             $request = $this->getMock(RequestInterface::class);
 
             $parameters = $this->getMock(HttpParameterContainer::class, [], [$request]);
-            $parameters->expects($this->any())->method('fromGet')->willReturn($requestParameters);
+            $parameters->expects($this->any())->method('fromGet')->willReturn(Collection::cast($requestParameters));
 
             $request->expects($this->any())->method('getParameters')->willReturn($parameters);
 
