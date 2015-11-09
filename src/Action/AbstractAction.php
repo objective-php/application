@@ -44,11 +44,17 @@
         protected $params;
 
         /**
+         * @var Collection
+         */
+        protected $rawParams;
+
+        /**
          *
          */
         public function __construct()
         {
             $this->parameterProcessors = new Collection();
+            $this->rawParams = new Collection();
 
             $this->init();
         }
@@ -74,7 +80,13 @@
 
             // set params
             $this->params = new Collection();
-            $this->setParams($this->getApplication()->getRequest()->getParameters()->fromGet());
+            $this->setParams(
+                $this->getApplication()->getRequest()->getParameters()->fromGet()
+                ->merge($this->getApplication()->getRequest()->getParameters()->fromPost())
+            );
+
+            // store raw parameters values before processing
+            $this->rawParams = $this->params;
 
             // process parameters
             $this->processParams();
@@ -119,7 +131,7 @@
                 $parameterProcessor->setApplication($this->getApplication());
                 $rawValue       = $this->params->get($parameterProcessor->getQueryParameterMapping());
                 $processedValue = $parameterProcessor->process($rawValue);
-                $this->setParam($parameterProcessor->getReference(), $processedValue);
+                $this->setParam($parameterProcessor->getReference(), $processedValue, false);
 
             })
             ;
@@ -156,11 +168,11 @@
          * @return $this
          * @throws \ObjectivePHP\Primitives\Exception
          */
-        public function setParam($name, $value)
+        public function setParam($name, $value, $processValue = true)
         {
             $processors = $this->getParameterProcessors();
 
-            if ($processors->has($name))
+            if ($processValue && $processors->has($name))
             {
                 $processor      = $processors->get($name);
                 $processedValue = $processor->process($value);
@@ -202,6 +214,14 @@
         public function getParams()
         {
             return $this->params;
+        }
+
+        /**
+         * @return mixed
+         */
+        public function getRawParams()
+        {
+            return $this->rawParams;
         }
 
         /**

@@ -28,6 +28,11 @@
         protected $application;
 
         /**
+         * @var Callable
+         */
+        protected $validator;
+
+        /**
          * Error message templates
          *
          * @var Collection
@@ -174,5 +179,27 @@
 
             return $this;
         }
+
+        /**
+         * @return Callable
+         */
+        public function getValidator()
+        {
+            return $this->validator;
+        }
+
+        /**
+         * @param Callable $validator
+         *
+         * @return $this
+         */
+        public function setValidator(callable $validator)
+        {
+            $this->validator = $validator;
+
+            return $this;
+        }
+
+
 
     }
