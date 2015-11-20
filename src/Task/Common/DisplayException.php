@@ -48,7 +48,7 @@
             }
 
             // manually emit response
-            (new SapiEmitter())->emit($event->getApplication()->getResponse());
+            (new SapiEmitter())->emit($event->getApplication()->getResponse()->withStatus(500));
 
         }
     }
