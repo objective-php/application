@@ -74,7 +74,7 @@ class AbstractParameterTest extends \PHPUnit_Framework_TestCase
         $processor = $this->getMockForAbstractClass(AbstractParameterProcessor::class, ['reference']);
 
         // default message for missing parameter
-        $this->assertEquals('Missing mandatory parameter ":reference"', $processor->getMessage());
+        $this->assertContains('Missing mandatory parameter "reference', (string) $processor->getMessage());
 
         // set message for missing parameter
         $processor->setMessage(ActionParameter::IS_MISSING, 'custom message');

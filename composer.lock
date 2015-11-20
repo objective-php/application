@@ -245,12 +245,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/primitives.git",
-                "reference": "49b26c81d8b16943a668cbf1511275a8e371bfc8"
+                "reference": "09ab45365f30729d49e524203799b58bb66cf665"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/primitives/zipball/49b26c81d8b16943a668cbf1511275a8e371bfc8",
-                "reference": "49b26c81d8b16943a668cbf1511275a8e371bfc8",
+                "url": "https://api.github.com/repos/objective-php/primitives/zipball/09ab45365f30729d49e524203799b58bb66cf665",
+                "reference": "09ab45365f30729d49e524203799b58bb66cf665",
                 "shasum": ""
             },
             "require": {
@@ -291,7 +291,7 @@
                 "objective php",
                 "primitives"
             ],
-            "time": "2015-09-20 15:04:12"
+            "time": "2015-11-17 11:19:03"
         },
         {
             "name": "objective-php/services-factory",
@@ -849,16 +849,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.16",
+            "version": "4.8.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "625f8c345606ed0f3a141dfb88f4116f0e22978e"
+                "reference": "fa33d4ad96481b91df343d83e8c8aabed6b1dfd3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/625f8c345606ed0f3a141dfb88f4116f0e22978e",
-                "reference": "625f8c345606ed0f3a141dfb88f4116f0e22978e",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fa33d4ad96481b91df343d83e8c8aabed6b1dfd3",
+                "reference": "fa33d4ad96481b91df343d83e8c8aabed6b1dfd3",
                 "shasum": ""
             },
             "require": {
@@ -917,7 +917,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-10-23 06:48:33"
+            "time": "2015-11-11 11:32:49"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
