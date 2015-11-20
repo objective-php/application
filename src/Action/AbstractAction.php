@@ -186,6 +186,10 @@
 
             $this->params->set($name, $processedValue);
 
+
+            // also register a shortcut as action property
+            $this->$name = $processedValue;
+
             return $this;
         }
 
@@ -289,5 +293,14 @@
             return $this;
         }
 
+        /**
+         * @param     $url
+         * @param int $code
+         */
+        public function redirect($url, $code = 302)
+        {
+            header('Location: ' . $url, $code);
+            exit;
+        }
 
     }

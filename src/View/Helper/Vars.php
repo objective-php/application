@@ -9,6 +9,8 @@
     class Vars
     {
 
+        protected static $capturing = false;
+
         protected static $variables;
 
         /**
@@ -26,8 +28,14 @@
          * @param $reference
          * @param $value
          */
-        public static function set($reference, $value)
+        public static function set($reference, $value = null)
         {
+            if(is_null($value) && self::$capturing)
+            {
+                $value = ob_get_clean();
+                self::$capturing = false;
+            }
+
             self::$variables[$reference] = $value;
         }
 
@@ -38,7 +46,7 @@
          */
         public static function string($reference)
         {
-            return String::cast((self::get($reference)));
+            return String::cast(self::get($reference));
         }
 
         /**
@@ -50,4 +58,14 @@
         {
             return Collection::cast(self::get($reference));
         }
+
+        /**
+         * Start capturing output
+         */
+        public static function capture()
+        {
+            ob_start();
+            self::$capturing = true;
+        }
+
     }

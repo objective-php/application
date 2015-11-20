@@ -4,6 +4,8 @@
     namespace ObjectivePHP\Application\Session;
 
     use ObjectivePHP\Application\Exception;
+    use ObjectivePHP\Matcher\Matcher;
+    use ObjectivePHP\Primitives\Collection\Collection;
 
     /**
      * Class Session
@@ -17,6 +19,10 @@
 
         static protected $defaultMode = self::SESSION_MODE_NATIVE;
 
+        /**
+         * @var Matcher
+         */
+        protected $matcher;
 
         /**
          * @var array Either a reference to $_SESSION or a local array, depending on mode
@@ -71,21 +77,62 @@
          */
         public function set($key, $value)
         {
-            $this->data[$key] = $value;
+            self::$data[$key] = $value;
 
             return $this;
         }
 
         /**
-         * @param      $key
+         * @param      $reference
          * @param null $default
          *
          * @return mixed|null
          * @throws \ObjectivePHP\Primitives\Exception
          */
-        public function get($key, $default = null)
+        public function get($reference, $default = null)
         {
-            return isset($this->data[$key]) ? $this->data[$key] : $default;
+
+            // first look for exact match
+            if(isset(self::$data[$reference]))
+            {
+                return self::$data[$reference];
+            }
+
+            // otherwise use a matcher to return a
+            // collection of matching entries
+            $matcher = $this->getMatcher();
+            $matches = new Collection();
+
+            Collection::cast(self::$data)->each(function(&$value, $key) use($matcher, $reference, $matches)
+            {
+                if($matcher->match($reference, $key))
+                {
+                    $matches[$key] = $value;
+                }
+            });
+
+                if(!$matches->isEmpty()) return $matches;
+
+            return  $default;
+        }
+
+        /**
+         * @param $key
+         *
+         * @return $this
+         */
+        public function remove($reference)
+        {
+            $matcher = $this->getMatcher();
+
+            Collection::cast(self::$data)->each(function (&$value, $key) use ($matcher, $reference)
+            {
+                if($matcher->match($reference, $key))
+                {
+                    unset(self::$data[$key]);
+                }
+            });
+                return $this;
         }
 
         /**
@@ -112,6 +159,32 @@
         public static function setDefaultMode($defaultMode)
         {
             self::$defaultMode = $defaultMode;
+        }
+
+        /**
+         * @return Matcher
+         */
+        public function getMatcher()
+        {
+
+            if(is_null($this->matcher))
+            {
+                $this->matcher = new Matcher();
+            }
+
+            return $this->matcher;
+        }
+
+        /**
+         * @param Matcher $matcher
+         *
+         * @return $this
+         */
+        public function setMatcher(Matcher $matcher)
+        {
+            $this->matcher = $matcher;
+
+            return $this;
         }
 
 

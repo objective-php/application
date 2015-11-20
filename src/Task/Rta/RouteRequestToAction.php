@@ -22,8 +22,13 @@
 
             $this->application = $application = $event->getApplication();
 
-            $path = $event->getApplication()->getRequest()->getUri()->getPath();
+            $path = rtrim($event->getApplication()->getRequest()->getUri()->getPath(), '/');
 
+            // default to home
+            if (!$path)
+            {
+                $path = '/';
+            }
 
             $actionClass = $this->resolveActionClassName($path);
 

@@ -116,9 +116,12 @@
             $message = String::cast($this->getMessages()->get($code));
 
             $paramName = $this->getReference();
-            if ($this->getQueryParameterMapping()) $paramName .= ' ("' . $this->getQueryParameterMapping() . ' in query)';
+            if (($mapping = $this->getQueryParameterMapping()) !== null)
+            {
+                $paramName .= ' (' . (is_int($mapping) ? '#' : '') . $mapping . ' in query)';
+            }
 
-            $message->setVariable('param', $paramName);
+            $message->setVariable('reference', $paramName);
 
             foreach($values as $placeHolder => $value)
             {
