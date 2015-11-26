@@ -8,7 +8,7 @@
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\Str;
-    use ObjectivePHP\ServicesFactory\Reference;
+    use ObjectivePHP\ServicesFactory\ServiceReference;
 
     /**
      * Class ResolveView
@@ -45,7 +45,7 @@
                            ->getResults()['action-resolver'];
 
 
-            if($action instanceof Reference)
+            if($action instanceof ServiceReference)
             {
                 $action = $this->getApplication()->getServicesFactory()->get($action->getId());
             }

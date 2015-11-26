@@ -8,7 +8,7 @@
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\Str;
     use ObjectivePHP\Application\Exception;
-    use ObjectivePHP\ServicesFactory\Reference;
+    use ObjectivePHP\ServicesFactory\ServiceReference;
 
     class RouteRequestToAction
     {
@@ -46,7 +46,7 @@
                 $this->application->getServicesFactory()->registerService(['id' => $serviceId, 'class' => $action]);
 
                 // replace action by serviceId to ensure it will be fetched using the ServicesFactory
-                $action = new Reference($serviceId);
+                $action = new ServiceReference($serviceId);
             }
 
             $application->getWorkflow()->bind('run.execute', new AliasedCallback('action', $action));
