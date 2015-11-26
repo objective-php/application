@@ -27,7 +27,7 @@
          * @param null          $symbol    Currency symbol to display instead of default one
          * @param null          $placement Currency symbol placement to use instead of default one
          *
-         * @return String
+         * @return Str
          */
         public static function format($amount, $symbol = null, $symbolPlacement = null, $spacer = null)
         {

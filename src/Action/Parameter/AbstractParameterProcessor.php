@@ -2,11 +2,13 @@
     namespace ObjectivePHP\Application\Action\Parameter;
     
     use ObjectivePHP\Primitives\Collection\Collection;
-    use ObjectivePHP\Primitives\String\String;
+    use ObjectivePHP\Primitives\String\Str;
     use ObjectivePHP\Application\ApplicationInterface;
 
     abstract class AbstractParameterProcessor implements ParameterProcessorInterface
     {
+        const IS_MISSING = 'action-parameter.is-missing';
+
         /**
          * @var mixed   Parameter name or position
          */
@@ -37,7 +39,7 @@
          *
          * @var Collection
          */
-        protected $messages = [ActionParameter::IS_MISSING => 'Missing mandatory parameter ":reference"'];
+        protected $messages = [self::IS_MISSING => 'Missing mandatory parameter ":reference"'];
 
         /**
          * Constructor
@@ -111,9 +113,9 @@
         /**
          * @return string
          */
-        public function getMessage($code = ActionParameter::IS_MISSING, $values = [])
+        public function getMessage($code = self::IS_MISSING, $values = [])
         {
-            $message = String::cast($this->getMessages()->get($code));
+            $message = Str::cast($this->getMessages()->get($code));
 
             $paramName = $this->getReference();
             if (($mapping = $this->getQueryParameterMapping()) !== null)
@@ -138,7 +140,7 @@
          */
         public function setMessage($code, $message)
         {
-            $this->messages[$code] = String::cast($message);
+            $this->messages[$code] = Str::cast($message);
 
             return $this;
         }

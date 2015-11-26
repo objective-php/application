@@ -6,7 +6,7 @@
     use ObjectivePHP\Application\Action\Parameter\StringParameter;
     use ObjectivePHP\Application\Exception;
     use ObjectivePHP\PHPUnit\TestCase;
-    use ObjectivePHP\Primitives\String\String;
+    use ObjectivePHP\Primitives\String\Str;
 
     class StringParameterTest extends TestCase
     {
@@ -18,7 +18,7 @@
 
             $processor = new StringParameter('reference');
 
-            $this->assertEquals(new String($parameterValue), $processor->process($parameterValue));
+            $this->assertEquals(new Str($parameterValue), $processor->process($parameterValue));
 
         }
 

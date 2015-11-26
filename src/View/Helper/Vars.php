@@ -4,7 +4,7 @@
     
     
     use ObjectivePHP\Primitives\Collection\Collection;
-    use ObjectivePHP\Primitives\String\String;
+    use ObjectivePHP\Primitives\String\Str;
 
     class Vars
     {
@@ -42,11 +42,11 @@
         /**
          * @param $reference
          *
-         * @return \ObjectivePHP\Primitives\String\String
+         * @return \ObjectivePHP\Primitives\String\Str
          */
         public static function string($reference)
         {
-            return String::cast(self::get($reference));
+            return Str::cast(self::get($reference));
         }
 
         /**

@@ -4,7 +4,7 @@
     
     
     use ObjectivePHP\Application\Exception;
-    use ObjectivePHP\Primitives\String\String;
+    use ObjectivePHP\Primitives\String\Str;
 
     class StringParameter extends AbstractParameterProcessor
     {
@@ -18,10 +18,10 @@
         {
             if ($this->isMandatory() && is_null($value))
             {
-                throw new Exception($this->getMessage(ActionParameter::IS_MISSING));
+                throw new Exception($this->getMessage(AbstractParameterProcessor::IS_MISSING));
             }
 
-            return String::cast($value);
+            return Str::cast($value);
         }
 
     }

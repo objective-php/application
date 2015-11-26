@@ -77,7 +77,7 @@
          *
          * @return mixed
          */
-        public function getMessage($code = ActionParameter::IS_MISSING);
+        public function getMessage($code = AbstractParameterProcessor::IS_MISSING);
 
         /**
          * Set error message for given error code

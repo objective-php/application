@@ -2,7 +2,7 @@
 
     namespace ObjectivePHP\Application\Action;
 
-    use ObjectivePHP\Primitives\String\String;
+    use ObjectivePHP\Primitives\String\Str;
 
     /**
      * Class DefaultAction

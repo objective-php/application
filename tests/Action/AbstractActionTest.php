@@ -3,7 +3,7 @@
     namespace Tests\ObjectivePHP\Application\Action;
 
     use ObjectivePHP\Application\Action\AbstractAction;
-    use ObjectivePHP\Application\Action\Parameter\NumericParameter;
+    use ObjectivePHP\Application\Action\Parameter\NumericParameterProcessor;
     use ObjectivePHP\Application\Action\Parameter\StringParameter;
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
@@ -12,8 +12,7 @@
     use ObjectivePHP\Message\Request\RequestInterface;
     use ObjectivePHP\PHPUnit\TestCase;
     use ObjectivePHP\Primitives\Collection\Collection;
-    use ObjectivePHP\Primitives\Numeric\Numeric;
-    use ObjectivePHP\Primitives\String\String;
+    use ObjectivePHP\Primitives\String\Str;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
 
     class AbstractActionTest extends TestCase
@@ -34,19 +33,19 @@
             $event = $this->getEvent(['param1_value', 'param2' => 12]);
 
             $action = $this->getAction();
-            $action->setParameterProcessor(new StringParameter('param1', 0), new NumericParameter('param2'));
+            $action->setParameterProcessor(new StringParameter('param1', 0), new NumericParameterProcessor('param2'));
             $action->expects($this->at(0))->method('processParameters');
 
             call_user_func($action, $event);
 
-            $this->assertInstanceOf(String::class, $action->getParams()['param1']);
-            $this->assertEquals(new String('param1_value'), $action->getParam('param1'));
-            $this->assertEquals(new Numeric(12), $action->getParam('param2'));
+            $this->assertInstanceOf(Str::class, $action->getParams()['param1']);
+            $this->assertEquals(new Str('param1_value'), $action->getParam('param1'));
+            $this->assertEquals(12, $action->getParam('param2'));
 
             $action->setParam('param1', 'updated_param1_value');
 
-            $this->assertInstanceOf(String::class, $action->getParams()['param1']);
-            $this->assertEquals(new String('updated_param1_value'), $action->getParams()['param1']);
+            $this->assertInstanceOf(Str::class, $action->getParams()['param1']);
+            $this->assertEquals(new Str('updated_param1_value'), $action->getParams()['param1']);
 
             // also test unprocessed params
             $action->setParam('param3', 'param3_value');

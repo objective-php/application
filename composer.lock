@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/config.git",
-                "reference": "3621adb0a3f64addf86b228cac65a72f386e4e9c"
+                "reference": "c61354d1210aef2753c11a356a75aa1b848377bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/config/zipball/3621adb0a3f64addf86b228cac65a72f386e4e9c",
-                "reference": "3621adb0a3f64addf86b228cac65a72f386e4e9c",
+                "url": "https://api.github.com/repos/objective-php/config/zipball/c61354d1210aef2753c11a356a75aa1b848377bb",
+                "reference": "c61354d1210aef2753c11a356a75aa1b848377bb",
                 "shasum": ""
             },
             "require": {
@@ -53,7 +53,7 @@
                 "config",
                 "objective-php"
             ],
-            "time": "2015-09-20 15:14:40"
+            "time": "2015-11-25 16:05:08"
         },
         {
             "name": "objective-php/events-handler",
@@ -245,12 +245,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/primitives.git",
-                "reference": "09ab45365f30729d49e524203799b58bb66cf665"
+                "reference": "e71e1a48d921da7db51ac54bc0042a694875714c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/primitives/zipball/09ab45365f30729d49e524203799b58bb66cf665",
-                "reference": "09ab45365f30729d49e524203799b58bb66cf665",
+                "url": "https://api.github.com/repos/objective-php/primitives/zipball/e71e1a48d921da7db51ac54bc0042a694875714c",
+                "reference": "e71e1a48d921da7db51ac54bc0042a694875714c",
                 "shasum": ""
             },
             "require": {
@@ -291,7 +291,7 @@
                 "objective php",
                 "primitives"
             ],
-            "time": "2015-11-17 11:19:03"
+            "time": "2015-11-25 16:00:57"
         },
         {
             "name": "objective-php/services-factory",
@@ -394,16 +394,16 @@
         },
         {
             "name": "zendframework/zend-diactoros",
-            "version": "1.1.4",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-diactoros.git",
-                "reference": "3f0ce6c0ba2106e018fb514a9f09dbb91eb6bfd0"
+                "reference": "edfda00b9831630c19c411f85f50a47bb66af457"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/3f0ce6c0ba2106e018fb514a9f09dbb91eb6bfd0",
-                "reference": "3f0ce6c0ba2106e018fb514a9f09dbb91eb6bfd0",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/edfda00b9831630c19c411f85f50a47bb66af457",
+                "reference": "edfda00b9831630c19c411f85f50a47bb66af457",
                 "shasum": ""
             },
             "require": {
@@ -420,8 +420,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0-dev",
-                    "dev-develop": "1.1-dev"
+                    "dev-master": "1.2-dev",
+                    "dev-develop": "1.3-dev"
                 }
             },
             "autoload": {
@@ -440,7 +440,7 @@
                 "psr",
                 "psr-7"
             ],
-            "time": "2015-10-16 15:24:05"
+            "time": "2015-11-24 19:16:22"
         }
     ],
     "packages-dev": [
@@ -1348,16 +1348,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.7.6",
+            "version": "v2.7.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "eca9019c88fbe250164affd107bc8057771f3f4d"
+                "reference": "4cfcd7a9fceba662b3c036b7d9a91f6197af046c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/eca9019c88fbe250164affd107bc8057771f3f4d",
-                "reference": "eca9019c88fbe250164affd107bc8057771f3f4d",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/4cfcd7a9fceba662b3c036b7d9a91f6197af046c",
+                "reference": "4cfcd7a9fceba662b3c036b7d9a91f6197af046c",
                 "shasum": ""
             },
             "require": {
@@ -1372,7 +1372,10 @@
             "autoload": {
                 "psr-4": {
                     "Symfony\\Component\\Yaml\\": ""
-                }
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -1390,7 +1393,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2015-10-11 09:39:48"
+            "time": "2015-11-18 13:41:01"
         }
     ],
     "aliases": [],

@@ -6,7 +6,7 @@
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Events\Callback\AliasedCallback;
     use ObjectivePHP\Primitives\Collection\Collection;
-    use ObjectivePHP\Primitives\String\String;
+    use ObjectivePHP\Primitives\String\Str;
     use ObjectivePHP\Application\Exception;
     use ObjectivePHP\ServicesFactory\Reference;
 
@@ -71,7 +71,7 @@
             }
 
             // clean path name
-            $path = String::cast($path);
+            $path = Str::cast($path);
             $path->trim('/');
 
             $namespaces = $path->split('/');
@@ -126,6 +126,6 @@
          */
         protected function computeServiceName($path)
         {
-            return (string) String::cast($path)->trim('/')->replace('/', '.')->prepend('action.');
+            return (string) Str::cast($path)->trim('/')->replace('/', '.')->prepend('action.');
         }
     }

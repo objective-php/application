@@ -7,7 +7,7 @@
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Events\EventsHandler;
     use ObjectivePHP\Primitives\Collection\Collection;
-    use ObjectivePHP\Primitives\String\String;
+    use ObjectivePHP\Primitives\String\Str;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
 
     /**

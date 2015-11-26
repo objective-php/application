@@ -5,7 +5,7 @@
     
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Html\Tag\Tag;
-    use ObjectivePHP\Primitives\String\String;
+    use ObjectivePHP\Primitives\String\Str;
     use Zend\Diactoros\Response\SapiEmitter;
 
     /**
@@ -35,7 +35,7 @@
             $div->append(Tag::h2('File'), Tag::pre($exception->getFile())->append(':', $exception->getLine())->setSeparator(''));
 
             // shorten Trace
-            $trace = String::cast($exception->getTraceAsString())->replace(getcwd() . '/', '');
+            $trace = Str::cast($exception->getTraceAsString())->replace(getcwd() . '/', '');
 
             $div->append(Tag::h2('Trace'), Tag::pre($trace));
 
