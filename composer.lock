@@ -61,12 +61,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/events-handler.git",
-                "reference": "4c80a9c5c2f1676c86cb2504e7de068bf4894f5c"
+                "reference": "37e95719d6d437a03027e221ad98f8e344b59fa3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/events-handler/zipball/4c80a9c5c2f1676c86cb2504e7de068bf4894f5c",
-                "reference": "4c80a9c5c2f1676c86cb2504e7de068bf4894f5c",
+                "url": "https://api.github.com/repos/objective-php/events-handler/zipball/37e95719d6d437a03027e221ad98f8e344b59fa3",
+                "reference": "37e95719d6d437a03027e221ad98f8e344b59fa3",
                 "shasum": ""
             },
             "require": {
@@ -105,7 +105,7 @@
                 "events handler",
                 "objective php"
             ],
-            "time": "2015-09-20 15:16:29"
+            "time": "2015-11-26 10:22:27"
         },
         {
             "name": "objective-php/matcher",
@@ -299,12 +299,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/services-factory.git",
-                "reference": "e083f3eccc5dd470a3de6685417c23536ce9d861"
+                "reference": "dcd0ed1be71e40c0ed9b13a3d40d477422e8c10e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/services-factory/zipball/e083f3eccc5dd470a3de6685417c23536ce9d861",
-                "reference": "e083f3eccc5dd470a3de6685417c23536ce9d861",
+                "url": "https://api.github.com/repos/objective-php/services-factory/zipball/dcd0ed1be71e40c0ed9b13a3d40d477422e8c10e",
+                "reference": "dcd0ed1be71e40c0ed9b13a3d40d477422e8c10e",
                 "shasum": ""
             },
             "require": {
@@ -341,7 +341,7 @@
                 "objective php",
                 "services"
             ],
-            "time": "2015-09-27 08:26:34"
+            "time": "2015-11-26 11:03:38"
         },
         {
             "name": "psr/http-message",
