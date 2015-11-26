@@ -6,7 +6,7 @@
     use ObjectivePHP\Application\Exception;
     use ObjectivePHP\Primitives\String\Str;
 
-    class StringParameter extends AbstractParameterProcessor
+    class StringParameterProcessor extends AbstractParameterProcessor
     {
 
         /**

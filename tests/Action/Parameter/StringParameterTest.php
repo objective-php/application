@@ -3,7 +3,7 @@
     namespace Test\ObjectivePHP\Application\Action\Param;
 
 
-    use ObjectivePHP\Application\Action\Parameter\StringParameter;
+    use ObjectivePHP\Application\Action\Parameter\StringParameterProcessor;
     use ObjectivePHP\Application\Exception;
     use ObjectivePHP\PHPUnit\TestCase;
     use ObjectivePHP\Primitives\String\Str;
@@ -16,7 +16,7 @@
 
             $parameterValue = uniqid();
 
-            $processor = new StringParameter('reference');
+            $processor = new StringParameterProcessor('reference');
 
             $this->assertEquals(new Str($parameterValue), $processor->process($parameterValue));
 
@@ -24,7 +24,7 @@
 
         public function testMandatoryCheck()
         {
-            $processor = (new StringParameter('reference'))->setMandatory();
+            $processor = (new StringParameterProcessor('reference'))->setMandatory();
 
             $this->expectsException(function () use ($processor)
             {
