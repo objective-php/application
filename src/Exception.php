@@ -13,4 +13,7 @@
 
         // Session
         const SESSION_DISABLED = 0x30;
+
+        // Request parameters
+        const INVALID_PARAMETER_VALUE = 0x40;
     }

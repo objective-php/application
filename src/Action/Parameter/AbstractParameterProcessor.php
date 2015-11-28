@@ -118,6 +118,7 @@
             $message = Str::cast($this->getMessages()->get($code));
 
             $paramName = $this->getReference();
+
             if (($mapping = $this->getQueryParameterMapping()) !== null)
             {
                 $paramName .= ' (' . (is_int($mapping) ? '#' : '') . $mapping . ' in query)';
@@ -127,7 +128,7 @@
 
             foreach($values as $placeHolder => $value)
             {
-                $message->setValue($placeHolder, $value);
+                $message->setVariable($placeHolder, $value);
             }
 
             return $message;
