@@ -161,6 +161,13 @@
             return $this;
         }
 
+        public function addParameterProcessor(ParameterProcessorInterface $processor)
+        {
+            $this->parameterProcessors->set($processor->getReference(), $processor);
+
+            return $this;
+        }
+
         /**
          * @param $name
          * @param $value

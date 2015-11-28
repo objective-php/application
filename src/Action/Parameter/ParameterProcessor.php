@@ -1,11 +1,12 @@
 <?php
     namespace ObjectivePHP\Application\Action\Parameter;
     
+    use ObjectivePHP\DataProcessor\DataProcessorInterface;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\Str;
     use ObjectivePHP\Application\ApplicationInterface;
 
-    abstract class AbstractParameterProcessor implements ParameterProcessorInterface
+    class ParameterProcessor implements ParameterProcessorInterface
     {
         const IS_MISSING = 'action-parameter.is-missing';
 
@@ -41,14 +42,22 @@
          */
         protected $messages = [self::IS_MISSING => 'Missing mandatory parameter ":reference"'];
 
+
+        /**
+         * @var DataProcessorInterface
+         */
+        protected $dataProcessor;
+
         /**
          * Constructor
          *
          * @param string     $reference Parameter reference
          * @param int|string $mapping   Query parameter name or position. If none provided, $reference is used as mapping.
          */
-        public function __construct($reference, $mapping = null)
+        public function __construct(DataProcessorInterface $dataProcessor, $reference, $mapping = null)
         {
+
+            $this->setDataProcessor($dataProcessor);
 
             $this->setReference($reference);
 
@@ -61,6 +70,21 @@
             $this->setQueryParameterMapping($mapping);
 
         }
+
+        /**
+         * Process a value
+         *
+         * The processed value will be stored as parameter value
+         *
+         * @param mixed $value
+         *
+         * @return mixed
+         */
+        public function process($value)
+        {
+            return $this->getDataProcessor()->process($value);
+        }
+
 
         /**
          * @return string|int
@@ -206,6 +230,24 @@
             return $this;
         }
 
+        /**
+         * @return DataProcessorInterface
+         */
+        public function getDataProcessor() : DataProcessorInterface
+        {
+            return $this->dataProcessor;
+        }
 
+        /**
+         * @param DataProcessorInterface $dataProcessor
+         *
+         * @return $this
+         */
+        public function setDataProcessor($dataProcessor)
+        {
+            $this->dataProcessor = $dataProcessor;
+
+            return $this;
+        }
 
     }

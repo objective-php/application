@@ -4,9 +4,10 @@
     
     
     use ObjectivePHP\Application\ApplicationInterface;
+    use ObjectivePHP\DataProcessor\DataProcessorInterface;
     use ObjectivePHP\Primitives\Collection\Collection;
 
-    interface ParameterProcessorInterface
+    interface ParameterProcessorInterface extends DataProcessorInterface
     {
 
         /**
@@ -15,7 +16,7 @@
          * @param string $reference    Parameter name (for further reference)
          * @param mixed  $queryMapping Related parameter name or position in the query string
          */
-        public function __construct($reference, $queryMapping = null);
+        public function __construct(DataProcessorInterface $processor, $reference, $queryMapping = null);
 
         /**
          * Inject Application
@@ -56,16 +57,6 @@
          */
         public function isMandatory();
 
-        /**
-         * Process a value
-         *
-         * The processed value will be stored as parameter value
-         *
-         * @param mixed $value
-         *
-         * @return mixed
-         */
-        public function process($value);
 
         /**
          * @return Collection
@@ -77,7 +68,7 @@
          *
          * @return mixed
          */
-        public function getMessage($code = AbstractParameterProcessor::IS_MISSING);
+        public function getMessage($code, $variables = []);
 
         /**
          * Set error message for given error code
@@ -93,4 +84,9 @@
          * @return string
          */
         public function getQueryParameterMapping();
+
+        /**
+         * @return DataProcessorInterface
+         */
+        public function getDataProcessor() : DataProcessorInterface;
     }

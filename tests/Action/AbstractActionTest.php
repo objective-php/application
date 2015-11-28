@@ -4,9 +4,12 @@
 
     use ObjectivePHP\Application\Action\AbstractAction;
     use ObjectivePHP\Application\Action\Parameter\NumericParameterProcessor;
+    use ObjectivePHP\Application\Action\Parameter\ParameterProcessor;
     use ObjectivePHP\Application\Action\Parameter\StringParameterProcessor;
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
+    use ObjectivePHP\DataProcessor\NumericProcessor;
+    use ObjectivePHP\DataProcessor\StringProcessor;
     use ObjectivePHP\Events\EventsHandler;
     use ObjectivePHP\Message\Request\Parameter\Container\HttpParameterContainer;
     use ObjectivePHP\Message\Request\RequestInterface;
@@ -33,7 +36,7 @@
             $event = $this->getEvent(['param1_value', 'param2' => 12]);
 
             $action = $this->getAction();
-            $action->setParameterProcessor(new StringParameterProcessor('param1', 0), new NumericParameterProcessor('param2'));
+            $action->setParameterProcessor(new ParameterProcessor(new StringProcessor(), 'param1', 0), new ParameterProcessor(new NumericProcessor, 'param2'));
             $action->expects($this->at(0))->method('processParameters');
 
             call_user_func($action, $event);
