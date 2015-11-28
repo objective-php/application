@@ -1,7 +1,9 @@
 <?php
     namespace ObjectivePHP\Application\Action\Parameter;
     
+    use ObjectivePHP\Application\ApplicationAwareInterface;
     use ObjectivePHP\DataProcessor\DataProcessorInterface;
+    use ObjectivePHP\Html\Exception;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\Str;
     use ObjectivePHP\Application\ApplicationInterface;
@@ -40,7 +42,7 @@
          *
          * @var Collection
          */
-        protected $messages = [self::IS_MISSING => 'Missing mandatory parameter ":reference"'];
+        protected $messages = [self::IS_MISSING => 'Missing mandatory parameter ":param"'];
 
 
         /**
@@ -62,7 +64,7 @@
             $this->setReference($reference);
 
             // if no mapping is defined, use $reference as mapping
-            if(is_null($mapping))
+            if (is_null($mapping))
             {
                 $mapping = $reference;
             }
@@ -82,7 +84,27 @@
          */
         public function process($value)
         {
-            return $this->getDataProcessor()->process($value);
+
+            if ($this->isMandatory() && !$value)
+            {
+                throw new Exception($this->getMessage(self::IS_MISSING, ['param', $this->reference]));
+            }
+
+            $dataProcessor = $this->getDataProcessor();
+
+            if ($dataProcessor instanceof ApplicationAwareInterface)
+            {
+                $dataProcessor->setApplication($this->getApplication());
+            }
+
+            $processedValue = $dataProcessor->process($value);
+
+            if($this->isMandatory() && is_null($processedValue))
+            {
+                throw new Exception($this->getMessage(self::IS_MISSING, ['param', $this->reference]));
+            }
+
+            return $processedValue;
         }
 
 
@@ -145,12 +167,12 @@
 
             if (($mapping = $this->getQueryParameterMapping()) !== null)
             {
-                $paramName .= ' (' . (is_int($mapping) ? '#' : '') . $mapping . ' in query)';
+                $paramName .= ' (alias ' . (is_int($mapping) ? '#' : '') . $mapping . ')';
             }
 
-            $message->setVariable('reference', $paramName);
+            $message->setVariable('param', $paramName);
 
-            foreach($values as $placeHolder => $value)
+            foreach ($values as $placeHolder => $value)
             {
                 $message->setVariable($placeHolder, $value);
             }
@@ -245,6 +267,7 @@
          */
         public function setDataProcessor($dataProcessor)
         {
+
             $this->dataProcessor = $dataProcessor;
 
             return $this;
