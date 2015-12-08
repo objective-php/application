@@ -1,10 +1,4 @@
 <?php
-    /**
-     * Created by PhpStorm.
-     * User: gauthier
-     * Date: 07/12/2015
-     * Time: 14:05
-     */
     
     namespace ObjectivePHP\Application\Middleware;
     
