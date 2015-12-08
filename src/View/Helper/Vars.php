@@ -13,6 +13,8 @@
 
         protected static $variables;
 
+        public static $config;
+
         /**
          * @param      $reference
          * @param null $default
@@ -37,6 +39,14 @@
             }
 
             self::$variables[$reference] = $value;
+        }
+
+        /**
+         * @param $reference
+         */
+        static function unset($reference)
+        {
+            unset(self::$variables[$reference]);
         }
 
         /**
@@ -68,4 +78,8 @@
             self::$capturing = true;
         }
 
+        public static function config()
+        {
+            return self::$config;
+        }
     }

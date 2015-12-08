@@ -3,6 +3,7 @@
     namespace ObjectivePHP\Application\Action;
     
     
+    use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
 
     /**
@@ -17,5 +18,5 @@
          *
          * @return mixed
          */
-        public function __invoke(WorkflowEvent $event);
+        public function __invoke(ApplicationInterface $application);
     }

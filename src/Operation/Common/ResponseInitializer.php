@@ -6,26 +6,27 @@
      * Time: 16:41
      */
     
-    namespace ObjectivePHP\Application\Task\Common;
+    namespace ObjectivePHP\Application\Operation\Common;
 
+    use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Message\Response\HttpResponse;
 
     /**
-     * Class InitializeResponse
+     * Class ResponseInitializer
      *
      * @package ObjectivePHP\Application\Task\Common
      */
-    class InitializeResponse
+    class ResponseInitializer
     {
         /**
          * Instantiate Response
          *
          * @param WorkflowEvent $event
          */
-        public function __invoke(WorkflowEvent $event)
+        public function __invoke(ApplicationInterface $app)
         {
             // TODO handle CLI repsonse
-            $event->getApplication()->setResponse(new HttpResponse());
+            $app->setResponse(new HttpResponse());
         }
     }

@@ -1,6 +1,6 @@
 <?php
 
-    namespace ObjectivePHP\Application\Task\Common;
+    namespace ObjectivePHP\Application\Operation\Common;
     
     
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;

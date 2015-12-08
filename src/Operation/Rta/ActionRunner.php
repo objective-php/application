@@ -1,8 +1,10 @@
 <?php
-    namespace ObjectivePHP\Application\Task\Rta;
+    namespace ObjectivePHP\Application\Operation\Rta;
 
 
     use ObjectivePHP\Application\ApplicationInterface;
+    use ObjectivePHP\Application\Middleware\AbstractMiddleware;
+    use ObjectivePHP\Application\Middleware\ActionMiddleware;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Events\Callback\AliasedCallback;
     use ObjectivePHP\Primitives\Collection\Collection;
@@ -10,49 +12,60 @@
     use ObjectivePHP\Application\Exception;
     use ObjectivePHP\ServicesFactory\ServiceReference;
 
-    class RouteRequestToAction
+    /**
+     * Class ActionRunner
+     *
+     * @package ObjectivePHP\Application\Task\Rta
+     */
+    class ActionRunner extends AbstractMiddleware
     {
         /**
          * @var ApplicationInterface
          */
         protected $application;
 
-        public function __invoke(WorkflowEvent $event)
+        /**
+         * @param ApplicationInterface $app
+         *
+         * @throws Exception
+         * @throws \ObjectivePHP\ServicesFactory\Exception
+         */
+        public function run(ApplicationInterface $app)
         {
 
-            $this->application = $application = $event->getApplication();
+            $this->application = $app;
 
-            $path = rtrim($event->getApplication()->getRequest()->getUri()->getPath(), '/');
+            $route = $app->getRequest()->getRoute();
 
-            // default to home
-            if (!$path)
+            // compute service id
+            $serviceId = $this->computeServiceName($route);
+
+            // if no service matching the route has been registered,
+            // try to locate a class that could be used as service
+            if(!$app->getServicesFactory()->isServiceRegistered($serviceId))
             {
-                $path = '/';
+                $actionClass = $this->resolveActionClassName($route);
+
+                $action = $this->resolveActionFullyQualifiedName($actionClass);
+
+                if (!$action)
+                {
+                    throw new Exception(sprintf('No callback found to map the requested route "%s"', $route), Exception::ACTION_NOT_FOUND);
+                }
+
+                $app->getServicesFactory()->registerService(['id' => $serviceId, 'class' => $action]);
+
             }
 
-            $actionClass = $this->resolveActionClassName($path);
+            // replace action by serviceId to ensure it will be fetched using the ServicesFactory
+            $action = new ServiceReference($serviceId);
 
-            $action = $this->resolveActionFullyQualifiedName($actionClass);
+            // wrap action to inject returned value in application
+            $app->on('action')->plug(new ActionMiddleware($action));
 
-            if(!$action)
-            {
-                throw new Exception(sprintf('No callback found to map the requested action "%s"', $path), Exception::ACTION_NOT_FOUND);
-            }
 
-            // if action is a class, register it as service
-            if(is_string($action) && class_exists($action))
-            {
-                $serviceId = $this->computeServiceName($path);
-                $this->application->getServicesFactory()->registerService(['id' => $serviceId, 'class' => $action]);
-
-                // replace action by serviceId to ensure it will be fetched using the ServicesFactory
-                $action = new ServiceReference($serviceId);
-            }
-
-            $application->getWorkflow()->bind('run.execute', new AliasedCallback('action', $action));
-
-            // store action in event result for further reference
-            return $action;
+            // store action as application parameter for further reference
+            $app->setParam('action', $action);
         }
 
         /**
@@ -62,13 +75,6 @@
          */
         protected function resolveActionClassName($path)
         {
-            // check if path is routed
-            if ($this->application->getConfig()->has('router.routes'))
-            {
-                $routes = Collection::cast($this->application->getConfig()->get('router.routes'));
-
-                if($action = $routes->get($path)) return $action;
-            }
 
             // clean path name
             $path = Str::cast($path);
@@ -107,7 +113,6 @@
             foreach ($registeredActionNamespaces as $namespace)
             {
                 $fullClassName = $namespace . '\\' . $className;
-
                 if (class_exists('\\' . $fullClassName))
                 {
                     return $fullClassName;

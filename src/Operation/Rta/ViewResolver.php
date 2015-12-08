@@ -1,21 +1,22 @@
 <?php
 
-    namespace ObjectivePHP\Application\Task\Rta;
+    namespace ObjectivePHP\Application\Operation\Rta;
     
     
     use ObjectivePHP\Application\Action\RenderableActionInterface;
     use ObjectivePHP\Application\ApplicationInterface;
+    use ObjectivePHP\Application\Middleware\AbstractMiddleware;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\Str;
     use ObjectivePHP\ServicesFactory\ServiceReference;
 
     /**
-     * Class ResolveView
+     * Class ViewResolver
      *
      * @package ObjectivePHP\Application\Task\Rta
      */
-    class ResolveView
+    class ViewResolver extends AbstractMiddleware
     {
         /**
          * @var ApplicationInterface
@@ -23,16 +24,17 @@
         protected $application;
 
         /**
-         * @param WorkflowEvent $event
+         * @param Application $app
          *
          * @return $this|mixed|null
          */
-        public function __invoke(WorkflowEvent $event)
+        public function run(ApplicationInterface $app)
         {
 
-            $this->setApplication($event->getApplication());
+            $this->setApplication($app);
 
-            return $this->getViewTemplate();
+            $app->setParam('view.template', $this->getViewTemplate());
+
         }
 
         /**
@@ -41,13 +43,12 @@
         public function getViewTemplate()
         {
             // get action
-            $action = $this->getApplication()->getWorkflow()->getStep('route')->getEarlierEvent('resolve')
-                           ->getResults()['action-resolver'];
+            $action = $this->getApplication()->getParam('action');
 
 
             if($action instanceof ServiceReference)
             {
-                $action = $this->getApplication()->getServicesFactory()->get($action->getId());
+                $action = $this->getApplication()->getServicesFactory()->get($action);
             }
 
             if (!$action instanceof RenderableActionInterface)

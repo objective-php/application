@@ -30,14 +30,21 @@
         static protected $data;
 
         /**
+         * @var string
+         */
+        protected $namespace;
+
+        /**
          * Session constructor.
          *
          * @param string $namespace
          */
-        public function __construct($mode = null)
+        public function __construct($namespace = null, $mode = null)
         {
 
             if(is_null($mode)) $mode = self::$defaultMode;
+
+            $this->setNamespace((string) $namespace);
 
             if($mode == self::SESSION_MODE_NATIVE)
             {
@@ -67,6 +74,35 @@
 
         }
 
+        /**
+         * @return string
+         */
+        public function getNamespace()
+        {
+            return $this->namespace;
+        }
+
+        /**
+         * @param string $namespace
+         *
+         * @return $this
+         */
+        public function setNamespace($namespace)
+        {
+            $this->namespace = (string) $namespace;
+
+            return $this;
+        }
+
+        /**
+         * @return $this
+         */
+        public function resetNamespace()
+        {
+            $this->namespace = null;
+
+            return $this;
+        }
 
         /**
          * @param $key
@@ -75,9 +111,10 @@
          * @return $this
          * @throws \ObjectivePHP\Primitives\Exception
          */
-        public function set($key, $value)
+        public function set($reference, $value)
         {
-            self::$data[$key] = $value;
+            $reference = $this->computeKeyFQN($reference);
+            self::$data[$reference] = $value;
 
             return $this;
         }
@@ -91,6 +128,7 @@
          */
         public function get($reference, $default = null)
         {
+            $reference = $this->computeKeyFQN($reference);
 
             // first look for exact match
             if(isset(self::$data[$reference]))
@@ -123,6 +161,7 @@
          */
         public function remove($reference)
         {
+            $reference = $this->computeKeyFQN($reference);
             $matcher = $this->getMatcher();
 
             Collection::cast(self::$data)->each(function (&$value, $key) use ($matcher, $reference)
@@ -133,6 +172,17 @@
                 }
             });
                 return $this;
+        }
+
+        /**
+         * @return $this
+         */
+        public function clear()
+        {
+            if(!$this->namespace) self::$data = [];
+            else $this->remove('*');
+
+            return $this;
         }
 
         /**
@@ -187,5 +237,14 @@
             return $this;
         }
 
+        /**
+         * @param $key
+         *
+         * @return string
+         */
+        protected function computeKeyFQN($key)
+        {
+            return $this->namespace ? $this->namespace . $this->getMatcher()->getSeparator() . $key : $key;
+        }
 
     }

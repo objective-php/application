@@ -2,13 +2,20 @@
     
     namespace ObjectivePHP\Application;
 
+    use ObjectivePHP\Application\Workflow\Step;
     use ObjectivePHP\Application\Workflow\WorkflowInterface;
     use ObjectivePHP\Config\Config;
     use ObjectivePHP\Events\EventsHandler;
     use ObjectivePHP\Message\Request\RequestInterface;
     use ObjectivePHP\Message\Response\ResponseInterface;
+    use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
 
+    /**
+     * Interface ApplicationInterface
+     *
+     * @package ObjectivePHP\Application
+     */
     interface ApplicationInterface
     {
 
@@ -30,11 +37,6 @@
          * @return Config
          */
         public function getConfig();
-
-        /**
-         * @return WorkflowInterface
-         */
-        public function getWorkflow();
 
         /**
          * @param RequestInterface $request
@@ -60,7 +62,16 @@
          */
         public function getResponse();
 
+        /**
+         * @param $step
+         *
+         * @return Step
+         */
+        public function on($step) : Step;
 
-
+        /**
+         * @return Collection
+         */
+        public function getSteps() : Collection;
 
     }

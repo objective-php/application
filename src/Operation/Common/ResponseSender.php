@@ -1,8 +1,9 @@
 <?php
 
-    namespace ObjectivePHP\Application\Task\Common;
+    namespace ObjectivePHP\Application\Operation\Common;
 
 
+    use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use Zend\Diactoros\Response\SapiEmitter;
 
@@ -11,14 +12,14 @@
      *
      * @package ObjectivePHP\Application\Task\Common
      */
-    class SendResponse
+    class ResponseSender
     {
         /**
          * @param WorkflowEvent $event
          */
-        public function __invoke(WorkflowEvent $event)
+        public function __invoke(ApplicationInterface $app)
         {
-            $response = $event->getApplication()->getResponse();
+            $response = $app->getResponse();
             $emitter = new SapiEmitter();
 
             $emitter->emit($response);

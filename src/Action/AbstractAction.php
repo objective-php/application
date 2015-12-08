@@ -2,9 +2,8 @@
 
     namespace ObjectivePHP\Application\Action;
 
-    use ObjectivePHP\Application\Action\Parameter\ParameterProcessorInterface;
     use ObjectivePHP\Application\ApplicationInterface;
-    use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
+    use ObjectivePHP\DataProcessor\DataProcessorInterface;
     use ObjectivePHP\Events\EventsHandler;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\Str;
@@ -36,31 +35,25 @@
         /**
          * @var Collection
          */
-        protected $parameterProcessors;
-
-        /**
-         * @var Collection
-         */
         protected $params;
 
         /**
-         * @var Collection
+         * @var array
          */
-        protected $rawParams;
+        protected $aliases = [];
 
         /**
          *
          */
         public function __construct()
         {
-            $this->parameterProcessors = new Collection();
-            $this->rawParams = new Collection();
-
-            $this->init();
+            $this->params = new Collection();
         }
 
         /**
          * Delegated constructor
+         *
+         * This should be overriden in children instead of overriding __construct()
          */
         public function init()
         {
@@ -68,31 +61,27 @@
         }
 
         /**
-         * @param WorkflowEvent $event
+         * @param ApplicationInterface $app
          *
          * @return mixed
          */
-        public function __invoke(WorkflowEvent $event)
+        public function __invoke(ApplicationInterface $app)
         {
-            $this->setServicesFactory($event->getApplication()->getServicesFactory());
-            $this->setApplication($event->getApplication());
-            $this->setEventsHandler($event->getApplication()->getEventsHandler());
+            $this->setApplication($app);
+            $this->setServicesFactory($app->getServicesFactory());
+            $this->setEventsHandler($app->getEventsHandler());
 
             // set params
             $this->params = new Collection();
             $this->setParams(
                 $this->getApplication()->getRequest()->getParameters()->fromGet()
-                ->merge($this->getApplication()->getRequest()->getParameters()->fromPost())
             );
 
-            // store raw parameters values before processing
-            $this->rawParams = $this->params;
-
-            // process parameters
-            $this->processParams();
+            // init action
+            $this->init();
 
             // actually execute action
-            return $this->run($event);
+            return $this->run($app);
 
         }
 
@@ -117,95 +106,19 @@
         }
 
         /**
-         * @param $params
-         *
-         * @throws \ObjectivePHP\Primitives\Exception
-         */
-        public function processParams()
-        {
-
-            // fulfill expectations
-            $this->getParameterProcessors()->each(function (ParameterProcessorInterface $parameterProcessor)
-            {
-                // inject application
-                $parameterProcessor->setApplication($this->getApplication());
-                $rawValue       = $this->params->get($parameterProcessor->getQueryParameterMapping());
-                $processedValue = $parameterProcessor->process($rawValue);
-                $this->setParam($parameterProcessor->getReference(), $processedValue, false);
-
-            })
-            ;
-
-            return $this;
-        }
-
-        /**
-         * @return Collection
-         */
-        public function getParameterProcessors()
-        {
-            return $this->parameterProcessors;
-        }
-
-        /**
-         * @param Collection $processors
-         *
-         * @return $this
-         */
-        public function setParameterProcessor(ParameterProcessorInterface ...$processors)
-        {
-            Collection::cast($processors)->each(function(ParameterProcessorInterface $processor){
-                $this->parameterProcessors->set($processor->getReference(), $processor);
-            });
-
-            return $this;
-        }
-
-        public function addParameterProcessor(ParameterProcessorInterface $processor)
-        {
-            $this->parameterProcessors->set($processor->getReference(), $processor);
-
-            return $this;
-        }
-
-        /**
-         * @param $name
+         * @param $param
          * @param $value
          *
          * @return $this
          * @throws \ObjectivePHP\Primitives\Exception
          */
-        public function setParam($name, $value, $processValue = true)
+        public function setParam($param, $value)
         {
-            $processors = $this->getParameterProcessors();
-
-            if ($processValue && $processors->has($name))
-            {
-                $processor      = $processors->get($name);
-                $processedValue = $processor->process($value);
-                $name           = $processors->get($name)->getReference();
-            }
-            else
-            {
-                // keep unexpected params anyway
-                $processedValue = $value;
-            }
-
-            $this->params->set($name, $processedValue);
-
-
-            // also register a shortcut as action property
-            $this->$name = $processedValue;
+            $param = $this->resolveAlias($param);
+            $this->params->set($param, $value);
 
             return $this;
         }
-
-        /**
-         * @param WorkflowEvent $event
-         *
-         * @return mixed
-         */
-        abstract public function run(WorkflowEvent $event);
 
         /**
          * @param      $param
@@ -216,6 +129,8 @@
          */
         public function getParam($param, $default = null)
         {
+            $param = $this->resolveAlias($param);
+
             return $this->params->get($param, $default);
         }
 
@@ -225,14 +140,6 @@
         public function getParams()
         {
             return $this->params;
-        }
-
-        /**
-         * @return mixed
-         */
-        public function getRawParams()
-        {
-            return $this->rawParams;
         }
 
         /**
@@ -308,6 +215,29 @@
         {
             header('Location: ' . $url, $code);
             exit;
+        }
+
+        /**
+         * @param $param
+         * @param $alias
+         *
+         * @return $this
+         */
+        public function alias($param, $alias)
+        {
+            $this->aliases[$alias] = $param;
+
+            return $this;
+        }
+
+        /**
+         * @param $alias
+         *
+         * @return mixed
+         */
+        protected function resolveAlias($alias)
+        {
+            return $this->aliases[$alias] ?? $alias;
         }
 
     }

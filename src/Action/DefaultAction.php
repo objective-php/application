@@ -16,6 +16,9 @@
          */
         protected $viewTemplate;
 
+
+        static protected $viewExtensions = ['phtml'];
+
         /**
          * @return string
          */
@@ -29,8 +32,18 @@
 
                 $viewTemplate = substr($reflected->getFileName(), 0, -4);
 
+                $templateFound = false;
 
-                if(!is_file($viewTemplate))
+                foreach(self::$viewExtensions as $extension)
+                {
+                    if(file_exists($viewTemplate . '.' . ltrim($extension, '.')))
+                    {
+                        $templateFound = true;
+                        break;
+                    }
+                }
+
+                if(!$templateFound)
                 {
                     // try to get parent template if any
                     $parentReflectedClass = $reflected->getParentClass();
@@ -40,7 +53,6 @@
 
                         $viewTemplate = $parentViewTemplate;
                     }
-
 
                 }
 
@@ -61,5 +73,14 @@
             $this->viewTemplate = $viewTemplate;
 
             return $this;
+        }
+
+        /**
+         * @param $extension
+         */
+        static public function registerTemplateExtension($extension)
+        {
+            self::$viewExtensions[] = $extension;
+            self::$viewExtensions   = array_unique(self::$viewExtensions);
         }
     }
