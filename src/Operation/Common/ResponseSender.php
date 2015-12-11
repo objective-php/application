@@ -15,7 +15,7 @@
     class ResponseSender
     {
         /**
-         * @param WorkflowEvent $event
+         * @param ApplicationInterface $app
          */
         public function __invoke(ApplicationInterface $app)
         {

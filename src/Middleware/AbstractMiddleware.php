@@ -65,7 +65,7 @@
         /**
          * @return string
          */
-        public function getDetails()
+        public function getDescription() : string
         {
             return 'Middleware ' . get_class($this);
         }

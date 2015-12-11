@@ -4,6 +4,7 @@
 
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Exception;
+    use ObjectivePHP\Invokable\InvokableInterface;
 
     /**
      * Class RouteFilter
@@ -15,7 +16,7 @@
         /**
          * @return bool
          */
-        public function filter(ApplicationInterface $app) : bool
+        public function __invoke(ApplicationInterface $app) : bool
         {
             // check route filter
             if ($this->getFilter() != '*')
@@ -25,7 +26,7 @@
 
                 if (!$request)
                 {
-                    throw new Exception('Cannot run UrlFilter: no request has been set');
+                    throw new Exception(sprintf('Cannot run UrlFilter for filter "%s": no request has been set', $this->getFilter()));
                 }
 
                 // use route as reference to match route filter, but default to URL if
@@ -39,6 +40,14 @@
             }
 
             return true;
+        }
+
+        /**
+         * @return string
+         */
+        public function getDescription() : string
+        {
+            return 'Url Filter (' . get_class($this) . ')';
         }
 
     }

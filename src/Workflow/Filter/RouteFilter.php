@@ -10,6 +10,7 @@
 
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Exception;
+    use ObjectivePHP\Invokable\InvokableInterface;
 
     /**
      * Class RouteFilter
@@ -18,10 +19,11 @@
      */
     class RouteFilter extends AbstractFilter
     {
+
         /**
          * @return bool
          */
-        public function filter(ApplicationInterface $app) : bool
+        public function __invoke(ApplicationInterface $app) : bool
         {
             // check route filter
             if ($this->getFilter() != '*')
@@ -49,6 +51,14 @@
             }
 
             return true;
+        }
+
+        /**
+         * @return string
+         */
+        public function getDescription() : string
+        {
+            return 'Route Filter (' . get_class($this) . ')';
         }
 
 

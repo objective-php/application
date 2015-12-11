@@ -3,24 +3,16 @@
     namespace ObjectivePHP\Application\Middleware;
 
     use ObjectivePHP\Application\ApplicationInterface;
+    use ObjectivePHP\Invokable\InvokableInterface;
 
     /**
      * Interface MiddlewareInterface
      *
      * @package ObjectivePHP\Application\Hook
      */
-    interface MiddlewareInterface
+    interface MiddlewareInterface extends InvokableInterface
     {
-        /**
-         * @param ApplicationInterface $application
-         *
-         * @return mixed
-         */
-        public function __invoke(ApplicationInterface $application);
-
         public function getLabel();
 
         public function getReference();
-
-        public function getDetails();
     }

@@ -5,9 +5,8 @@
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Exception;
     use ObjectivePHP\Application\Middleware\MiddlewareInterface;
-    use ObjectivePHP\Application\Workflow\Filter\EncapsulatedFilter;
-    use ObjectivePHP\Application\Workflow\Filter\FilterInterface;
-    use ObjectivePHP\Application\Workflow\Filter\UrlFilter;
+    use ObjectivePHP\Invokable\Invokable;
+    use ObjectivePHP\Invokable\InvokableInterface;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\ServicesFactory\ServiceReference;
 
@@ -44,7 +43,7 @@
         public function __construct(MiddlewareInterface $middleware, ...$filters)
         {
             $this->setMiddleware($middleware);
-            $this->setFilters(Collection::cast($filters));
+            $this->setFilters($filters);
         }
 
         /**
@@ -55,14 +54,21 @@
          */
         public function run(ApplicationInterface $app)
         {
+            try
+            {
+                // filter call
+                if (!$this->filter($app)) return null;
 
-            // filter call
-            if (!$this->filter($app)) return null;
+                //$app->getEventsHandler()->trigger('application.workflow.hook.run', $this);
+                $middleware = $this->getMiddleware();
 
-            $app->getEventsHandler()->trigger('application.workflow.hook.run', $this);
-            $middleware = $this->getMiddleware();
+                return $middleware($app);
 
-            return $middleware($app);
+            }
+            catch(\Throwable $e)
+            {
+                throw new Exception('Failed running ' . $middleware->getDescription(), null, $e);
+            }
         }
 
         /**
@@ -74,41 +80,16 @@
         protected function filter(ApplicationInterface $app)
         {
 
-            foreach ($this->getFilters() as $filter)
+            /**
+             * @var callable $filter
+             */
+            foreach($this->getFilters() as $filter)
             {
-                // normalize filters
-                if (!$filter instanceof FilterInterface)
+                if (!$filter($app))
                 {
-
-                    if (is_string($filter) && class_exists($filter))
-                    {
-                        $filter = new $filter;
-                    }
-                    elseif ($filter instanceof ServiceReference)
-                    {
-                        $filter = $app->getServicesFactory()->get($filter);
-                    }
-
-                    if (!$filter instanceof FilterInterface)
-                    {
-                        if (is_callable($filter))
-                        {
-                            $filter = new EncapsulatedFilter($filter);
-                        }
-                        elseif (is_string($filter))
-                        {
-                            // default to UrlFilter
-                            $filter = new UrlFilter($filter);
-                        }
-                        else
-                        {
-                            throw new Exception('Invalid filter');
-                        }
-                    }
+                    return false;
                 }
-
-                if (!$filter->filter($app)) return false;
-            };
+            }
 
             return true;
         }
@@ -128,7 +109,12 @@
          */
         public function setFilters($filters)
         {
-            $this->filters = $filters;
+
+            $this->filters = (new Collection())->restrictTo(InvokableInterface::class);
+
+            Collection::cast($filters)->each(function($filter) {
+                $this->filters->append(Invokable::cast($filter));
+            });
 
             return $this;
         }

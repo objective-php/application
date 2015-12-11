@@ -4,6 +4,7 @@
     
     
     use ObjectivePHP\Application\ApplicationInterface;
+    use ObjectivePHP\Invokable\InvokableInterface;
     use ObjectivePHP\Message\Request\HttpRequest;
 
     /**
@@ -11,13 +12,15 @@
      *
      * @package ObjectivePHP\Application\Operation\Common
      */
-    class RequestWrapper
+    class RequestWrapper implements InvokableInterface
     {
+
         /**
          * @param ApplicationInterface $app
          */
         public function __invoke(ApplicationInterface $app)
         {
+
             if (isset($_SERVER['REQUEST_URI']))
             {
                 $request = new HttpRequest($_SERVER['REQUEST_URI']);
@@ -30,4 +33,14 @@
             }
 
         }
+
+        /**
+         * @return string
+         */
+        public function getDescription() : string
+        {
+            return 'Request initializer';
+        }
+
+
     }

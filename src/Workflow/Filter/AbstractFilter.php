@@ -2,12 +2,14 @@
 
     namespace ObjectivePHP\Application\Workflow\Filter;
 
+    use ObjectivePHP\Invokable\InvokableInterface;
+
     /**
      * Class AbstractFilter
      *
      * @package ObjectivePHP\Application\Workflow
      */
-    abstract class AbstractFilter implements FilterInterface
+    abstract class AbstractFilter implements InvokableInterface
     {
         protected $filter;
 

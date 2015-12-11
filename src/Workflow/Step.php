@@ -4,7 +4,7 @@
     
     
     use ObjectivePHP\Application\Exception;
-    use ObjectivePHP\Application\Middleware\EncapsulatedMiddleware;
+    use ObjectivePHP\Application\Middleware\EmbeddedMiddleware;
     use ObjectivePHP\Application\Middleware\MiddlewareInterface;
     use ObjectivePHP\Primitives\Collection\Collection;
 
@@ -44,7 +44,7 @@
 
             if(!$middleware instanceof MiddlewareInterface)
             {
-                $middleware = new EncapsulatedMiddleware($middleware);
+                $middleware = new EmbeddedMiddleware($middleware);
             }
 
             $this->append((new Hook($middleware, ...$filters))->setStep($this));
@@ -65,7 +65,7 @@
 
             if (!$middleware instanceof MiddlewareInterface)
             {
-                $middleware = new EncapsulatedMiddleware($middleware);
+                $middleware = new EmbeddedMiddleware($middleware);
             }
 
             $this->prepend((new Hook($middleware, ...$filters))->setStep($this));

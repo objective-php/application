@@ -19,6 +19,7 @@
 
         static protected $viewExtensions = ['phtml'];
 
+
         /**
          * @return string
          */

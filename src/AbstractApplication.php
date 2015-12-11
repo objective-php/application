@@ -2,7 +2,6 @@
 
     namespace ObjectivePHP\Application;
     
-    
     use Composer\Autoload\ClassLoader;
     use ObjectivePHP\Application\Workflow\Hook;
     use ObjectivePHP\Application\Workflow\Step;
@@ -99,55 +98,6 @@
             $this->init();
 
 
-        }
-
-        /**
-         * @param $operation
-         *
-         * @return mixed
-         * @throws \ObjectivePHP\ServicesFactory\Exception
-         */
-        public function exec($operation)
-        {
-
-            if ($operation instanceof Hook)
-            {
-                $operation = $operation->getMiddleware();
-            }
-
-            if (!is_callable($operation))
-            {
-                if ($operation instanceof ServiceReference)
-                {
-                    $operation = $this->getServicesFactory()->get($operation);
-                }
-                elseif (class_exists($operation))
-                {
-                    $operation = new $operation;
-                }
-            }
-
-
-            if (!is_callable($operation))
-            {
-                throw new Exception(sprintf('Cannot execute operation: ' . (is_object($operation) ? 'Class ' . get_class($operation) . ' is not invokable' : gettype($operation) . ' variable is not callable')));
-            }
-
-
-            return $operation($this);
-        }
-
-        /**
-         * @param $hook
-         * @param $middleware
-         *
-         * @return $this
-         */
-        public function logExecutionStep($hook, $middleware)
-        {
-            $this->executionTrace[$hook][] = $middleware;
-
-            return $this;
         }
 
         /**

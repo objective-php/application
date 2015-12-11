@@ -18,7 +18,7 @@
      *
      * @package ObjectivePHP\Application\Middleware
      */
-    class ActionMiddleware extends EncapsulatedMiddleware
+    class ActionMiddleware extends EmbeddedMiddleware
     {
 
         /**
@@ -39,9 +39,9 @@
         /**
          * @return string
          */
-        public function getDetails()
+        public function getDescription() : string
         {
-            return 'Action Middleware encapsulating ' . parent::getDetails();
+            return 'Action Middleware encapsulating ' . parent::getDescription();
         }
 
     }
