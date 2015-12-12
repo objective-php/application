@@ -14,6 +14,7 @@
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\ServicesFactory\ServiceReference;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
+    use Zend\Diactoros\Response;
 
     /**
      * Class AbstractApplication
@@ -218,11 +219,11 @@
         }
 
         /**
-         * @param ResponseInterface $response
+         * @param Response $response
          *
          * @return $this
          */
-        public function setResponse(ResponseInterface $response)
+        public function setResponse(Response $response)
         {
             $this->response = $response;
 

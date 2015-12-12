@@ -10,6 +10,7 @@
     use ObjectivePHP\Message\Response\ResponseInterface;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
+    use Zend\Diactoros\Response;
 
     /**
      * Interface ApplicationInterface
@@ -51,11 +52,11 @@
         public function getRequest();
 
         /**
-         * @param ResponseInterface $request
+         * @param Response $request
          *
          * @return $this
          */
-        public function setResponse(ResponseInterface $request);
+        public function setResponse(Response $request);
 
         /**
          * @return ResponseInterface

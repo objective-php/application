@@ -54,18 +54,18 @@
                 }
 
                 $app->getServicesFactory()->registerService(['id' => $serviceId, 'class' => $action]);
-
             }
 
             // replace action by serviceId to ensure it will be fetched using the ServicesFactory
-            $action = new ServiceReference($serviceId);
+            $actionReference = new ServiceReference($serviceId);
 
             // wrap action to inject returned value in application
-            $app->on('action')->plug(new ActionMiddleware($action));
+            $app->on('action')->plug($actionMiddleware = new ActionMiddleware($actionReference));
 
 
             // store action as application parameter for further reference
-            $app->setParam('action', $action);
+            $app->setParam('runtime.action.middleware', $actionMiddleware);
+            $app->setParam('runtime.action.service-id', $serviceId);
         }
 
         /**

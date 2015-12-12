@@ -7,6 +7,7 @@
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Middleware\AbstractMiddleware;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
+    use ObjectivePHP\Invokable\Invokable;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\Str;
     use ObjectivePHP\ServicesFactory\ServiceReference;
@@ -38,18 +39,14 @@
         }
 
         /**
-         * @return $this|mixed|null
+         * @return mixed
          */
         public function getViewTemplate()
         {
             // get action
-            $action = $this->getApplication()->getParam('action');
+            $actionMiddleware = $this->getApplication()->getParam('runtime.action.middleware');
 
-
-            if($action instanceof ServiceReference)
-            {
-                $action = $this->getApplication()->getServicesFactory()->get($action);
-            }
+            $action = $actionMiddleware->getOperation()->getCallable($this->getApplication());
 
             if (!$action instanceof RenderableActionInterface)
             {

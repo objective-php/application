@@ -20,6 +20,7 @@
         public function __invoke(ApplicationInterface $app)
         {
             $response = $app->getResponse();
+
             $emitter = new SapiEmitter();
 
             $emitter->emit($response);

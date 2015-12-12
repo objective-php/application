@@ -5,13 +5,14 @@
      * Date: 07/12/2015
      * Time: 18:07
      */
-    
+
     namespace ObjectivePHP\Application\Middleware;
-    
-    
+
+
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\View\Helper\Vars;
     use ObjectivePHP\Primitives\Collection\Collection;
+    use Zend\Diactoros\Response;
 
     /**
      * Class ActionMiddleware
@@ -30,10 +31,19 @@
         {
             $result = parent::run($app);
 
-            Collection::cast($result)->each(function ($value, $var)
+            if($result instanceof Response)
             {
-                Vars::set($var, $value);
-            });
+                $app->setResponse($result);
+            }
+            else
+            {
+                $app->setResponse(new Response);
+
+                Collection::cast($result)->each(function ($value, $var)
+                {
+                    Vars::set($var, $value);
+                });
+            }
         }
 
         /**
