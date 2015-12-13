@@ -40,7 +40,7 @@
             $workflow->bind('packages.post', new AliasedCallback('services-loader', Common\ServiceLoader::class));
 
             // define what action to execute
-            $workflow->bind('route.resolve', new AliasedCallback('action-resolver', Rta\ActionRunner::class));
+            $workflow->bind('route.resolve', new AliasedCallback('action-resolver', Rta\ActionPlugger::class));
 
             // handle rendering
             $workflow->bind('response.generate', new AliasedCallback('view-resolver', Rta\ViewResolver::class));

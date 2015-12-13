@@ -25,17 +25,15 @@
         protected $application;
 
         /**
-         * @param Application $app
+         * @param ApplicationInterface $app
          *
          * @return $this|mixed|null
          */
         public function run(ApplicationInterface $app)
         {
-
             $this->setApplication($app);
 
             $app->setParam('view.template', $this->getViewTemplate());
-
         }
 
         /**

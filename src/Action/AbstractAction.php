@@ -240,4 +240,6 @@
             return $this->aliases[$alias] ?? $alias;
         }
 
+        abstract function run(ApplicationInterface $app);
+
     }

@@ -31,13 +31,14 @@
         {
             $result = parent::run($app);
 
+
             if($result instanceof Response)
             {
                 $app->setResponse($result);
             }
             else
             {
-                $app->setResponse(new Response);
+                $app->setResponse(new Response\HtmlResponse(''));
 
                 Collection::cast($result)->each(function ($value, $var)
                 {

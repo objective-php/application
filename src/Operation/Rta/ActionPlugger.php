@@ -17,7 +17,7 @@
      *
      * @package ObjectivePHP\Application\Task\Rta
      */
-    class ActionRunner extends AbstractMiddleware
+    class ActionPlugger extends AbstractMiddleware
     {
         /**
          * @var ApplicationInterface
@@ -60,7 +60,7 @@
             $actionReference = new ServiceReference($serviceId);
 
             // wrap action to inject returned value in application
-            $app->on('action')->plug($actionMiddleware = new ActionMiddleware($actionReference));
+            $app->getStep('action')->plug($actionMiddleware = new ActionMiddleware($actionReference));
 
 
             // store action as application parameter for further reference

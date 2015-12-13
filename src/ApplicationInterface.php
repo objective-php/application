@@ -68,7 +68,7 @@
          *
          * @return Step
          */
-        public function on($step) : Step;
+        public function getStep($step) : Step;
 
         /**
          * @return Collection

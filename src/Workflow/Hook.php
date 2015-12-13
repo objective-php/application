@@ -67,7 +67,7 @@
             }
             catch(\Throwable $e)
             {
-                throw new Exception('Failed running hook "' . $middleware->getReference() . '" of type: ' . $middleware->getDescription(), null, $e);
+                throw new Exception('Failed running hook "' . $this->getMiddleware()->getReference() . '" of type: ' . $this->getMiddleware()->getDescription(), null, $e);
             }
         }
 

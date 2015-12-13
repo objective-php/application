@@ -15,7 +15,7 @@
 
             foreach($appConfig->packages->registered as $packageClass)
             {
-                $application->on('init')->plug($packageClass);
+                $application->getStep('init')->plug($packageClass);
             }
         }
     }

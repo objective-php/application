@@ -269,7 +269,7 @@
          * @return Step
          * @throws \ObjectivePHP\Primitives\Exception
          */
-        public function on($step) : Step
+        public function getStep($step) : Step
         {
             $stepInstance = $this->steps->get($step);
 
