@@ -9,6 +9,7 @@
     namespace ObjectivePHP\Application\Middleware;
 
     use ObjectivePHP\Application\ApplicationInterface;
+    use ObjectivePHP\Notification\Stack;
 
     /**
      * Class AbstractMiddleware
@@ -18,9 +19,20 @@
     abstract class AbstractMiddleware implements MiddlewareInterface
     {
 
+        /**
+         * @var string
+         */
         protected $label;
 
+        /**
+         * @var string
+         */
         protected $reference;
+
+        /**
+         * @var Stack
+         */
+        protected $notifications;
 
         /**
          * @return mixed
@@ -73,12 +85,13 @@
         /**
          * Forward calls on this object to run()
          *
-         * @param ...$args
+         * @param ApplicationInterface $app
+         * @param array                ...$args
          *
          * @return mixed
          */
-        public function __invoke(ApplicationInterface $app)
+        public function __invoke(ApplicationInterface $app, ...$args)
         {
-            return $this->run($app);
+            return $this->run($app, ...$args);
         }
     }

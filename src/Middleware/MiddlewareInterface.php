@@ -4,6 +4,7 @@
 
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Invokable\InvokableInterface;
+    use ObjectivePHP\Notification\Stack;
 
     /**
      * Interface MiddlewareInterface
@@ -15,4 +16,6 @@
         public function getLabel();
 
         public function getReference();
+
+        public function getNotifications() : Stack;
     }
