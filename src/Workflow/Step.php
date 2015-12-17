@@ -126,6 +126,13 @@
             {
                 $this->rename($this->lastOperation, $reference);
 
+                // inject alias as Middleware label
+                $middleware = $this[$reference]->getMiddleware();
+                $middleware->setReference($reference);
+                // also set label if none is defined
+                if(!$middleware->getLabel()) $middleware->setLabel($reference);
+
+
                 $this->lastOperation = null;
             }
 

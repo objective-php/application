@@ -3,16 +3,18 @@
     namespace ObjectivePHP\Application;
     
     use Composer\Autoload\ClassLoader;
+    use ObjectivePHP\Application\Operation\Common\ExceptionHandler;
     use ObjectivePHP\Application\Workflow\Hook;
     use ObjectivePHP\Application\Workflow\Step;
     use ObjectivePHP\Config\Config;
     use ObjectivePHP\Config\Loader\DirectoryLoader;
     use ObjectivePHP\Events\EventsHandler;
+    use ObjectivePHP\Invokable\Invokable;
+    use ObjectivePHP\Invokable\InvokableInterface;
     use ObjectivePHP\Matcher\Matcher;
     use ObjectivePHP\Message\Request\RequestInterface;
     use ObjectivePHP\Message\Response\ResponseInterface;
     use ObjectivePHP\Primitives\Collection\Collection;
-    use ObjectivePHP\ServicesFactory\ServiceReference;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
     use Zend\Diactoros\Response;
 
@@ -32,6 +34,16 @@
          * @var ServicesFactory
          */
         protected $servicesFactory;
+
+        /**
+         * @var InvokableInterface
+         */
+        protected $exceptionHandler;
+
+        /**
+         * @var \Throwable
+         */
+        protected $exception;
 
         /**
          * @var ClassLoader
@@ -96,8 +108,10 @@
             $this->params       = new Collection();
             $this->routeMatcher = (new Matcher())->setSeparator('/');
 
-            $this->init();
+            // set default Exception Handler
+            $this->setExceptionHandler(ExceptionHandler::class);
 
+            $this->init();
 
         }
 
@@ -256,14 +270,6 @@
         }
 
         /**
-         * @return Collection
-         */
-        public function getSteps() : Collection
-        {
-            return $this->steps;
-        }
-
-        /**
          * @param $step
          *
          * @return Step
@@ -282,6 +288,14 @@
         }
 
         /**
+         * @return Collection
+         */
+        public function getSteps() : Collection
+        {
+            return $this->steps;
+        }
+
+        /**
          * @throws \Throwable
          */
         public function run()
@@ -290,10 +304,9 @@
             $this->getEventsHandler()->setServicesFactory($this->getServicesFactory());
             $this->getServicesFactory()->setEventsHandler($this->getEventsHandler());
 
-            $executionTrace = [];
             try
             {
-                $this->steps->each(function (Step $step) use (&$executionTrace)
+                $this->steps->each(function (Step $step)
                 {
                     $this->getEventsHandler()->trigger('application.workflow.step.run', $step);
                     $this->executionTrace[$step->getName()] = [];
@@ -301,13 +314,17 @@
 
                     $step->each(function (Hook $hook)
                     {
+                        $this->currentExecutionStack[$hook->getMiddleware()->getReference()] = $hook->getMiddleware()->getDescription();
                         $hook->run($this);
                     }
                     );
                 });
-            } catch (\Throwable $e)
+            }
+            catch (\Throwable $e)
             {
-                throw $e;
+                $this->setException($e);
+                $exceptionHandler = $this->getExceptionHandler();
+                $exceptionHandler($this);
             }
         }
 
@@ -393,6 +410,54 @@
             $this->routeMatcher = $routeMatcher;
 
             return $this;
+        }
+
+        /**
+         * @return InvokableInterface
+         */
+        public function getExceptionHandler() : InvokableInterface
+        {
+            return $this->exceptionHandler;
+        }
+
+        /**
+         * @param InvokableInterface $exceptionHandler
+         *
+         * @return $this
+         */
+        public function setExceptionHandler($exceptionHandler)
+        {
+            $this->exceptionHandler = Invokable::cast($exceptionHandler);
+
+            return $this;
+        }
+
+        /**
+         * @return \Throwable
+         */
+        public function getException() : \Throwable
+        {
+            return $this->exception;
+        }
+
+        /**
+         * @param \Throwable $exception
+         *
+         * @return $this
+         */
+        public function setException(\Throwable $exception)
+        {
+            $this->exception = $exception;
+
+            return $this;
+        }
+
+        /**
+         * @return array
+         */
+        public function getExecutionTrace()
+        {
+            return $this->executionTrace;
         }
 
     }

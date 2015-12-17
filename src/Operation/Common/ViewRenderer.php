@@ -148,7 +148,7 @@
         {
             $config = $this->getApplication()->getConfig();
 
-            if ($config->hasDirective($this->viewsLocationDirective))
+            if ($config->hasSection($this->viewsLocationDirective))
             {
                 $viewLocations = array_reverse(Collection::cast($config->get($this->viewsLocationDirective))->toArray());
             }
@@ -171,7 +171,7 @@
         {
             $config = $this->getApplication()->getConfig();
 
-            if ($config->hasDirective($this->layoutsLocationDirective))
+            if ($config->hasSection($this->layoutsLocationDirective))
             {
                 $viewLocations = array_reverse(Collection::cast($config->get($this->layoutsLocationDirective))->toArray());
             }

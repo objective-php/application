@@ -39,7 +39,7 @@
          */
         public function getLabel()
         {
-            return $this->label;
+            return $this->label ?? 'anonymous';
         }
 
         /**
@@ -59,7 +59,7 @@
          */
         public function getReference()
         {
-            return $this->reference;
+            return $this->reference ?? 'n/a';
         }
 
         /**
@@ -81,6 +81,17 @@
         {
             return 'Middleware ' . get_class($this);
         }
+
+        public function getNotifications() : Stack
+        {
+            if(is_null($this->notifications))
+            {
+                $this->notifications = new Stack();
+            }
+
+            return $this->notifications;
+        }
+
 
         /**
          * Forward calls on this object to run()

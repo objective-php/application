@@ -6,6 +6,7 @@
     use ObjectivePHP\Application\Workflow\WorkflowInterface;
     use ObjectivePHP\Config\Config;
     use ObjectivePHP\Events\EventsHandler;
+    use ObjectivePHP\Invokable\InvokableInterface;
     use ObjectivePHP\Message\Request\RequestInterface;
     use ObjectivePHP\Message\Response\ResponseInterface;
     use ObjectivePHP\Primitives\Collection\Collection;
@@ -75,4 +76,32 @@
          */
         public function getSteps() : Collection;
 
+        /**
+         * @param \Throwable $exception
+         *
+         * @return mixed
+         */
+        public function setException(\Throwable $exception);
+
+        /**
+         * @return \Throwable
+         */
+        public function getException() : \Throwable;
+
+        /**
+         * @param mixed $invokable
+         *
+         * @return mixed
+         */
+        public function setExceptionHandler($invokable);
+
+        /**
+         * @return InvokableInterface
+         */
+        public function getExceptionHandler() : InvokableInterface;
+
+        /**
+         * @return array
+         */
+        public function getExecutionTrace();
     }

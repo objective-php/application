@@ -39,7 +39,7 @@
             }
 
             // check if path is routed
-            if ($app->getConfig()->has('router.routes'))
+            if ($app->getConfig()->hasSection('router.routes'))
             {
                 $routes = Collection::cast($app->getConfig()->get('router.routes'));
 

@@ -5,6 +5,7 @@
     
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
+    use ObjectivePHP\Package\Devtools\Package\Debug\Dumper;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
 
     class ServiceLoader
