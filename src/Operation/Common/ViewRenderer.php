@@ -3,6 +3,8 @@
     namespace ObjectivePHP\Application\Operation\Common;
 
     use ObjectivePHP\Application\ApplicationInterface;
+    use ObjectivePHP\Application\Config\LayoutsLocation;
+    use ObjectivePHP\Application\Config\ViewsLocation;
     use ObjectivePHP\Application\Exception;
     use ObjectivePHP\Application\Middleware\AbstractMiddleware;
     use ObjectivePHP\Application\View\Helper\Vars;
@@ -16,12 +18,6 @@
      */
     class ViewRenderer extends AbstractMiddleware
     {
-
-        /**
-         * @var string
-         */
-        protected $viewsLocationDirective = 'views.locations';
-        protected $layoutsLocationDirective = 'layouts.locations';
 
         /**
          * @var ApplicationInterface
@@ -148,19 +144,7 @@
         {
             $config = $this->getApplication()->getConfig();
 
-            if ($config->hasSection($this->viewsLocationDirective))
-            {
-                $viewLocations = array_reverse(Collection::cast($config->get($this->viewsLocationDirective))->toArray());
-            }
-            else return [];
-
-            $locations = [];
-            foreach ($viewLocations as $paths)
-            {
-                $locations[] = $paths;
-            }
-
-            return $locations;
+            return $config->get(ViewsLocation::DIRECTIVE, []);
 
         }
 
@@ -171,21 +155,9 @@
         {
             $config = $this->getApplication()->getConfig();
 
-            if ($config->hasSection($this->layoutsLocationDirective))
-            {
-                $viewLocations = array_reverse(Collection::cast($config->get($this->layoutsLocationDirective))->toArray());
-            }
-            else return [];
+            return $config->get(LayoutsLocation::DIRECTIVE, []);
 
-            $locations = [];
-            foreach ($viewLocations as $paths)
-            {
-                $locations[] = $paths;
-            }
-
-            return $locations;
-
-        }
+         }
 
         /**
          * @param ApplicationInterface $app

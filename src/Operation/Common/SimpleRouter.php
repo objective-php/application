@@ -39,11 +39,10 @@
             }
 
             // check if path is routed
-            if ($app->getConfig()->hasSection('router.routes'))
+            $routes = $app->getConfig()->subset('router.routes');
+            if ($routes)
             {
-                $routes = Collection::cast($app->getConfig()->get('router.routes'));
-
-                if ($route = $routes->get($path)) $path = $route;
+                $path = $routes[$path] ?? $path;
             }
 
             // inject route

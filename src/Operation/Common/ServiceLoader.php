@@ -18,7 +18,7 @@
 
             $this->injectInitialServices($app);
 
-            foreach($config->services as $serviceSpec)
+            foreach($config->get('services') as $serviceSpec)
             {
                 $servicesFactory->registerService($serviceSpec);
             }

@@ -3,6 +3,7 @@
 
 
     use ObjectivePHP\Application\ApplicationInterface;
+    use ObjectivePHP\Application\Config\ActionNamespace;
     use ObjectivePHP\Application\Middleware\AbstractMiddleware;
     use ObjectivePHP\Application\Middleware\ActionMiddleware;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
@@ -107,8 +108,7 @@
          */
         public function resolveActionFullyQualifiedName($className)
         {
-            $registeredActionNamespaces = array_reverse(Collection::cast($this->application->getConfig()->actions->namespaces)
-                                                                  ->toArray());
+            $registeredActionNamespaces = $this->application->getConfig()->get(ActionNamespace::DIRECTIVE);
 
             foreach ($registeredActionNamespaces as $namespace)
             {
