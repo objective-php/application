@@ -14,5 +14,4 @@
 
     class Route extends SingleValueDirectiveGroup
     {
-        const PREFIX = 'router.routes';
     }

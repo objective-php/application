@@ -108,7 +108,7 @@
          */
         public function resolveActionFullyQualifiedName($className)
         {
-            $registeredActionNamespaces = $this->application->getConfig()->get(ActionNamespace::DIRECTIVE);
+            $registeredActionNamespaces = $this->application->getConfig()->get(ActionNamespace::class);
 
             foreach ($registeredActionNamespaces as $namespace)
             {

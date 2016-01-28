@@ -15,5 +15,4 @@
 
     class LayoutsLocation extends StackedValuesDirective
     {
-        const DIRECTIVE = 'layouts.locations';
     }

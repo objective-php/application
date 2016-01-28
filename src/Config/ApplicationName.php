@@ -14,5 +14,4 @@
 
     class ApplicationName extends SingleValueDirective
     {
-        const DIRECTIVE = 'app.name';
     }
