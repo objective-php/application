@@ -3,6 +3,7 @@
     namespace ObjectivePHP\Application\View\Helper;
     
     
+    use ObjectivePHP\Config\ConfigInterface;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\Str;
 
@@ -78,6 +79,9 @@
             self::$capturing = true;
         }
 
+        /**
+         * @return ConfigInterface
+         */
         public static function config()
         {
             return self::$config;

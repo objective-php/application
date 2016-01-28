@@ -14,5 +14,4 @@
 
     class ActionNamespace extends StackedValuesDirective
     {
-        const DIRECTIVE = 'actions.namespaces';
     }

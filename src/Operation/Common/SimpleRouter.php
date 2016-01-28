@@ -10,6 +10,7 @@
     
     
     use ObjectivePHP\Application\ApplicationInterface;
+    use ObjectivePHP\Application\Config\Route;
     use ObjectivePHP\Application\Middleware\AbstractMiddleware;
     use ObjectivePHP\Primitives\Collection\Collection;
 
@@ -39,7 +40,7 @@
             }
 
             // check if path is routed
-            $routes = $app->getConfig()->subset('router.routes');
+            $routes = $app->getConfig()->subset(Route::class);
             if ($routes)
             {
                 $path = $routes[$path] ?? $path;

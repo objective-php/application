@@ -144,7 +144,7 @@
         {
             $config = $this->getApplication()->getConfig();
 
-            return $config->get(ViewsLocation::DIRECTIVE, []);
+            return $config->get(ViewsLocation::class, []);
 
         }
 
@@ -155,7 +155,7 @@
         {
             $config = $this->getApplication()->getConfig();
 
-            return $config->get(LayoutsLocation::DIRECTIVE, []);
+            return $config->get(LayoutsLocation::class, []);
 
          }
 

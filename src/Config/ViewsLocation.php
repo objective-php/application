@@ -15,5 +15,4 @@
 
     class ViewsLocation extends StackedValuesDirective
     {
-        const DIRECTIVE = 'views.locations';
     }
