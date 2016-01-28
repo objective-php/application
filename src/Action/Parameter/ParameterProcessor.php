@@ -2,8 +2,8 @@
     namespace ObjectivePHP\Application\Action\Parameter;
     
     use ObjectivePHP\Application\ApplicationAwareInterface;
+    use ObjectivePHP\Application\Exception;
     use ObjectivePHP\DataProcessor\DataProcessorInterface;
-    use ObjectivePHP\Html\Exception;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\Str;
     use ObjectivePHP\Application\ApplicationInterface;
