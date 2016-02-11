@@ -59,15 +59,16 @@
                 // filter call
                 if (!$this->filter($app)) return null;
 
-                $middleware = $this->getMiddleware();
                 $app->getEventsHandler()->trigger('application.workflow.hook.run', $this);
 
+                $middleware = $this->getMiddleware();
+                if($middleware instanceof InvokableInterface) $middleware->setServicesFactory($app->getServicesFactory());
                 return $middleware($app);
 
             }
             catch(\Throwable $e)
             {
-                throw new Exception('Failed running hook "' . $this->getMiddleware()->getReference() . '" of type: ' . $this->getMiddleware()->getDescription(), null, $e);
+                throw new Exception('Failed running hook "' . $middleware->getReference() . '" of type: ' . $middleware->getDescription(), null, $e);
             }
         }
 

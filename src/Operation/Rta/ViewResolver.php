@@ -6,11 +6,6 @@
     use ObjectivePHP\Application\Action\RenderableActionInterface;
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Middleware\AbstractMiddleware;
-    use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
-    use ObjectivePHP\Invokable\Invokable;
-    use ObjectivePHP\Primitives\Collection\Collection;
-    use ObjectivePHP\Primitives\String\Str;
-    use ObjectivePHP\ServicesFactory\ServiceReference;
 
     /**
      * Class ViewResolver

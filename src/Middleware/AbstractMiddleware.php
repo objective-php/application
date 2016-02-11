@@ -10,6 +10,7 @@
 
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Notification\Stack;
+    use ObjectivePHP\ServicesFactory\ServicesFactory;
 
     /**
      * Class AbstractMiddleware
@@ -92,17 +93,27 @@
             return $this->notifications;
         }
 
-
         /**
-         * Forward calls on this object to run()
+         * Run the operation
          *
-         * @param ApplicationInterface $app
-         * @param array                ...$args
+         * @param mixed ...$args
          *
          * @return mixed
          */
-        public function __invoke(ApplicationInterface $app, ...$args)
+        public function __invoke(...$args)
         {
-            return $this->run($app, ...$args);
+            // TODO: Implement __invoke() method.
         }
+
+        /**
+         * @param ServicesFactory $factory
+         *
+         * @return mixed
+         */
+        public function setServicesFactory(ServicesFactory $factory)
+        {
+            // TODO: Implement setServicesFactory() method.
+        }
+
+
     }

@@ -116,7 +116,10 @@
         }
 
         /**
-         * @param array $steps
+         * @param array|\string[] ...$steps
+         *
+         * @return $this
+         * @throws \ObjectivePHP\Primitives\Exception
          */
         public function addSteps(string ...$steps)
         {
@@ -273,6 +276,7 @@
          * @param $step
          *
          * @return Step
+         * @throws Exception
          * @throws \ObjectivePHP\Primitives\Exception
          */
         public function getStep($step) : Step
@@ -421,7 +425,7 @@
         }
 
         /**
-         * @param InvokableInterface $exceptionHandler
+         * @param  $exceptionHandler
          *
          * @return $this
          */
