@@ -40,7 +40,7 @@
         {
             $operation =  $this->getOperation();
 
-            return $operation($app);
+            return $operation->setServicesFactory($app->getServicesFactory())->__invoke($app);
         }
 
         /**

@@ -166,6 +166,7 @@
          */
         protected function getLayoutName()
         {
+            // FIXME layout.default config directive does not exist
             $layout = $this->getApplication()->getParam('layout.name', $this->getApplication()->getConfig()->get('layouts.default', 'layout'));
 
             return $layout;

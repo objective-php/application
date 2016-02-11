@@ -16,7 +16,7 @@
         /**
          * @return bool
          */
-        public function __invoke(ApplicationInterface $app) : bool
+        public function run(ApplicationInterface $app) : bool
         {
             // check route filter
             if ($this->getFilter() != '*')

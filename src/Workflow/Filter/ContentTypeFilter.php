@@ -15,7 +15,7 @@ use ObjectivePHP\Primitives\Collection\Collection;
 
 class ContentTypeFilter extends AbstractFilter
 {
-    public function __invoke(ApplicationInterface $app)
+    public function run(ApplicationInterface $app)
     {
         $response = $app->getResponse();
 

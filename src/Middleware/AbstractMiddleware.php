@@ -36,6 +36,11 @@
         protected $notifications;
 
         /**
+         * @var ServicesFactory
+         */
+        protected $servicesFactory;
+
+        /**
          * @return mixed
          */
         public function getLabel()
@@ -102,7 +107,7 @@
          */
         public function __invoke(...$args)
         {
-            // TODO: Implement __invoke() method.
+            return $this->run(...$args);
         }
 
         /**
@@ -112,7 +117,9 @@
          */
         public function setServicesFactory(ServicesFactory $factory)
         {
-            // TODO: Implement setServicesFactory() method.
+            $this->servicesFactory = $factory;
+
+            return $this;
         }
 
 

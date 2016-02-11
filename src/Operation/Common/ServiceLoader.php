@@ -6,10 +6,16 @@
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Package\Devtools\Package\Debug\Dumper;
+    use ObjectivePHP\ServicesFactory\Config\Service;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
 
     class ServiceLoader
     {
+        /**
+         * @param ApplicationInterface $app
+         *
+         * @throws \ObjectivePHP\ServicesFactory\Exception\Exception
+         */
         public function __invoke(ApplicationInterface $app)
         {
             $config = $app->getConfig();
@@ -18,16 +24,18 @@
 
             $this->injectInitialServices($app);
 
-            foreach($config->get('services', []) as $serviceSpec)
+            foreach($config->get(Service::class, []) as $serviceSpec)
             {
                 $servicesFactory->registerService($serviceSpec);
             }
         }
 
         /**
-         * @param ApplicationInterface $application
+         * @param ApplicationInterface $app
          *
-         * @throws \ObjectivePHP\ServicesFactory\Exception
+         * @throws \ObjectivePHP\ServicesFactory\Exception\Exception
+         * @internal param ApplicationInterface $application
+         *
          */
         protected function injectInitialServices(ApplicationInterface $app)
         {
