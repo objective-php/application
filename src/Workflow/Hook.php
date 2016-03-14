@@ -57,18 +57,28 @@
             try
             {
                 // filter call
-                if (!$this->filter($app)) return null;
-
+                if (!$this->filter($app)) {
+                    return null;
+                }
                 $app->getEventsHandler()->trigger('application.workflow.hook.run', $this);
 
                 $middleware = $this->getMiddleware();
-                if($middleware instanceof InvokableInterface) $middleware->setServicesFactory($app->getServicesFactory());
+
+                if($middleware instanceof InvokableInterface) $middleware->setApplication($app);
+
                 return $middleware($app);
 
             }
             catch(\Throwable $e)
             {
-                throw new Exception('Failed running hook "' . $middleware->getReference() . '" of type: ' . $middleware->getDescription(), null, $e);
+                if(!empty($middleware))
+                {
+                    throw new Exception('Failed running hook "' . $middleware->getReference() . '" of type: ' . $middleware->getDescription(), null, $e);
+                }
+                else {
+                    // propagate Exception
+                    throw $e;
+                }
             }
         }
 
@@ -86,6 +96,11 @@
              */
             foreach($this->getFilters() as $filter)
             {
+                if($filter instanceof InvokableInterface)
+                {
+                    $filter->setApplication($app);
+                }
+
                 if (!$filter($app))
                 {
                     return false;
@@ -104,7 +119,7 @@
         }
 
         /**
-         * @param Collection $filters
+         * @param array $filters
          *
          * @return $this
          */

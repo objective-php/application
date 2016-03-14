@@ -4,7 +4,6 @@
 
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Exception;
-    use ObjectivePHP\Invokable\InvokableInterface;
 
     /**
      * Class RouteFilter
@@ -22,7 +21,7 @@
             if ($this->getFilter() != '*')
             {
 
-                $request = $app->getRequest();
+                $request = $this->getApplication()->getRequest();
 
                 if (!$request)
                 {
@@ -33,7 +32,7 @@
                 // no route has been set yet
                 $path = $request->getUri()->getPath();
 
-                if (!$app->getRouteMatcher()->match($this->getFilter(), $path))
+                if (!$this->getApplication()->getRouteMatcher()->match($this->getFilter(), $path))
                 {
                     return false;
                 }

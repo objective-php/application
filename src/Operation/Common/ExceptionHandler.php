@@ -48,6 +48,21 @@
                 $output .= $this->renderException($exception);
             } while($exception = $exception->getPrevious());
 
+            // display config
+            $output .= Tag::h2('Configuration');
+            ob_start();
+            var_dump($app->getConfig()->getInternalValue());
+            $output .= ob_get_clean();
+
+            // display services
+            $output .= Tag::h2('Services');
+            foreach($app->getServicesFactory()->getServices() as $spec) {
+                $output .= Tag::h3($spec->getId());
+                ob_start();
+                var_dump($spec);
+                $output .= ob_get_clean();
+            }
+
             // manually emit response
             (new SapiEmitter())->emit((new HtmlResponse($output))->withStatus(500));
 

@@ -10,7 +10,8 @@
     
     
     use ObjectivePHP\Application\ApplicationInterface;
-    use ObjectivePHP\Application\Config\Route;
+    use ObjectivePHP\Application\Config\SimpleRoute;
+    use ObjectivePHP\Application\Config\UrlAlias;
     use ObjectivePHP\Application\Middleware\AbstractMiddleware;
     use ObjectivePHP\Primitives\Collection\Collection;
 
@@ -40,14 +41,31 @@
             }
 
             // check if path is routed
-            $routes = $app->getConfig()->subset(Route::class);
-            if ($routes)
+            $aliases = $app->getConfig()->subset(UrlAlias::class);
+            if ($aliases)
             {
-                $path = $routes[$path] ?? $path;
+                $path = $aliases[$path] ?? $path;
             }
 
-            // inject route
-            $app->getRequest()->setRoute($path);
+            // look for matching route
+            $routes = $app->getConfig()->subset(SimpleRoute::class)->reverse();
+            /** @var SimpleRoute $route */
+            $routed = false;
+            foreach($routes as $alias => $route)
+            {
+                if($route->matches($app->getRequest()))
+                {
+                    $app->getRequest()->setAction($route->getAction());
+                    $app->getRequest()->setRoute($alias);
+                    $routed = true;
+                    break;
+                }
+            }
+
+            // inject route if none matched
+            if(!$routed) {
+                $app->getRequest()->setRoute($path);
+            }
 
         }
 

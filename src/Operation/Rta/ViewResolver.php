@@ -39,7 +39,7 @@
             // get action
             $actionMiddleware = $this->getApplication()->getParam('runtime.action.middleware');
 
-            $action = $actionMiddleware->getOperation()->getCallable($this->getApplication());
+            $action = $actionMiddleware->getInvokable()->getCallable($this->getApplication());
 
             if (!$action instanceof RenderableActionInterface)
             {
@@ -49,26 +49,6 @@
             return $action->getViewTemplate();
 
 
-        }
-
-        /**
-         * @return ApplicationInterface
-         */
-        public function getApplication()
-        {
-            return $this->application;
-        }
-
-        /**
-         * @param ApplicationInterface $application
-         *
-         * @return $this
-         */
-        public function setApplication($application)
-        {
-            $this->application = $application;
-
-            return $this;
         }
 
     }

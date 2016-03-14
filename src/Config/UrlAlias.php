@@ -12,6 +12,6 @@
     
     use ObjectivePHP\Config\SingleValueDirectiveGroup;
 
-    class Route extends SingleValueDirectiveGroup
+    class UrlAlias extends SingleValueDirectiveGroup
     {
     }

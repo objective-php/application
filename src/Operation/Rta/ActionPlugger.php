@@ -8,6 +8,7 @@
     use ObjectivePHP\Application\Middleware\ActionMiddleware;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Events\Callback\AliasedCallback;
+    use ObjectivePHP\Invokable\Invokable;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\Str;
     use ObjectivePHP\Application\Exception;
@@ -36,33 +37,42 @@
 
             $this->application = $app;
 
-            $route = $app->getRequest()->getRoute();
-
-            // compute service id
-            $serviceId = $this->computeServiceName($route);
-
-            // if no service matching the route has been registered,
-            // try to locate a class that could be used as service
-            if(!$app->getServicesFactory()->isServiceRegistered($serviceId))
+            $action = $app->getRequest()->getAction();
+            if($action)
             {
-                $actionClass = $this->resolveActionClassName($route);
+                $actionMiddleware = new ActionMiddleware(Invokable::cast($action));
+                $serviceId = ($action instanceof ServiceReference) ? $action->getId() : $this->computeServiceName($app->getRequest()->getUri()->getPath());
+                $app->getStep('action')->plug($actionMiddleware);
+            }
+                else
+            {
+                $route = $app->getRequest()->getRoute();
 
-                $action = $this->resolveActionFullyQualifiedName($actionClass);
+                // compute service id
+                $serviceId = $this->computeServiceName($route);
 
-                if (!$action)
+                // if no service matching the route has been registered,
+                // try to locate a class that could be used as service
+                if (!$app->getServicesFactory()->isServiceRegistered($serviceId))
                 {
-                    throw new Exception(sprintf('No callback found to map the requested route "%s"', $route), Exception::ACTION_NOT_FOUND);
+                    $actionClass = $this->resolveActionClassName($route);
+
+                    $action = $this->resolveActionFullyQualifiedName($actionClass);
+
+                    if (!$action)
+                    {
+                        throw new Exception(sprintf('No callback found to map the requested route "%s"', $route), Exception::ACTION_NOT_FOUND);
+                    }
+
+                    $app->getServicesFactory()->registerService(['id' => $serviceId, 'class' => $action]);
                 }
 
-                $app->getServicesFactory()->registerService(['id' => $serviceId, 'class' => $action]);
+                // replace action by serviceId to ensure it will be fetched using the ServicesFactory
+                $actionReference = new ServiceReference($serviceId);
+
+                // wrap action to inject returned value in application
+                $app->getStep('action')->plug($actionMiddleware = new ActionMiddleware($actionReference));
             }
-
-            // replace action by serviceId to ensure it will be fetched using the ServicesFactory
-            $actionReference = new ServiceReference($serviceId);
-
-            // wrap action to inject returned value in application
-            $app->getStep('action')->plug($actionMiddleware = new ActionMiddleware($actionReference));
-
 
             // store action as application parameter for further reference
             $app->setParam('runtime.action.middleware', $actionMiddleware);

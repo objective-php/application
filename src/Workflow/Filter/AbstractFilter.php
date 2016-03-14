@@ -1,33 +1,33 @@
 <?php
 
-    namespace ObjectivePHP\Application\Workflow\Filter;
+namespace ObjectivePHP\Application\Workflow\Filter;
 
-    use ObjectivePHP\Application\Middleware\AbstractMiddleware;
+use ObjectivePHP\Invokable\AbstractInvokable;
+
+/**
+ * Class AbstractFilter
+ *
+ * @package ObjectivePHP\Application\Workflow
+ */
+abstract class AbstractFilter extends AbstractInvokable
+{
+    protected $filter;
 
     /**
-     * Class AbstractFilter
+     * RouteFilter constructor.
      *
-     * @package ObjectivePHP\Application\Workflow
+     * @param $filter
      */
-    abstract class AbstractFilter extends AbstractMiddleware
+    public function __construct($filter)
     {
-        protected $filter;
-
-        /**
-         * RouteFilter constructor.
-         *
-         * @param $filter
-         */
-        public function __construct($filter)
-        {
-            $this->filter = $filter;
-        }
-
-        /**
-         * @return mixed
-         */
-        public function getFilter()
-        {
-            return $this->filter;
-        }
+        $this->filter = $filter;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getFilter()
+    {
+        return $this->filter;
+    }
+}

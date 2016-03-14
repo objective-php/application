@@ -21,7 +21,7 @@ class ContentTypeFilter extends AbstractFilter
 
         if(!$response)
         {
-            throw new Exception(sprintf('Cannot filter response ContentType against "%s" because no request has been set', $this->getFilter()->join(', ')));
+            throw new Exception(sprintf('Cannot filter response ContentType against "%s" because no response has been set', $this->getFilter()->join(', ')));
         }
 
         $contentTypes = $response->getHeader('Content-Type');

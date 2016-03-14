@@ -1,14 +1,9 @@
 <?php
-    /**
-     * Created by PhpStorm.
-     * User: gauthier
-     * Date: 07/12/2015
-     * Time: 13:42
-     */
-    
+
     namespace ObjectivePHP\Application\Middleware;
 
     use ObjectivePHP\Application\ApplicationInterface;
+    use ObjectivePHP\Invokable\AbstractInvokable;
     use ObjectivePHP\Notification\Stack;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
 
@@ -17,7 +12,7 @@
      *
      * @package ObjectivePHP\Application\Hook
      */
-    abstract class AbstractMiddleware implements MiddlewareInterface
+    abstract class AbstractMiddleware extends AbstractInvokable implements MiddlewareInterface
     {
 
         /**
@@ -65,7 +60,7 @@
          */
         public function getReference()
         {
-            return $this->reference ?? 'n/a';
+            return $this->reference ?? 'unaliased';
         }
 
         /**
@@ -97,30 +92,5 @@
 
             return $this->notifications;
         }
-
-        /**
-         * Run the operation
-         *
-         * @param mixed ...$args
-         *
-         * @return mixed
-         */
-        public function __invoke(...$args)
-        {
-            return $this->run(...$args);
-        }
-
-        /**
-         * @param ServicesFactory $factory
-         *
-         * @return mixed
-         */
-        public function setServicesFactory(ServicesFactory $factory)
-        {
-            $this->servicesFactory = $factory;
-
-            return $this;
-        }
-
 
     }

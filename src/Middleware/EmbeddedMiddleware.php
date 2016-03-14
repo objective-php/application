@@ -1,61 +1,60 @@
 <?php
-    
-    namespace ObjectivePHP\Application\Middleware;
-    
-    
-    use ObjectivePHP\Application\ApplicationInterface;
-    use ObjectivePHP\Invokable\Invokable;
-    use ObjectivePHP\Invokable\InvokableInterface;
-    use ObjectivePHP\ServicesFactory\ServiceReference;
+
+namespace ObjectivePHP\Application\Middleware;
+
+
+use ObjectivePHP\Application\ApplicationInterface;
+use ObjectivePHP\Invokable\Invokable;
+use ObjectivePHP\Invokable\InvokableInterface;
+
+/**
+ * Class EmbeddedMiddleware
+ *
+ * @package ObjectivePHP\Application\Hook
+ */
+class EmbeddedMiddleware extends AbstractMiddleware
+{
 
     /**
-     * Class EmbeddedMiddleware
-     *
-     * @package ObjectivePHP\Application\Hook
+     * @var
      */
-    class EmbeddedMiddleware extends AbstractMiddleware
+    protected $invokable;
+
+    /**
+     * EmbeddedMiddleware constructor.
+     *
+     * @param $invokable
+     */
+    public function __construct($invokable)
     {
-
-        /**
-         * @var
-         */
-        protected $operation;
-
-        /**
-         * EmbeddedMiddleware constructor.
-         *
-         * @param $operation
-         */
-        public function __construct($operation)
-        {
-            $this->operation = Invokable::cast($operation);
-        }
-
-        /**
-         * @param ApplicationInterface $app
-         *
-         * @return mixed
-         */
-        public function run(ApplicationInterface $app)
-        {
-            $operation =  $this->getOperation();
-
-            return $operation->setServicesFactory($app->getServicesFactory())->__invoke($app);
-        }
-
-        /**
-         * @return InvokableInterface
-         */
-        public function getOperation()
-        {
-            return $this->operation;
-        }
-
-        /**
-         * @return string
-         */
-        public function getDescription() : string
-        {
-            return 'Middleware embedding ' . $this->getOperation()->getDescription();
-        }
+        $this->invokable = Invokable::cast($invokable);
     }
+
+    /**
+     * @param ApplicationInterface $app
+     *
+     * @return mixed
+     */
+    public function run(ApplicationInterface $app)
+    {
+        $invokable = $this->getInvokable()->setApplication($app);
+
+        return $invokable($app);
+    }
+
+    /**
+     * @return InvokableInterface
+     */
+    public function getInvokable()
+    {
+        return $this->invokable;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription() : string
+    {
+        return 'Middleware embedding ' . $this->getInvokable()->getDescription();
+    }
+}

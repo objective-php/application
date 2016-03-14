@@ -73,27 +73,6 @@
         }
 
 
-
-        /**
-         * @return ApplicationInterface
-         */
-        public function getApplication()
-        {
-            return $this->application;
-        }
-
-        /**
-         * @param ApplicationInterface $application
-         *
-         * @return $this
-         */
-        public function setApplication($application)
-        {
-            $this->application = $application;
-
-            return $this;
-        }
-
         /**
          * @param       $viewName
          * @param array $context

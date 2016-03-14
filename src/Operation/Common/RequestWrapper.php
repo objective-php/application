@@ -5,7 +5,6 @@
     
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Middleware\AbstractMiddleware;
-    use ObjectivePHP\Invokable\InvokableInterface;
     use ObjectivePHP\Message\Request\HttpRequest;
 
     /**
@@ -21,12 +20,11 @@
          */
         public function run(ApplicationInterface $app)
         {
-
             if (isset($_SERVER['REQUEST_URI']))
             {
                 $request = new HttpRequest($_SERVER['REQUEST_URI']);
 
-                $app->setRequest($request);
+                $this->getApplication()->setRequest($request);
             }
             else
             {

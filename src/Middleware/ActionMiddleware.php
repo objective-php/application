@@ -1,10 +1,4 @@
 <?php
-    /**
-     * Created by PhpStorm.
-     * User: gauthier
-     * Date: 07/12/2015
-     * Time: 18:07
-     */
 
     namespace ObjectivePHP\Application\Middleware;
 
@@ -29,16 +23,16 @@
          */
         public function run(ApplicationInterface $app)
         {
-            $result = parent::run($app);
 
+            $result = parent::run($app);
 
             if($result instanceof Response)
             {
-                $app->setResponse($result);
+                $this->getApplication()->setResponse($result);
             }
             else
             {
-                $app->setResponse(new Response\HtmlResponse(''));
+                $this->getApplication()->setResponse(new Response\HtmlResponse(''));
 
                 Collection::cast($result)->each(function ($value, $var)
                 {

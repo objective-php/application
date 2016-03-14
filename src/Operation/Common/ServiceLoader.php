@@ -5,18 +5,19 @@
     
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
+    use ObjectivePHP\Invokable\AbstractInvokable;
     use ObjectivePHP\Package\Devtools\Package\Debug\Dumper;
     use ObjectivePHP\ServicesFactory\Config\Service;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
 
-    class ServiceLoader
+    class ServiceLoader extends AbstractInvokable
     {
         /**
          * @param ApplicationInterface $app
          *
          * @throws \ObjectivePHP\ServicesFactory\Exception\Exception
          */
-        public function __invoke(ApplicationInterface $app)
+        public function run(ApplicationInterface $app)
         {
             $config = $app->getConfig();
 

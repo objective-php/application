@@ -15,4 +15,11 @@
 
     class LayoutsLocation extends StackedValuesDirective
     {
+        public function __construct($value)
+        {
+            // TODO check path existence
+
+            parent::__construct($value);
+        }
+
     }
