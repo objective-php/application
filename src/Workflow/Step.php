@@ -104,11 +104,9 @@
             {
                 throw new Exception('No middleware is expecting an alias. This method should be called immediately after plug()');
             }
-
             $this->rename($this->lastOperation, $reference);
 
             $this->lastOperation = null;
-
             return $this;
         }
 
@@ -132,13 +130,10 @@
                 // also set label if none is defined
                 if(!$middleware->getLabel()) $middleware->setLabel($reference);
 
-
                 $this->lastOperation = null;
             }
 
             return $this;
         }
-
-
 
     }

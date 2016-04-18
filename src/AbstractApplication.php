@@ -317,7 +317,7 @@
 
                     $step->each(function (Hook $hook)
                     {
-                        $this->currentExecutionStack[] = [$hook->getMiddleware()->getReference() => $hook->getMiddleware()->getDescription()];
+                        $this->currentExecutionStack[] = $hook->getMiddleware();
                         $hook->run($this);
                     }
                     );

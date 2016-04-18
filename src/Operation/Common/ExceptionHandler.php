@@ -30,16 +30,16 @@
 
             $output .= Tag::h2('Workflow');
 
-            foreach ($app->getExecutionTrace() as $step => $hooks)
+            foreach ($app->getExecutionTrace() as $step => $middlewares)
             {
                 $output .= Tag::h3('Step: ' . $step);
 
                 /**
                  * @var Hook $hook
                  */
-                foreach($hooks as $label => $hook)
+                foreach($middlewares as $middleware)
                 {
-                    $output .= Tag::dt([$label, $hook]);
+                    $output .= Tag::dt([$middleware->getReference() . ': ', $middleware->getDescription()]);
                 }
             }
 
