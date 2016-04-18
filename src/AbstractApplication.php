@@ -309,7 +309,7 @@
 
             try
             {
-                $this->steps->each(function (Step $step)
+                $this->getSteps()->each(function (Step $step)
                 {
                     $this->getEventsHandler()->trigger('application.workflow.step.run', $step);
                     $this->executionTrace[$step->getName()] = [];
@@ -317,7 +317,7 @@
 
                     $step->each(function (Hook $hook)
                     {
-                        $this->currentExecutionStack[$hook->getMiddleware()->getReference()] = $hook->getMiddleware()->getDescription();
+                        $this->currentExecutionStack[] = [$hook->getMiddleware()->getReference() => $hook->getMiddleware()->getDescription()];
                         $hook->run($this);
                     }
                     );

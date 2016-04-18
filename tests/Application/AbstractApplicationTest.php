@@ -28,5 +28,19 @@
 
             $this->assertInstanceOf(ServicesFactory::class, $servicesFactory);
         }
+
+        public function testRun()
+        {
+            /** @var AbstractApplication $app */
+            $app = $this->getMockForAbstractClass(AbstractApplication::class);
+
+            $app->addSteps('test');
+            $app->getStep('test')->plug(function() {})->as('first');
+            $app->getStep('test')->plug(function() {})->as('second');
+
+            $app->run();
+
+            $this->assertCount(2, $app->getExecutionTrace()['test']);
+        }
     }
 
