@@ -15,7 +15,9 @@ use ObjectivePHP\Application\ApplicationInterface;
 abstract class VersionnedApiMiddleware extends SubRoutingMiddleware
 {
 
-    use HttpAction;
+    use HttpAction {
+        // HttpAction::run as __unused;
+    }
 
     protected $defaultVersion = '1.0';
 
@@ -38,5 +40,6 @@ abstract class VersionnedApiMiddleware extends SubRoutingMiddleware
     {
         return $this->getMiddlewareStack()->keys()->toArray();
     }
+
 
 }

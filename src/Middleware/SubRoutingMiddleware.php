@@ -19,9 +19,15 @@ abstract class SubRoutingMiddleware extends AbstractMiddleware
 
     public function __invoke(...$args)
     {
+        // FIXME this should not be necessary!
+        $this->setApplication($args[0][0]);
+        return $this->run($args[0][0]);
+    }
 
+    public function run(ApplicationInterface $app)
+    {
         $middlewareReference = $this->route();
-        
+
         $middleware = $this->getMiddleware($middlewareReference);
 
         if(!is_callable($middleware))
@@ -29,13 +35,8 @@ abstract class SubRoutingMiddleware extends AbstractMiddleware
             throw new Exception(sprintf('No middleware matching routed reference "%s" has been registered', $middlewareReference));
         }
 
-        return $middleware(...$args);
+        return $middleware($app);
 
-    }
-
-    public function run(ApplicationInterface $app)
-    {
-        return $this->__invoke($app);
     }
 
 
