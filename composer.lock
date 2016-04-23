@@ -147,12 +147,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/message.git",
-                "reference": "d55ed3b0ec6eba5318cb7f5930b5d5c26f1deb9e"
+                "reference": "ff150d2c6d4a07f39a553822bf230a29bb53c62c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/message/zipball/d55ed3b0ec6eba5318cb7f5930b5d5c26f1deb9e",
-                "reference": "d55ed3b0ec6eba5318cb7f5930b5d5c26f1deb9e",
+                "url": "https://api.github.com/repos/objective-php/message/zipball/ff150d2c6d4a07f39a553822bf230a29bb53c62c",
+                "reference": "ff150d2c6d4a07f39a553822bf230a29bb53c62c",
                 "shasum": ""
             },
             "require": {
@@ -180,7 +180,7 @@
                 }
             ],
             "description": "ObjectivePHP implementation for PSR-7",
-            "time": "2016-04-23 07:44:31"
+            "time": "2016-04-23 07:47:41"
         },
         {
             "name": "objective-php/services-factory",
