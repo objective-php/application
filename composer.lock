@@ -40,12 +40,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/components.git",
-                "reference": "274f9ea0297be2c3e80afbd5d6e932963591c645"
+                "reference": "19a798ee71cf652014d7f6ed6f1d494e34d2eea5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/components/zipball/274f9ea0297be2c3e80afbd5d6e932963591c645",
-                "reference": "274f9ea0297be2c3e80afbd5d6e932963591c645",
+                "url": "https://api.github.com/repos/objective-php/components/zipball/19a798ee71cf652014d7f6ed6f1d494e34d2eea5",
+                "reference": "19a798ee71cf652014d7f6ed6f1d494e34d2eea5",
                 "shasum": ""
             },
             "require": {
@@ -92,7 +92,7 @@
                 "objective php",
                 "primitives"
             ],
-            "time": "2016-03-14 16:22:34"
+            "time": "2016-04-23 09:19:02"
         },
         {
             "name": "objective-php/events-handler",
