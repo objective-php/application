@@ -9,7 +9,6 @@
     namespace ObjectivePHP\Application\Operation\Common;
 
     use ObjectivePHP\Application\ApplicationInterface;
-    use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
     use ObjectivePHP\Message\Response\HttpResponse;
 
     /**

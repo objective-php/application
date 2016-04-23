@@ -22,8 +22,9 @@
         {
             if (isset($_SERVER['REQUEST_URI']))
             {
-                $request = new HttpRequest($_SERVER['REQUEST_URI']);
-
+                $request = new HttpRequest($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
+                $request->setGet($_GET);
+                $request->setPost($_POST);
                 $this->getApplication()->setRequest($request);
             }
             else

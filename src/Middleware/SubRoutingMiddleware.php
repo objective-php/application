@@ -33,6 +33,11 @@ abstract class SubRoutingMiddleware extends AbstractMiddleware
 
     }
 
+    public function run(ApplicationInterface $app)
+    {
+        return $this->__invoke($app);
+    }
+
 
     abstract public function route();
 

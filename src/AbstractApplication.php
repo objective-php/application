@@ -232,7 +232,7 @@
         /**
          * @return ResponseInterface
          */
-        public function getResponse() : ResponseInterface
+        public function getResponse() : Response
         {
             return $this->response;
         }
@@ -326,6 +326,7 @@
                         {
                             $emitter = new Response\SapiEmitter();
                             $emitter->emit($result);
+                            exit;
                         }
                     }
                     );

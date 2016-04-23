@@ -2,15 +2,19 @@
 
     namespace ObjectivePHP\Application\Action;
 
-    use ObjectivePHP\Primitives\String\Str;
+    use ObjectivePHP\Application\Middleware\AbstractMiddleware;
+    use ObjectivePHP\Application\Middleware\MiddlewareInterface;
 
     /**
      * Class DefaultAction
      *
      * @package ObjectivePHP\Application\Action
      */
-    abstract class DefaultAction extends AbstractAction implements RenderableActionInterface
+    abstract class RenderableAction extends AbstractMiddleware implements RenderableActionInterface
     {
+
+        use HttpAction;
+
         /**
          * @var string
          */

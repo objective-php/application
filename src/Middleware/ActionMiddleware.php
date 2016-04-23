@@ -5,7 +5,9 @@
 
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\View\Helper\Vars;
+    use ObjectivePHP\Message\Response\HttpResponse;
     use ObjectivePHP\Primitives\Collection\Collection;
+    use ObjectivePHP\Message\Response\ResponseInterface;
     use Zend\Diactoros\Response;
 
     /**
@@ -32,7 +34,7 @@
             }
             else
             {
-                $this->getApplication()->setResponse(new Response\HtmlResponse(''));
+                $this->getApplication()->setResponse((new HttpResponse())->withHeader('Content-Type', 'text/html'));
 
                 Collection::cast($result)->each(function ($value, $var)
                 {

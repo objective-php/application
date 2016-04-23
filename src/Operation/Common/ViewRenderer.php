@@ -35,7 +35,6 @@
             $this->setApplication($app);
 
             $viewName = $this->getViewName($app);
-
             if (!$viewName)
             {
                 return;

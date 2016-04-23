@@ -68,7 +68,7 @@
         /**
          * @return ResponseInterface
          */
-        public function getResponse() : ResponseInterface;
+        public function getResponse() : Response;
 
         /**
          * @param $step

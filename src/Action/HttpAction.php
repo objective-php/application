@@ -3,8 +3,10 @@
     namespace ObjectivePHP\Application\Action;
 
     use ObjectivePHP\Application\ApplicationInterface;
+    use ObjectivePHP\Application\Exception;
     use ObjectivePHP\DataProcessor\DataProcessorInterface;
     use ObjectivePHP\Events\EventsHandler;
+    use ObjectivePHP\Invokable\InvokableInterface;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\Str;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
@@ -14,7 +16,7 @@
      *
      * @package ObjectivePHP\Application\Action
      */
-    abstract class AbstractAction implements ActionInterface
+    trait  HttpAction
     {
 
         /**
@@ -61,12 +63,22 @@
         }
 
         /**
-         * @param ApplicationInterface $app
-         *
+         * @param array $args
          * @return mixed
+         * @internal param ApplicationInterface $app
+         *
          */
-        public function __invoke(ApplicationInterface $app)
+        public function __invoke(... $args)
         {
+
+            $app = array_shift($args);
+
+            if(!$app instanceof ApplicationInterface)
+            {
+                throw new Exception('Action must be invoked with an ApplicationInterface instance as first parameter');
+            }
+
+
             $this->setApplication($app);
             $this->setServicesFactory($app->getServicesFactory());
             $this->setEventsHandler($app->getEventsHandler());
@@ -88,7 +100,7 @@
         /**
          * @return ApplicationInterface
          */
-        public function getApplication()
+        public function getApplication() : ApplicationInterface
         {
             return $this->application;
         }
@@ -98,7 +110,7 @@
          *
          * @return $this
          */
-        public function setApplication($application)
+        public function setApplication(ApplicationInterface $application) : InvokableInterface
         {
             $this->application = $application;
 
@@ -170,7 +182,7 @@
         /**
          * @return ServicesFactory
          */
-        public function getServicesFactory()
+        public function getServicesFactory() : ServicesFactory
         {
             return $this->servicesFactory;
         }

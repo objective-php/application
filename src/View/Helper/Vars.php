@@ -24,7 +24,7 @@
          */
         public static function get($reference, $default = null)
         {
-            return @self::$variables[$reference] ?: $default;
+            return self::$variables[$reference] ?? $default;
         }
 
         /**

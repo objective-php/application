@@ -9,16 +9,25 @@
 namespace ObjectivePHP\Application\Middleware;
 
 
+use ObjectivePHP\Application\Action\HttpAction;
 use ObjectivePHP\Application\ApplicationInterface;
 use Zend\Diactoros\Response\JsonResponse;
 
 abstract class AbstractRestfulMiddleware extends SubRoutingMiddleware
 {
+
+    use HttpAction;
+
     public function __invoke(...$args)
     {
         $response = parent::__invoke($args);
 
         return ($response instanceof JsonResponse) ? $response : new JsonResponse($response);
+    }
+
+    function run(ApplicationInterface $app)
+    {
+        return $this->__invoke($app);
     }
 
 
