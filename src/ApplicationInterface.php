@@ -21,48 +21,54 @@
     interface ApplicationInterface
     {
 
+        /**
+         * @return mixed
+         */
         public function init();
 
+        /**
+         * @return mixed
+         */
         public function run();
 
         /**
          * @return EventsHandler
          */
-        public function getEventsHandler();
+        public function getEventsHandler() : EventsHandler;
 
         /**
          * @return ServicesFactory
          */
-        public function getServicesFactory();
+        public function getServicesFactory() : ServicesFactory;
 
         /**
          * @return Config
          */
-        public function getConfig();
+        public function getConfig() : Config;
 
         /**
          * @param RequestInterface $request
          *
-         * @return mixed
+         * @return ApplicationInterface
          */
-        public function setRequest(RequestInterface $request);
+        public function setRequest(RequestInterface $request) : ApplicationInterface;
 
         /**
          * @return RequestInterface
          */
-        public function getRequest();
+        public function getRequest() : RequestInterface;
 
         /**
          * @param Response $request
          *
-         * @return $this
+         * @return ApplicationInterface
          */
-        public function setResponse(Response $request);
+        public function setResponse(Response $request) : ApplicationInterface;
 
         /**
          * @return ResponseInterface
          */
-        public function getResponse();
+        public function getResponse() : ResponseInterface;
 
         /**
          * @param $step
@@ -79,9 +85,9 @@
         /**
          * @param \Throwable $exception
          *
-         * @return mixed
+         * @return ApplicationInterface
          */
-        public function setException(\Throwable $exception);
+        public function setException(\Throwable $exception) : ApplicationInterface;
 
         /**
          * @return \Throwable
@@ -91,9 +97,9 @@
         /**
          * @param mixed $invokable
          *
-         * @return mixed
+         * @return ApplicationInterface
          */
-        public function setExceptionHandler($invokable);
+        public function setExceptionHandler($invokable) : ApplicationInterface;
 
         /**
          * @return InvokableInterface
@@ -103,5 +109,11 @@
         /**
          * @return array
          */
-        public function getExecutionTrace();
+        public function getExecutionTrace() : array;
+
+
+        /**
+         * @return string
+         */
+        public function getEnv() : string;
     }

@@ -134,7 +134,7 @@
         /**
          * @return string
          */
-        public function getEnv()
+        public function getEnv() : string
         {
             return $this->env;
         }
@@ -144,7 +144,7 @@
          *
          * @return $this
          */
-        public function setEnv($env)
+        public function setEnv($env) : ApplicationInterface
         {
             $this->env = $env;
 
@@ -159,12 +159,14 @@
             $configLoader = new DirectoryLoader();
 
             $this->config = $configLoader->load($path);
+
+            return $this;
         }
 
         /**
          * @return Config
          */
-        public function getConfig()
+        public function getConfig() : Config
         {
             return $this->config;
         }
@@ -174,7 +176,7 @@
          *
          * @return $this
          */
-        public function setConfig($config)
+        public function setConfig($config) : ApplicationInterface
         {
             $this->config = $config;
 
@@ -184,7 +186,7 @@
         /**
          * @return EventsHandler
          */
-        public function getEventsHandler()
+        public function getEventsHandler() : EventsHandler
         {
 
             if (is_null($this->eventsHandler))
@@ -200,7 +202,7 @@
          *
          * @return $this
          */
-        public function setEventsHandler(EventsHandler $eventsHandler)
+        public function setEventsHandler(EventsHandler $eventsHandler) : ApplicationInterface
         {
             $this->eventsHandler = $eventsHandler;
 
@@ -210,7 +212,7 @@
         /**
          * @return RequestInterface
          */
-        public function getRequest()
+        public function getRequest() : RequestInterface
         {
             return $this->request;
         }
@@ -220,7 +222,7 @@
          *
          * @return $this
          */
-        public function setRequest(RequestInterface $request)
+        public function setRequest(RequestInterface $request) : ApplicationInterface
         {
             $this->request = $request;
 
@@ -230,7 +232,7 @@
         /**
          * @return ResponseInterface
          */
-        public function getResponse()
+        public function getResponse() : ResponseInterface
         {
             return $this->response;
         }
@@ -240,7 +242,7 @@
          *
          * @return $this
          */
-        public function setResponse(Response $response)
+        public function setResponse(Response $response) : ApplicationInterface
         {
             $this->response = $response;
 
@@ -250,7 +252,7 @@
         /**
          * @return ServicesFactory
          */
-        public function getServicesFactory()
+        public function getServicesFactory() : ServicesFactory
         {
             if (is_null($this->servicesFactory))
             {
@@ -428,7 +430,7 @@
          *
          * @return $this
          */
-        public function setExceptionHandler($exceptionHandler)
+        public function setExceptionHandler($exceptionHandler) : ApplicationInterface
         {
             $this->exceptionHandler = Invokable::cast($exceptionHandler);
 
@@ -448,7 +450,7 @@
          *
          * @return $this
          */
-        public function setException(\Throwable $exception)
+        public function setException(\Throwable $exception) : ApplicationInterface
         {
             $this->exception = $exception;
 
@@ -458,7 +460,7 @@
         /**
          * @return array
          */
-        public function getExecutionTrace()
+        public function getExecutionTrace() : array
         {
             return $this->executionTrace;
         }

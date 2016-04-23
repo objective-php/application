@@ -84,6 +84,9 @@
             return 'Middleware ' . get_class($this);
         }
 
+        /**
+         * @return Stack
+         */
         public function getNotifications() : Stack
         {
             if(is_null($this->notifications))
@@ -94,4 +97,17 @@
             return $this->notifications;
         }
 
+
+        /**
+         * Forward calls on this object to run()
+         *
+         * @param ApplicationInterface $app
+         * @param array                ...$args
+         *
+         * @return mixed
+         */
+        public function __invoke(...$args)
+        {
+            return $this->run(...$args);
+        }
     }
