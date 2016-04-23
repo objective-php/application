@@ -33,13 +33,4 @@
 
         }
 
-        /**
-         * @return string
-         */
-        public function getDescription() : string
-        {
-            return 'Request initializer';
-        }
-
-
     }

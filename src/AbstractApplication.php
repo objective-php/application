@@ -320,7 +320,13 @@
                     $step->each(function (Hook $hook)
                     {
                         $this->currentExecutionStack[] = $hook->getMiddleware();
-                        $hook->run($this);
+                        $result = $hook->run($this);
+
+                        if($result instanceof Response)
+                        {
+                            $emitter = new Response\SapiEmitter();
+                            $emitter->emit($result);
+                        }
                     }
                     );
                 });
@@ -331,6 +337,7 @@
                 $exceptionHandler = $this->getExceptionHandler();
                 $exceptionHandler($this);
             }
+            return $this;
         }
 
         /**
