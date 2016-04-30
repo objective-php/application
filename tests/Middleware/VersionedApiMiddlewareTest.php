@@ -21,8 +21,8 @@ class VersionnedApiMiddlewareTest extends TestCase
     
     public function testDefaultRouting()
     {
-        
-        $middleware = new VersionedApiMiddleware();
+
+        $middleware = $this->getMockForAbstractClass(VersionedApiMiddleware::class);
         $middleware->setApplication($this->getApplication());
 
         $version = $middleware->route();
@@ -34,7 +34,7 @@ class VersionnedApiMiddlewareTest extends TestCase
     public function testRouting()
     {
 
-        $middleware = new VersionedApiMiddleware();
+        $middleware = $this->getMockForAbstractClass(VersionedApiMiddleware::class);
         $middleware->setApplication($this->getApplication(['version' => '2.0']));
 
         $version = $middleware->route();
@@ -45,7 +45,7 @@ class VersionnedApiMiddlewareTest extends TestCase
     
     public function testlistAvailableVersions()
     {
-        $middleware = new VersionedApiMiddleware();
+        $middleware = $this->getMockForAbstractClass(VersionedApiMiddleware::class);
         
         $firstMiddleware = $this->getMock(MiddlewareInterface::class);
         $secondMiddleware = $this->getMock(MiddlewareInterface::class);

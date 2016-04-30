@@ -19,9 +19,8 @@ abstract class SubRoutingMiddleware extends AbstractMiddleware
 
     public function __invoke(...$args)
     {
-        // FIXME this should not be necessary!
-        $this->setApplication($args[0][0]);
-        return $this->run($args[0][0]);
+        $this->setApplication($args[0]);
+        return $this->run($args[0]);
     }
 
     public function run(ApplicationInterface $app)

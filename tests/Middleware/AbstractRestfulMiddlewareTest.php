@@ -39,11 +39,8 @@ class AbstractRestfulMiddlewareTest extends TestCase
     public function testJsonResponseIsAutomaticallyGeneratedFromMiddlewareReturn()
     {
         $restfulMiddleware = new GetOnlyRestMiddleware();
-        $restfulMiddleware->setApplication($this->getApplication('get'));
-
-
-        $this->assertEquals(json_encode(['data' => 'value']), $restfulMiddleware()->getBody());
-
+        $this->assertEquals(json_encode(['data' => 'value']),
+            $restfulMiddleware($this->getApplication('get'))->getBody());
 
     }
 
@@ -51,16 +48,19 @@ class AbstractRestfulMiddlewareTest extends TestCase
     {
         $restfulMiddleware = new GetOnlyRestMiddleware();
         $restfulMiddleware->setApplication($this->getApplication('post'));
-
         $reference = $restfulMiddleware->route();
 
         $this->assertEquals('post', $reference);
 
         $this->expectsException(function() use($restfulMiddleware) {
-            $restfulMiddleware();
+            $restfulMiddleware($this->getApplication('post'));
         }, Exception::class, 'post');
     }
 
+    /**
+     * @param $method
+     * @return AbstractApplication
+     */
     protected function getApplication($method)
     {
         $application = $this->getMock(AbstractApplication::class);

@@ -48,7 +48,7 @@ class SubRoutingMiddlewareTest extends TestCase
         $subRoutingMiddleware->expects($this->once())->method('route');
 
         $this->expectsException(function() use($subRoutingMiddleware) {
-            $subRoutingMiddleware();
+            $subRoutingMiddleware($this->getMockForAbstractClass(ApplicationInterface::class));
         }, Exception::class);
 
     }
