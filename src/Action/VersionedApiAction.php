@@ -6,13 +6,10 @@
  * Time: 10:14
  */
 
-namespace ObjectivePHP\Application\Middleware;
+namespace ObjectivePHP\Application\Action;
 
 
-use ObjectivePHP\Application\Action\HttpAction;
-use ObjectivePHP\Application\ApplicationInterface;
-
-abstract class VersionedApiMiddleware extends SubRoutingMiddleware
+abstract class VersionedApiAction extends SubRoutingAction
 {
 
     use HttpAction;

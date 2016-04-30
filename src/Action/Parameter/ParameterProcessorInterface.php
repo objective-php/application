@@ -7,14 +7,19 @@
     use ObjectivePHP\DataProcessor\DataProcessorInterface;
     use ObjectivePHP\Primitives\Collection\Collection;
 
+    /**
+     * Interface ParameterProcessorInterface
+     * @package ObjectivePHP\Application\Action\Parameter
+     */
     interface ParameterProcessorInterface extends DataProcessorInterface
     {
 
         /**
          * Define parameter name and map it to query parameters if needed
          *
-         * @param string $reference    Parameter name (for further reference)
-         * @param mixed  $queryMapping Related parameter name or position in the query string
+         * @param DataProcessorInterface $processor
+         * @param string $reference Parameter name (for further reference)
+         * @param mixed $queryMapping Related parameter name or position in the query string
          */
         public function __construct(DataProcessorInterface $processor, $reference, $queryMapping = null);
 

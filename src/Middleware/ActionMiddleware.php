@@ -19,9 +19,11 @@
     {
 
         /**
-         * @param ApplicationInterface $application
-         *
+         * @param ApplicationInterface $app
          * @return mixed
+         * @throws \ObjectivePHP\Primitives\Exception
+         * @internal param ApplicationInterface $application
+         *
          */
         public function run(ApplicationInterface $app)
         {
@@ -34,6 +36,7 @@
             }
             else
             {
+                // set default content type
                 $this->getApplication()->setResponse((new HttpResponse())->withHeader('Content-Type', 'text/html'));
 
                 Collection::cast($result)->each(function ($value, $var)

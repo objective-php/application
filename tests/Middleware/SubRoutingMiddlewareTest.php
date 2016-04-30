@@ -9,10 +9,10 @@
 namespace Test\ObjectivePHP\Application\Middleware;
 
 
+use ObjectivePHP\Application\Action\SubRoutingAction;
 use ObjectivePHP\Application\ApplicationInterface;
 use ObjectivePHP\Application\Middleware\Exception;
 use ObjectivePHP\Application\Middleware\MiddlewareInterface;
-use ObjectivePHP\Application\Middleware\SubRoutingMiddleware;
 use ObjectivePHP\PHPUnit\TestCase;
 
 class SubRoutingMiddlewareTest extends TestCase
@@ -21,8 +21,8 @@ class SubRoutingMiddlewareTest extends TestCase
     public function testMiddlewareStack()
     {
 
-        /** @var SubRoutingMiddleware $subRoutingMiddleware */
-        $subRoutingMiddleware = $this->getMockForAbstractClass(SubRoutingMiddleware::class);
+        /** @var SubRoutingAction $subRoutingMiddleware */
+        $subRoutingMiddleware = $this->getMockForAbstractClass(SubRoutingAction::class);
         $subRoutingMiddleware->expects($this->once())->method('route')->willReturn('first');
 
         $app = $this->getMock(ApplicationInterface::class);
@@ -42,8 +42,8 @@ class SubRoutingMiddlewareTest extends TestCase
 
     public function testSubRoutingExecutionFailsIfNoMatchingMiddlewareIsRegistered()
     {
-        /** @var SubRoutingMiddleware $subRoutingMiddleware */
-        $subRoutingMiddleware = $this->getMockForAbstractClass(SubRoutingMiddleware::class);
+        /** @var SubRoutingAction $subRoutingMiddleware */
+        $subRoutingMiddleware = $this->getMockForAbstractClass(SubRoutingAction::class);
 
         $subRoutingMiddleware->expects($this->once())->method('route');
 

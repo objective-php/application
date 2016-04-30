@@ -53,8 +53,9 @@
         /**
          * Constructor
          *
-         * @param string     $reference Parameter reference
-         * @param int|string $mapping   Query parameter name or position. If none provided, $reference is used as mapping.
+         * @param DataProcessorInterface $dataProcessor
+         * @param string $reference Parameter reference
+         * @param int|string $mapping Query parameter name or position. If none provided, $reference is used as mapping.
          */
         public function __construct(DataProcessorInterface $dataProcessor, $reference, $mapping = null)
         {
@@ -79,8 +80,8 @@
          * The processed value will be stored as parameter value
          *
          * @param mixed $value
-         *
          * @return mixed
+         * @throws Exception
          */
         public function process($value)
         {
@@ -138,6 +139,7 @@
 
         /**
          * @param bool $switch
+         * @return $this|mixed
          */
         public function setMandatory($switch = true)
         {

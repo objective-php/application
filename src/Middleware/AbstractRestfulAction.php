@@ -1,18 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: gauthier
- * Date: 23/04/2016
- * Time: 10:39
- */
 
 namespace ObjectivePHP\Application\Middleware;
 
 
 use ObjectivePHP\Application\Action\HttpAction;
+use ObjectivePHP\Application\Action\SubRoutingAction;
 use Zend\Diactoros\Response\JsonResponse;
 
-abstract class AbstractRestfulMiddleware extends SubRoutingMiddleware
+abstract class AbstractRestfulAction extends SubRoutingAction
 {
 
     use HttpAction;

@@ -6,13 +6,17 @@
  * Time: 09:17
  */
 
-namespace ObjectivePHP\Application\Middleware;
+namespace ObjectivePHP\Application\Action;
 
 
 use ObjectivePHP\Application\ApplicationInterface;
+use ObjectivePHP\Application\Middleware\AbstractMiddleware;
+use ObjectivePHP\Application\Middleware\EmbeddedMiddleware;
+use ObjectivePHP\Application\Middleware\Exception;
+use ObjectivePHP\Application\Middleware\MiddlewareInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
 
-abstract class SubRoutingMiddleware extends AbstractMiddleware
+abstract class SubRoutingAction extends AbstractMiddleware
 {
 
     protected $middlewareStack;

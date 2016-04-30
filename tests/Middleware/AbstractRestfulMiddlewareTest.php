@@ -11,7 +11,7 @@ namespace Test\ObjectivePHP\Application\Middleware;
 
 
 use ObjectivePHP\Application\AbstractApplication;
-use ObjectivePHP\Application\Middleware\AbstractRestfulMiddleware;
+use ObjectivePHP\Application\Middleware\AbstractRestfulAction;
 use ObjectivePHP\Application\Middleware\Exception;
 use ObjectivePHP\Message\Request\HttpRequest;
 use ObjectivePHP\Message\Request\Parameter\Container\HttpParameterContainer;
@@ -82,7 +82,7 @@ class AbstractRestfulMiddlewareTest extends TestCase
 }
 
 // HELPERS
-class GetOnlyRestMiddleware extends AbstractRestfulMiddleware
+class GetOnlyRestMiddleware extends AbstractRestfulAction
 {
     public function get()
     {

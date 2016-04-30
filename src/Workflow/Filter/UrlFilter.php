@@ -13,7 +13,9 @@
     class UrlFilter extends AbstractFilter
     {
         /**
+         * @param ApplicationInterface $app
          * @return bool
+         * @throws Exception
          */
         public function run(ApplicationInterface $app) : bool
         {

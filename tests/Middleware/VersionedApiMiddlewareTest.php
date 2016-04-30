@@ -9,9 +9,9 @@
 namespace Test\ObjectivePHP\Application\Middleware;
 
 
+use ObjectivePHP\Application\Action\VersionedApiAction;
 use ObjectivePHP\Application\ApplicationInterface;
 use ObjectivePHP\Application\Middleware\MiddlewareInterface;
-use ObjectivePHP\Application\Middleware\VersionedApiMiddleware;
 use ObjectivePHP\Message\Request\HttpRequest;
 use ObjectivePHP\Message\Request\Parameter\Container\HttpParameterContainer;
 use ObjectivePHP\PHPUnit\TestCase;
@@ -22,7 +22,7 @@ class VersionnedApiMiddlewareTest extends TestCase
     public function testDefaultRouting()
     {
 
-        $middleware = $this->getMockForAbstractClass(VersionedApiMiddleware::class);
+        $middleware = $this->getMockForAbstractClass(VersionedApiAction::class);
         $middleware->setApplication($this->getApplication());
 
         $version = $middleware->route();
@@ -34,7 +34,7 @@ class VersionnedApiMiddlewareTest extends TestCase
     public function testRouting()
     {
 
-        $middleware = $this->getMockForAbstractClass(VersionedApiMiddleware::class);
+        $middleware = $this->getMockForAbstractClass(VersionedApiAction::class);
         $middleware->setApplication($this->getApplication(['version' => '2.0']));
 
         $version = $middleware->route();
@@ -45,7 +45,7 @@ class VersionnedApiMiddlewareTest extends TestCase
     
     public function testlistAvailableVersions()
     {
-        $middleware = $this->getMockForAbstractClass(VersionedApiMiddleware::class);
+        $middleware = $this->getMockForAbstractClass(VersionedApiAction::class);
         
         $firstMiddleware = $this->getMock(MiddlewareInterface::class);
         $secondMiddleware = $this->getMock(MiddlewareInterface::class);
