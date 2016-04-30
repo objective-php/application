@@ -7,6 +7,7 @@
     use ObjectivePHP\DataProcessor\DataProcessorInterface;
     use ObjectivePHP\Events\EventsHandler;
     use ObjectivePHP\Invokable\InvokableInterface;
+    use ObjectivePHP\Message\Request\Parameter\Container\HttpParameterContainer;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\Str;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
@@ -35,11 +36,6 @@
         protected $eventsHandler;
 
         /**
-         * @var Collection
-         */
-        protected $params;
-
-        /**
          * @var array
          */
         protected $aliases = [];
@@ -49,7 +45,7 @@
          */
         public function __construct()
         {
-            $this->params = new Collection();
+                $this->params = new Collection();
         }
 
         /**
@@ -83,12 +79,6 @@
             $this->setServicesFactory($app->getServicesFactory());
             $this->setEventsHandler($app->getEventsHandler());
 
-            // set params
-            $this->params = new Collection();
-            $this->setParams(
-                $this->getApplication()->getRequest()->getParameters()->fromGet()
-            );
-
             // init action
             $this->init();
 
@@ -118,21 +108,6 @@
         }
 
         /**
-         * @param $param
-         * @param $value
-         *
-         * @return $this
-         * @throws \ObjectivePHP\Primitives\Exception
-         */
-        public function setParam($param, $value)
-        {
-            $param = $this->resolveAlias($param);
-            $this->params->set($param, $value);
-
-            return $this;
-        }
-
-        /**
          * @param      $param
          * @param null $default
          *
@@ -143,7 +118,7 @@
         {
             $param = $this->resolveAlias($param);
 
-            return $this->params->get($param, $default);
+            return $this->getParams()->fromGet()->get($param, $default);
         }
 
         /**
@@ -151,7 +126,7 @@
          */
         public function getParams()
         {
-            return $this->params;
+            return $this->getApplication()->getRequest()->getParameters();
         }
 
         /**
@@ -161,6 +136,8 @@
          */
         public function setParams($params)
         {
+
+            echo get_class($this);
             $this->params = Collection::cast($params);
 
             return $this;
