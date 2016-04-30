@@ -108,6 +108,8 @@
         }
 
         /**
+	 * Shorthand to access GET parameters
+	 *
          * @param      $param
          * @param null $default
          *
@@ -137,7 +139,6 @@
         public function setParams($params)
         {
 
-            echo get_class($this);
             $this->params = Collection::cast($params);
 
             return $this;
