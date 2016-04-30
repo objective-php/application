@@ -12,12 +12,10 @@ namespace ObjectivePHP\Application\Middleware;
 use ObjectivePHP\Application\Action\HttpAction;
 use ObjectivePHP\Application\ApplicationInterface;
 
-abstract class VersionnedApiMiddleware extends SubRoutingMiddleware
+abstract class VersionedApiMiddleware extends SubRoutingMiddleware
 {
 
-    use HttpAction {
-        // HttpAction::run as __unused;
-    }
+    use HttpAction;
 
     protected $defaultVersion = '1.0';
 
