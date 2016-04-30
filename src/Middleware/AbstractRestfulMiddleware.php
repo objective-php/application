@@ -19,7 +19,7 @@ abstract class AbstractRestfulMiddleware extends SubRoutingMiddleware
 
     public function __invoke(...$args)
     {
-        $response = parent::__invoke($args);
+        $response = parent::__invoke(...$args);
 
         return ($response instanceof JsonResponse) ? $response : new JsonResponse($response);
     }

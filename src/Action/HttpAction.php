@@ -64,7 +64,7 @@
          * @internal param ApplicationInterface $app
          *
          */
-        public function __invoke(... $args)
+        public function __invoke(...$args)
         {
 
             $app = array_shift($args);
