@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a27b4b328dcacadf9f81b3689137f1a7",
-    "content-hash": "06afefb0fe50a3fdb24a3d7135d5a0a0",
+    "hash": "b8891a3bede1b25bb5e8e8f68c4bb6a2",
+    "content-hash": "aa3a713604f8636ce7f9941931d7a87a",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -40,12 +40,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/components.git",
-                "reference": "19a798ee71cf652014d7f6ed6f1d494e34d2eea5"
+                "reference": "55b13951d0ce0584d6022950f6d32b3a09be19d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/components/zipball/19a798ee71cf652014d7f6ed6f1d494e34d2eea5",
-                "reference": "19a798ee71cf652014d7f6ed6f1d494e34d2eea5",
+                "url": "https://api.github.com/repos/objective-php/components/zipball/55b13951d0ce0584d6022950f6d32b3a09be19d5",
+                "reference": "55b13951d0ce0584d6022950f6d32b3a09be19d5",
                 "shasum": ""
             },
             "require": {
@@ -92,11 +92,11 @@
                 "objective php",
                 "primitives"
             ],
-            "time": "2016-04-23 09:19:02"
+            "time": "2016-04-23 09:24:30"
         },
         {
             "name": "objective-php/events-handler",
-            "version": "dev-master",
+            "version": "v1.0.0-beta1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/events-handler.git",
@@ -143,16 +143,16 @@
         },
         {
             "name": "objective-php/message",
-            "version": "dev-master",
+            "version": "v0.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/message.git",
-                "reference": "7ded8071fc97480453eada9ffadeb72f040fe2e5"
+                "reference": "b7756df8f5e8f195eafafd10ef616b7f4ac3dbee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/message/zipball/7ded8071fc97480453eada9ffadeb72f040fe2e5",
-                "reference": "7ded8071fc97480453eada9ffadeb72f040fe2e5",
+                "url": "https://api.github.com/repos/objective-php/message/zipball/b7756df8f5e8f195eafafd10ef616b7f4ac3dbee",
+                "reference": "b7756df8f5e8f195eafafd10ef616b7f4ac3dbee",
                 "shasum": ""
             },
             "require": {
@@ -180,20 +180,20 @@
                 }
             ],
             "description": "ObjectivePHP implementation for PSR-7",
-            "time": "2016-04-23 09:04:59"
+            "time": "2016-05-01 14:08:15"
         },
         {
             "name": "objective-php/services-factory",
-            "version": "dev-master",
+            "version": "v1.0.0-beta1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/services-factory.git",
-                "reference": "05d32b7c75f6598729deec020d43bf0cb9910de6"
+                "reference": "5b61e1d1424e54c75ad9666eb59c2e26c79ff683"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/services-factory/zipball/05d32b7c75f6598729deec020d43bf0cb9910de6",
-                "reference": "05d32b7c75f6598729deec020d43bf0cb9910de6",
+                "url": "https://api.github.com/repos/objective-php/services-factory/zipball/5b61e1d1424e54c75ad9666eb59c2e26c79ff683",
+                "reference": "5b61e1d1424e54c75ad9666eb59c2e26c79ff683",
                 "shasum": ""
             },
             "require": {
@@ -228,7 +228,7 @@
                 "objective php",
                 "services"
             ],
-            "time": "2016-02-11 15:20:39"
+            "time": "2016-04-30 18:01:33"
         },
         {
             "name": "psr/http-message",
@@ -387,16 +387,16 @@
         },
         {
             "name": "myclabs/deep-copy",
-            "version": "1.5.0",
+            "version": "1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "e3abefcd7f106677fd352cd7c187d6c969aa9ddc"
+                "reference": "a8773992b362b58498eed24bf85005f363c34771"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/e3abefcd7f106677fd352cd7c187d6c969aa9ddc",
-                "reference": "e3abefcd7f106677fd352cd7c187d6c969aa9ddc",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/a8773992b362b58498eed24bf85005f363c34771",
+                "reference": "a8773992b362b58498eed24bf85005f363c34771",
                 "shasum": ""
             },
             "require": {
@@ -425,7 +425,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2015-11-07 22:20:37"
+            "time": "2015-11-20 12:04:31"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -1477,8 +1477,7 @@
     "stability-flags": {
         "objective-php/components": 20,
         "objective-php/services-factory": 20,
-        "objective-php/events-handler": 20,
-        "objective-php/message": 20
+        "objective-php/events-handler": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
