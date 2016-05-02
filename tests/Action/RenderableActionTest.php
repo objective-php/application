@@ -7,7 +7,7 @@
     use ObjectivePHP\Application\Action\RenderableAction;
     use ObjectivePHP\PHPUnit\TestCase;
 
-    class DefaultActionTest extends TestCase
+    class RenderableActionTest extends TestCase
     {
 
         public function testViewNameAccessors()

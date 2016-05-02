@@ -33,6 +33,13 @@ abstract class SubRoutingAction extends AbstractMiddleware
 
         $middleware = $this->getMiddleware($middlewareReference);
 
+        // auto inject dependencies
+        $servicesFactory = $app->getServicesFactory();
+        if($servicesFactory)
+        {
+            $servicesFactory->injectDependencies($middleware);
+        }
+
         if(!is_callable($middleware))
         {
             throw new Exception(sprintf('No middleware matching routed reference "%s" has been registered', $middlewareReference));
@@ -49,7 +56,7 @@ abstract class SubRoutingAction extends AbstractMiddleware
     {
 
 
-        $middleware = ($middleware instanceof MiddlewareInterface) ? $middleware  : new EmbeddedMiddleware($middleware);
+        $middleware = ($middleware instanceof MiddlewareInterface) ? $middleware : new EmbeddedMiddleware($middleware);
 
         $this->getMiddlewareStack()[$reference] = $middleware;
 
