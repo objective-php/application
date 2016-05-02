@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: gauthier
- * Date: 23/04/2016
- * Time: 10:14
- */
 
 namespace ObjectivePHP\Application\Action;
-
 
 abstract class VersionedApiAction extends SubRoutingAction
 {
@@ -27,8 +20,8 @@ abstract class VersionedApiAction extends SubRoutingAction
     }
 
     /**
-     * Return a list of  
-     * 
+     * Return a list of
+     *
      * @return array
      */
     public function listAvailableVersions()
