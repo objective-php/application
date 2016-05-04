@@ -27,6 +27,11 @@
             $exception = $app->getException();
 
             $output = Tag::h1('An error occurred');
+            
+            do
+            {
+                $output .= $this->renderException($exception);
+            } while($exception = $exception->getPrevious());
 
             $output .= Tag::h2('Workflow');
 
@@ -42,11 +47,6 @@
                     $output .= Tag::dt([$middleware->getReference() . ': ', $middleware->getDescription()]);
                 }
             }
-
-            do
-            {
-                $output .= $this->renderException($exception);
-            } while($exception = $exception->getPrevious());
 
             // display config
             $output .= Tag::h2('Configuration');
