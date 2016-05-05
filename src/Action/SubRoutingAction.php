@@ -17,17 +17,34 @@ use ObjectivePHP\Application\Middleware\MiddlewareInterface;
 use ObjectivePHP\Invokable\Invokable;
 use ObjectivePHP\Primitives\Collection\Collection;
 
+/**
+ * Class SubRoutingAction
+ * @package ObjectivePHP\Application\Action
+ */
 abstract class SubRoutingAction extends AbstractMiddleware
 {
 
+    /**
+     * @var
+     */
     protected $middlewareStack;
 
+    /**
+     * @param array ...$args
+     * @return mixed
+     * @throws Exception
+     */
     public function __invoke(...$args)
     {
         $this->setApplication($args[0]);
         return $this->run($args[0]);
     }
 
+    /**
+     * @param ApplicationInterface $app
+     * @return mixed
+     * @throws Exception
+     */
     public function run(ApplicationInterface $app)
     {
         $middlewareReference = $this->route();
@@ -71,8 +88,16 @@ abstract class SubRoutingAction extends AbstractMiddleware
     }
 
 
+    /**
+     * @return mixed
+     */
     abstract public function route();
 
+    /**
+     * @param $reference
+     * @param $middleware
+     * @return $this
+     */
     public function registerMiddleware($reference, $middleware)
     {
 
@@ -85,6 +110,10 @@ abstract class SubRoutingAction extends AbstractMiddleware
 
     }
 
+    /**
+     * @param $reference
+     * @return mixed
+     */
     public function getMiddleware($reference)
     {
         return $this->getMiddlewareStack()->get($reference);
