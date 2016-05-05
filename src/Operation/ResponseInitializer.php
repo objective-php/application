@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: gauthier
- * Date: 07/09/15
- * Time: 16:41
- */
 
 namespace ObjectivePHP\Application\Operation;
 
