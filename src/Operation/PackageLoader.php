@@ -1,10 +1,9 @@
 <?php
 
-    namespace ObjectivePHP\Application\Operation\Common;
+    namespace ObjectivePHP\Application\Operation;
     
     
     use ObjectivePHP\Application\ApplicationInterface;
-    use ObjectivePHP\Application\Workflow\Event\WorkflowEvent;
 
     class PackageLoader
     {

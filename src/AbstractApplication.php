@@ -3,7 +3,7 @@
     namespace ObjectivePHP\Application;
     
     use Composer\Autoload\ClassLoader;
-    use ObjectivePHP\Application\Operation\Common\ExceptionHandler;
+    use ObjectivePHP\Application\Operation\ExceptionHandler;
     use ObjectivePHP\Application\Workflow\Hook;
     use ObjectivePHP\Application\Workflow\Step;
     use ObjectivePHP\Config\Config;
