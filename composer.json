@@ -20,6 +20,7 @@
     "objective-php/components": "1.*",
     "objective-php/services-factory": "1.0.*",
     "objective-php/events-handler": "1.0.*",
+    "objective-php/data-processor": "1.0.*",
     "objective-php/message": "0.9.*"
   },
   "require-dev": {
