@@ -136,14 +136,22 @@ class ViewRenderer extends AbstractMiddleware
     }
 
     /**
-     * @param ApplicationInterface $app
-     *
-     * @return mixed|\ObjectivePHP\Config\Config
+     * @return string
      */
     protected function getLayoutName()
     {
         // FIXME layout.default config directive does not exist
-        $layout = $this->getApplication()->getParam('layout.name', $this->getApplication()->getConfig()->get('layouts.default', 'layout'));
+        $layout = $this->getApplication()->getParam('layout.name');
+
+        if($layout === false)
+        {
+            return null;
+        }
+
+        if(is_null($layout))
+        {
+            $layout = $this->getApplication()->getConfig()->get('layouts.default', 'layout');
+        }
 
         return $layout;
     }
