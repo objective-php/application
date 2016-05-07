@@ -6,7 +6,7 @@ namespace ObjectivePHP\Application\Operation;
 use ObjectivePHP\Application\ApplicationInterface;
 use ObjectivePHP\Application\Workflow\Hook;
 use ObjectivePHP\Primitives\String\Str;
-use phpDocumentor\Reflection\DocBlock\Tag;
+use ObjectivePHP\Html\Tag\Tag;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\SapiEmitter;
 
@@ -18,6 +18,24 @@ use Zend\Diactoros\Response\SapiEmitter;
 class ExceptionHandler
 {
 
+    public function __construct()
+    {
+        set_error_handler([$this, 'errorHandler']);
+    }
+
+    public function errorHandler($errno, $errstr, $errfile, $errline)
+    {
+        $errnoToCatch = E_CORE_ERROR | E_ERROR | E_CORE_ERROR | E_PARSE | E_RECOVERABLE_ERROR | E_USER_ERROR | E_WARNING;
+
+        if($errno & $errnoToCatch)
+        {
+            throw new \ErrorException($errstr, $errno, 1, $errfile, $errline);
+        }
+        else {
+            // forward error
+            trigger_error($errstr, E_USER_ERROR);
+        }
+    }
 
     /**
      * @param ApplicationInterface $app
@@ -74,6 +92,7 @@ class ExceptionHandler
         $div = Tag::div(Tag::h2('Exception trace'), 'errors');
 
 
+        $div->append(Tag::h2('Exception'), Tag::i(get_class($exception)));
         $div->append(Tag::h2('Message'), Tag::pre($exception->getMessage()));
         $div->append(Tag::h2('File'), Tag::pre($exception->getFile())->append(':', $exception->getLine())
             ->setSeparator(''));

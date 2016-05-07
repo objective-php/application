@@ -109,8 +109,8 @@
             $this->routeMatcher = (new Matcher())->setSeparator('/');
 
             // set default Exception Handler
-            $this->setExceptionHandler(ExceptionHandler::class);
-
+            $this->setExceptionHandler(new ExceptionHandler());
+            
             $this->init();
 
         }
