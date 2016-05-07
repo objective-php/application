@@ -5,14 +5,13 @@ namespace ObjectivePHP\Application\Action;
 
 use ObjectivePHP\Application\Action\HttpAction;
 use ObjectivePHP\Application\Action\SubRoutingAction;
-use ObjectivePHP\Application\Middleware\AbstractMiddleware;
 use Zend\Diactoros\Response\JsonResponse;
 
 /**
  * Class AbstractRestfulAction
  * @package ObjectivePHP\Application\Middleware
  */
-abstract class AbstractAjaxAction extends AbstractMiddleware
+abstract class RestfulAction extends SubRoutingAction
 {
 
     use HttpAction;
@@ -24,7 +23,7 @@ abstract class AbstractAjaxAction extends AbstractMiddleware
     public function __invoke(...$args)
     {
         $response = parent::__invoke(...$args);
-        $this->getApplication()->setParam('layout.name', false);
+
         return ($response instanceof JsonResponse) ? $response : new JsonResponse($response);
     }
 

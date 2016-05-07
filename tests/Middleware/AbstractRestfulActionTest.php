@@ -9,21 +9,19 @@
 namespace Test\ObjectivePHP\Application\Middleware;
 
 
-
 use ObjectivePHP\Application\AbstractApplication;
-use ObjectivePHP\Application\Middleware\AbstractRestfulAction;
+use ObjectivePHP\Application\Action\RestfulAction;
 use ObjectivePHP\Application\Middleware\Exception;
 use ObjectivePHP\Message\Request\HttpRequest;
 use ObjectivePHP\Message\Request\Parameter\Container\HttpParameterContainer;
 use ObjectivePHP\PHPUnit\TestCase;
-use Zend\Diactoros\Response\JsonResponse;
 
-class AbstractRestfulMiddlewareTest extends TestCase
+class AbstractRestfulActionTest extends TestCase
 {
 
     public function testRouting()
     {
-        
+
         $restfulMiddleware = new GetOnlyRestMiddleware();
         $restfulMiddleware->setApplication($this->getApplication('get'));
 
@@ -52,7 +50,8 @@ class AbstractRestfulMiddlewareTest extends TestCase
 
         $this->assertEquals('post', $reference);
 
-        $this->expectsException(function() use($restfulMiddleware) {
+        $this->expectsException(function () use ($restfulMiddleware)
+        {
             $restfulMiddleware($this->getApplication('post'));
         }, Exception::class, 'post');
     }
@@ -82,7 +81,7 @@ class AbstractRestfulMiddlewareTest extends TestCase
 }
 
 // HELPERS
-class GetOnlyRestMiddleware extends AbstractRestfulAction
+class GetOnlyRestMiddleware extends RestfulAction
 {
     public function get()
     {
