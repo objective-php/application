@@ -14,8 +14,6 @@ use Zend\Diactoros\Response\JsonResponse;
 abstract class RestfulAction extends SubRoutingAction
 {
 
-    use HttpAction;
-
     /**
      * @param array ...$args
      * @return mixed|JsonResponse

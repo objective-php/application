@@ -17,7 +17,7 @@
      *
      * @package ObjectivePHP\Application\Action
      */
-    trait  HttpAction
+    abstract class  HttpAction implements InvokableInterface
     {
 
         /**
@@ -61,8 +61,7 @@
         /**
          * @param array $args
          * @return mixed
-         * @internal param ApplicationInterface $app
-         *
+         * @throws Exception
          */
         public function __invoke(...$args)
         {
@@ -97,8 +96,7 @@
 
         /**
          * @param ApplicationInterface $application
-         *
-         * @return $this
+         * @return $this|InvokableInterface
          */
         public function setApplication(ApplicationInterface $application) : InvokableInterface
         {
@@ -229,6 +227,12 @@
         {
             return $this->aliases[$alias] ?? $alias;
         }
+
+        public function getDescription() : string
+        {
+            return 'Http action class';
+        }
+
 
         abstract function run(ApplicationInterface $app);
 

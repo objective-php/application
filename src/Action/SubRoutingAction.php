@@ -21,7 +21,7 @@ use ObjectivePHP\Primitives\Collection\Collection;
  * Class SubRoutingAction
  * @package ObjectivePHP\Application\Action
  */
-abstract class SubRoutingAction extends AbstractMiddleware
+abstract class SubRoutingAction extends HttpAction
 {
 
     /**

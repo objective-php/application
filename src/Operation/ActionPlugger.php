@@ -115,7 +115,7 @@ class ActionPlugger extends AbstractMiddleware
     {
         $registeredActionNamespaces = $this->application->getConfig()->get(ActionNamespace::class);
 
-        foreach($registeredActionNamespaces as $namespace)
+        foreach((array) $registeredActionNamespaces as $namespace)
         {
             $fullClassName = $namespace . '\\' . $className;
             if(class_exists('\\' . $fullClassName))

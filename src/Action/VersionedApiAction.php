@@ -5,8 +5,6 @@ namespace ObjectivePHP\Application\Action;
 abstract class VersionedApiAction extends SubRoutingAction
 {
 
-    use HttpAction;
-
     protected $defaultVersion = '1.0';
 
     protected $versionParameter = 'version';

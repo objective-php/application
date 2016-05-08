@@ -10,10 +10,8 @@
      *
      * @package ObjectivePHP\Application\Action
      */
-    abstract class RenderableAction extends AbstractMiddleware implements RenderableActionInterface
+    abstract class RenderableAction extends HttpAction implements RenderableActionInterface
     {
-
-        use HttpAction;
 
         /**
          * @var string

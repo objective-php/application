@@ -12,10 +12,8 @@ use Zend\Diactoros\Response\JsonResponse;
  * Class AbstractRestfulAction
  * @package ObjectivePHP\Application\Middleware
  */
-abstract class AjaxAction extends AbstractMiddleware
+abstract class AjaxAction extends HttpAction
 {
-
-    use HttpAction;
 
     /**
      * @param array ...$args
