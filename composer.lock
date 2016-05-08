@@ -289,16 +289,16 @@
         },
         {
             "name": "objective-php/config",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/config.git",
-                "reference": "727a3f320792fbd046bd4f86ac59b587dc8ecaac"
+                "reference": "7010747796465a1a3e836cdba6816a355a94fadb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/config/zipball/727a3f320792fbd046bd4f86ac59b587dc8ecaac",
-                "reference": "727a3f320792fbd046bd4f86ac59b587dc8ecaac",
+                "url": "https://api.github.com/repos/objective-php/config/zipball/7010747796465a1a3e836cdba6816a355a94fadb",
+                "reference": "7010747796465a1a3e836cdba6816a355a94fadb",
                 "shasum": ""
             },
             "require": {
@@ -333,7 +333,7 @@
                 "config",
                 "objective-php"
             ],
-            "time": "2016-05-05 13:50:33"
+            "time": "2016-05-08 09:15:05"
         },
         {
             "name": "objective-php/data-processor",
@@ -773,16 +773,16 @@
         },
         {
             "name": "objective-php/services-factory",
-            "version": "v1.0.2",
+            "version": "v1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/services-factory.git",
-                "reference": "0d7e6e95befcb3417825c7ad17445cfa429e3658"
+                "reference": "6d7472fd6d9e19805d55ce1c31d7406e57987424"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/services-factory/zipball/0d7e6e95befcb3417825c7ad17445cfa429e3658",
-                "reference": "0d7e6e95befcb3417825c7ad17445cfa429e3658",
+                "url": "https://api.github.com/repos/objective-php/services-factory/zipball/6d7472fd6d9e19805d55ce1c31d7406e57987424",
+                "reference": "6d7472fd6d9e19805d55ce1c31d7406e57987424",
                 "shasum": ""
             },
             "require": {
@@ -824,7 +824,7 @@
                 "objective php",
                 "services"
             ],
-            "time": "2016-05-07 12:11:20"
+            "time": "2016-05-08 13:28:26"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
