@@ -11,13 +11,14 @@
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\Str;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
+    use ObjectivePHP\ServicesFactory\Specs\InjectionAnnotationProvider;
 
     /**
      * Class AbstractAction
      *
      * @package ObjectivePHP\Application\Action
      */
-    abstract class  HttpAction implements InvokableInterface
+    abstract class  HttpAction implements InvokableInterface , InjectionAnnotationProvider
     {
 
         /**
