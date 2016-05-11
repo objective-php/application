@@ -30,17 +30,6 @@ abstract class SubRoutingAction extends HttpAction
     protected $middlewareStack;
 
     /**
-     * @param array ...$args
-     * @return mixed
-     * @throws Exception
-     */
-    public function __invoke(...$args)
-    {
-        $this->setApplication($args[0]);
-        return $this->run($args[0]);
-    }
-
-    /**
      * @param ApplicationInterface $app
      * @return mixed
      * @throws Exception
