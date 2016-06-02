@@ -32,12 +32,12 @@
 
             if($result instanceof Response)
             {
-                $this->getApplication()->setResponse($result);
+                $app->setResponse($result);
             }
             else
             {
                 // set default content type
-                $this->getApplication()->setResponse((new HttpResponse())->withHeader('Content-Type', 'text/html'));
+                $app->setResponse((new HttpResponse())->withHeader('Content-Type', 'text/html'));
 
                 Collection::cast($result)->each(function ($value, $var)
                 {

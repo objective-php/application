@@ -67,6 +67,7 @@ abstract class SubRoutingAction extends HttpAction
             }
         }
 
+        // TODO fix http return code (probably 405) 
         if (!is_callable($middleware)) {
             throw new Exception(sprintf('No middleware matching routed reference "%s" has been registered',
                 $middlewareReference));

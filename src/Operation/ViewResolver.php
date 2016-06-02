@@ -39,7 +39,7 @@ class ViewResolver extends AbstractMiddleware
         // get action
         $actionMiddleware = $this->getApplication()->getParam('runtime.action.middleware');
 
-        $action = $actionMiddleware->getInvokable()->getCallable($this->getApplication());
+        $action = $actionMiddleware->getCallable($this->getApplication());
 
         if(!$action instanceof RenderableActionInterface)
         {
