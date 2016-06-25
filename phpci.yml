@@ -7,10 +7,12 @@ setup:
         action: "install"
 
 test:
-  php_unit:
+    php_unit:
         config:
             - "tests/phpunit.xml"
         path: "tests/"  
+    php_loc:
+        directory: "src/"
 
 failure:
     slack_notify:
