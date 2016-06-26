@@ -31,10 +31,12 @@ class ExceptionHandler
         {
             throw new \ErrorException($errstr, $errno, 1, $errfile, $errline);
         }
+        /*
         else {
             // forward error
             trigger_error($errstr, E_USER_ERROR);
         }
+        */
     }
 
     /**
