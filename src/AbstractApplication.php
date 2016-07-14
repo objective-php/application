@@ -218,6 +218,14 @@
         }
 
         /**
+         * @return bool
+         */
+        public function hasRequest() : bool
+        {
+            return (bool) $this->request;
+        }
+
+        /**
          * @param RequestInterface $request
          *
          * @return $this
