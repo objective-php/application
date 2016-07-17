@@ -21,7 +21,7 @@
         {
             // deactivation Url filtered middleware if running in CLI
             // TODO add support for CLI requests
-            if(strpos(php_sapi_name(), 'cli') !== false)
+            if(php_sapi_name() === 'cli')
             {
                 return false;
             }
