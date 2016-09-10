@@ -6,16 +6,19 @@
     use ObjectivePHP\Application\Exception;
     use ObjectivePHP\Application\Middleware\EmbeddedMiddleware;
     use ObjectivePHP\Application\Middleware\MiddlewareInterface;
+    use ObjectivePHP\Application\Workflow\Filter\FiltersHandler;
     use ObjectivePHP\Primitives\Collection\Collection;
 
     /**
-     * Class Hook
+     * Class Step
      *
      * @package ObjectivePHP\Application
      */
     class Step extends Collection
     {
 
+        use FiltersHandler;
+        
         protected $name;
 
         protected $lastOperation;
@@ -36,8 +39,7 @@
 
         /**
          * @param      $operation
-         * @param      $routeFilter
-         * @param null $asserter
+         * @param      ...$filters
          */
         public function plug($middleware, ...$filters)
         {
@@ -54,11 +56,12 @@
 
             return $this;
         }
-
+    
         /**
          * @param      $operation
-         * @param      $routeFilter
-         * @param null $asserter
+         * @param      ...$filters
+         *
+         * @return $this
          */
         public function plugFirst($middleware, ...$filters)
         {
@@ -76,7 +79,7 @@
             return $this;
         }
         /**
-         * @return mixed
+         * @return string
          */
         public function getName()
         {
@@ -84,7 +87,7 @@
         }
 
         /**
-         * @param mixed $name
+         * @param string $name
          *
          * @return $this
          */
@@ -94,9 +97,11 @@
 
             return $this;
         }
-
+    
         /**
          * @param $reference
+         *
+         * @return $this
          */
         public function as($reference)
         {

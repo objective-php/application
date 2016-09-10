@@ -5,6 +5,7 @@
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Exception;
     use ObjectivePHP\Application\Middleware\MiddlewareInterface;
+    use ObjectivePHP\Application\Workflow\Filter\FiltersHandler;
     use ObjectivePHP\Invokable\Invokable;
     use ObjectivePHP\Invokable\InvokableInterface;
     use ObjectivePHP\Primitives\Collection\Collection;
@@ -18,15 +19,13 @@
      */
     class Hook
     {
+        
+        use FiltersHandler;
+        
         /**
          * @var
          */
         protected $middleware;
-
-        /**
-         * @var Collection
-         */
-        protected $filters = [];
 
         /**
          * @var Step
@@ -37,8 +36,8 @@
          * Hook constructor.
          *
          * @param MiddlewareInterface $middleware
-         * @param string              $url
-         * @param null                $asserter
+         * @param array               $filters
+         *
          */
         public function __construct(MiddlewareInterface $middleware, ...$filters)
         {
@@ -51,13 +50,14 @@
          *
          * @return null
          * @throws Exception
+         * @throws \Throwable
          */
         public function run(ApplicationInterface $app)
         {
             try
             {
                 // filter call
-                if (!$this->filter($app)) {
+                if (!$this->runFilters($app)) {
                     return null;
                 }
                 $app->getEventsHandler()->trigger('application.workflow.hook.run', $this);
@@ -80,59 +80,6 @@
                     throw $e;
                 }
             }
-        }
-
-        /**
-         * @param ApplicationInterface $app
-         *
-         * @return bool
-         * @throws Exception
-         */
-        protected function filter(ApplicationInterface $app)
-        {
-
-            /**
-             * @var callable $filter
-             */
-            foreach($this->getFilters() as $filter)
-            {
-                if($filter instanceof InvokableInterface)
-                {
-                    $filter->setApplication($app);
-                }
-
-                if (!$filter($app))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        /**
-         * @return Collection
-         */
-        public function getFilters()
-        {
-            return $this->filters;
-        }
-
-        /**
-         * @param array $filters
-         *
-         * @return $this
-         */
-        public function setFilters($filters)
-        {
-
-            $this->filters = (new Collection())->restrictTo(InvokableInterface::class);
-
-            Collection::cast($filters)->each(function($filter) {
-                $this->filters->append(Invokable::cast($filter));
-            });
-
-            return $this;
         }
 
         /**

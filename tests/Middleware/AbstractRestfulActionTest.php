@@ -62,9 +62,9 @@ class AbstractRestfulActionTest extends TestCase
      */
     protected function getApplication($method)
     {
-        $application = $this->getMock(AbstractApplication::class);
+        $application = $this->createMock(AbstractApplication::class);
 
-        $request = $this->getMock(HttpRequest::class);
+        $request = $this->createMock(HttpRequest::class);
         $request->method('getGet')->willReturn([]);
         $request->method('getPost')->willReturn([]);
         $request->method('getMethod')->willReturn($method);

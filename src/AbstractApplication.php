@@ -14,6 +14,7 @@
     use ObjectivePHP\Matcher\Matcher;
     use ObjectivePHP\Message\Request\RequestInterface;
     use ObjectivePHP\Message\Response\ResponseInterface;
+    use ObjectivePHP\Primitives\Collection\BreakException;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
     use Zend\Diactoros\Response;
@@ -168,6 +169,12 @@
          */
         public function getConfig() : Config
         {
+            // init Config
+            if(is_null($this->config))
+            {
+                $this->config = new Config();
+            }
+            
             return $this->config;
         }
 
@@ -176,7 +183,7 @@
          *
          * @return $this
          */
-        public function setConfig($config) : ApplicationInterface
+        public function setConfig(Config $config) : ApplicationInterface
         {
             $this->config = $config;
 
@@ -321,6 +328,13 @@
             {
                 $this->getSteps()->each(function (Step $step)
                 {
+                    
+                    // filter step
+                    if(!$step->runFilters($this))
+                    {
+                        return;
+                    }
+                    
                     $this->getEventsHandler()->trigger('application.workflow.step.run', $step);
                     $this->executionTrace[$step->getName()] = [];
                     $this->currentExecutionStack            = &$this->executionTrace[$step->getName()];
@@ -333,8 +347,8 @@
                         if($result instanceof Response)
                         {
                             $emitter = new Response\SapiEmitter();
-                            $emitter->emit($result);
-                            exit;
+                            //$emitter->emit($result);
+                            throw new BreakException;
                         }
                     }
                     );
@@ -346,6 +360,7 @@
                 $exceptionHandler = $this->getExceptionHandler();
                 $exceptionHandler($this);
             }
+            
             return $this;
         }
 

@@ -62,7 +62,7 @@
         {
             $processor = $this->getMockForAbstractClass(ParameterProcessor::class, [new StringProcessor(), 'reference']);
 
-            $app = $this->getMock(ApplicationInterface::class);
+            $app = $this->createMock(ApplicationInterface::class);
 
             $processor->setApplication($app);
 

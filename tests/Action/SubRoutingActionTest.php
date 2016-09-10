@@ -19,12 +19,12 @@ class SubRoutingActionTest extends TestCase
 {
     public function testServicesFactoryIsCalledToInjectDependencies()
     {
-        $middleware = $this->getMock(AbstractMiddleware::class);
+        $middleware = $this->createMock(AbstractMiddleware::class);
 
-        $servicesFactory = $this->getMock(ServicesFactory::class);
+        $servicesFactory = $this->createMock(ServicesFactory::class);
         $servicesFactory->expects($this->once())->method('injectDependencies')->with($middleware);
 
-        $application = $this->getMock(ApplicationInterface::class);
+        $application = $this->createMock(ApplicationInterface::class);
         $application->method('getServicesFactory')->willReturn($servicesFactory);
 
         $subRoutingAction = $this->getMockBuilder(SubRoutingAction::class)->setMethods(['route', 'getMiddleware'])->getMockForAbstractClass();

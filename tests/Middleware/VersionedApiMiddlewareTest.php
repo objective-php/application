@@ -47,8 +47,8 @@ class VersionnedApiMiddlewareTest extends TestCase
     {
         $middleware = $this->getMockForAbstractClass(VersionedApiAction::class);
         
-        $firstMiddleware = $this->getMock(MiddlewareInterface::class);
-        $secondMiddleware = $this->getMock(MiddlewareInterface::class);
+        $firstMiddleware = $this->createMock(MiddlewareInterface::class);
+        $secondMiddleware = $this->createMock(MiddlewareInterface::class);
         
         $middleware->registerMiddleware('1.0', $firstMiddleware);
         $middleware->registerMiddleware('2.0', $secondMiddleware);
@@ -59,9 +59,9 @@ class VersionnedApiMiddlewareTest extends TestCase
     
     protected function getApplication($parameters = [])
     {
-        $application = $this->getMock(ApplicationInterface::class);
+        $application = $this->createMock(ApplicationInterface::class);
         
-        $request = $this->getMock(HttpRequest::class);
+        $request = $this->createMock(HttpRequest::class);
         $request->method('getGet')->willReturn($parameters);
         $request->method('getPost')->willReturn([]);
 

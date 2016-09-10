@@ -25,9 +25,9 @@ class SubRoutingMiddlewareTest extends TestCase
         $subRoutingMiddleware = $this->getMockForAbstractClass(SubRoutingAction::class);
         $subRoutingMiddleware->expects($this->once())->method('route')->willReturn('first');
 
-        $app = $this->getMock(ApplicationInterface::class);
+        $app = $this->createMock(ApplicationInterface::class);
 
-        $firstMiddleware = $this->getMock(MiddlewareInterface::class);
+        $firstMiddleware = $this->createMock(MiddlewareInterface::class);
         $firstMiddleware->expects($this->once())->method('__invoke')->with($app);
 
         $subRoutingMiddleware->registerMiddleware('first', $firstMiddleware);
