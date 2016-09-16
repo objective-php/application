@@ -1,7 +1,7 @@
 <?php
 
     namespace ObjectivePHP\Application;
-    
+
     use Composer\Autoload\ClassLoader;
     use ObjectivePHP\Application\Operation\ExceptionHandler;
     use ObjectivePHP\Application\Workflow\Hook;
@@ -111,7 +111,7 @@
 
             // set default Exception Handler
             $this->setExceptionHandler(new ExceptionHandler());
-            
+
             $this->init();
 
         }
@@ -174,7 +174,7 @@
             {
                 $this->config = new Config();
             }
-            
+
             return $this->config;
         }
 
@@ -328,13 +328,13 @@
             {
                 $this->getSteps()->each(function (Step $step)
                 {
-                    
+
                     // filter step
                     if(!$step->runFilters($this))
                     {
                         return;
                     }
-                    
+
                     $this->getEventsHandler()->trigger('application.workflow.step.run', $step);
                     $this->executionTrace[$step->getName()] = [];
                     $this->currentExecutionStack            = &$this->executionTrace[$step->getName()];
@@ -347,8 +347,8 @@
                         if($result instanceof Response)
                         {
                             $emitter = new Response\SapiEmitter();
-                            //$emitter->emit($result);
-                            throw new BreakException;
+                            $emitter->emit($result);
+                            exit();
                         }
                     }
                     );
@@ -360,7 +360,7 @@
                 $exceptionHandler = $this->getExceptionHandler();
                 $exceptionHandler($this);
             }
-            
+
             return $this;
         }
 
