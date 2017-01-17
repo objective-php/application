@@ -62,7 +62,7 @@ class ExceptionHandler
 
         $exceptions = '';
         $exception = $this->exception;
-        $config = !empty(getenv('APP_ENV')) && in_array(getenv('APP_ENV'), ['prod', 'production']) ? '' : $this->renderConfig();
+        $config = in_array($this->app->getEnv(), ['prod', 'production']) ? '' : $this->renderConfig();
 
         do {
             $exceptions .= '<div class="exception-def">' . $this->renderException($exception) . '</div>';
