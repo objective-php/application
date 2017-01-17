@@ -3,12 +3,14 @@
 namespace ObjectivePHP\Application\Operation;
 
 
-use ObjectivePHP\Application\ApplicationInterface;
-use ObjectivePHP\Application\Workflow\Hook;
-use ObjectivePHP\Html\Tag\Tag;
-use ObjectivePHP\Primitives\String\Str;
-use Zend\Diactoros\Response\HtmlResponse;
-use Zend\Diactoros\Response\SapiEmitter;
+use ObjectivePHP\Application\{
+    ApplicationInterface, Exception
+};
+use Zend\Diactoros\{
+    Response,
+    Response\HtmlResponse,
+    Response\SapiEmitter
+};
 
 /**
  * Class ExceptionHandler
@@ -17,102 +19,249 @@ use Zend\Diactoros\Response\SapiEmitter;
  */
 class ExceptionHandler
 {
-    
+    /** @var ApplicationInterface */
+    protected $app;
+
+    /** @var \Throwable */
+    protected $exception;
+
     public function __construct()
     {
         set_error_handler([$this, 'errorHandler']);
     }
-    
+
     public function errorHandler($errno, $errstr, $errfile, $errline)
     {
         $errnoToCatch = E_CORE_ERROR | E_ERROR | E_CORE_ERROR | E_PARSE | E_RECOVERABLE_ERROR | E_USER_ERROR | E_WARNING;
-        
-        if ($errno & $errnoToCatch)
-        {
+
+        if ($errno & $errnoToCatch) {
             throw new \ErrorException($errstr, $errno, 1, $errfile, $errline);
         }
-        /*
-        else {
-            // forward error
-            trigger_error($errstr, E_USER_ERROR);
-        }
-        */
     }
-    
-    /**
-     * @param ApplicationInterface $app
-     */
+
     public function __invoke(ApplicationInterface $app)
     {
-        $exception = $app->getException();
-    
-        if (php_sapi_name() == 'cli')
-        {
+        $this->app = $app;
+        $exception = $this->app->getException();
+
+        if ($exception instanceof Exception
+            && preg_match('/^Failed running hook "(.*)" of type:/', $exception->getMessage(), $m)
+            && $exception->getPrevious()
+        ) {
+            $this->exception = $exception->getPrevious();
+        } else {
+            $this->exception = $exception;
+        }
+
+        $code = ($this->exception->getCode() < 100 || $this->exception->getCode() > 599) ? 500 : $this->exception->getCode();
+        $this->app->setResponse((new Response())->withStatus($code));
+
+        if (php_sapi_name() == 'cli') {
             throw $exception;
         }
-        else
-        {
-        $output = Tag::h1('An error occurred');
-        
-        do
-        {
-            $output .= $this->renderException($exception);
+
+        $exceptions = '';
+        $exception = $this->exception;
+        $config = !empty(getenv('APP_ENV')) && !in_array(getenv('APP_ENV'), ['prod', 'production']) ? $this->renderConfig() : '';
+
+        do {
+            $exceptions .= '<div class="exception-def">' . $this->renderException($exception) . '</div>';
         } while ($exception = $exception->getPrevious());
-        
-        $output .= Tag::h2('Workflow');
-        
-        foreach ($app->getExecutionTrace() as $step => $middlewares)
-        {
-            $output .= Tag::h3('Step: ' . $step);
-            
-            /**
-             * @var Hook $hook
-             */
-            foreach ($middlewares as $middleware)
-            {
-                $output .= Tag::dt([$middleware->getReference() . ': ', $middleware->getDescription()]);
-            }
-        }
-        
-        // display config
-        $output .= Tag::h2('Configuration');
-        ob_start();
-        var_dump($app->getConfig()->getInternalValue());
-        $output .= ob_get_clean();
-        
-        // display services
-        $output .= Tag::h2('Services');
-        foreach ($app->getServicesFactory()->getServices() as $spec)
-        {
-            $output .= Tag::h3($spec->getId());
-            ob_start();
-            var_dump($spec);
-            $output .= ob_get_clean();
-        }
-        
+
+
+        $output = '
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <meta charset="utf-8">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+                    <title>An Exception occured</title>
+                    
+                    ' . $this->renderCss() . '
+                </head>
+                
+                <body>
+                    <div>' . $exceptions . '</div>
+                    <div>' . $config . '</div>
+                    
+                    ' . $this->renderJs() . '
+                </body>
+                            
+            </html>
+        ';
+
+
         // manually emit response
-        
-            (new SapiEmitter())->emit((new HtmlResponse($output))->withStatus(500));
-        }
-        
+        (new SapiEmitter())->emit((new HtmlResponse($output))->withStatus($code));
     }
-    
+
+
     protected function renderException(\Throwable $exception)
     {
-        $div = Tag::div(Tag::h2('Exception trace'), 'errors');
-        
-        
-        $div->append(Tag::h2('Exception'), Tag::i(get_class($exception)));
-        $div->append(Tag::h2('Message'), Tag::pre($exception->getMessage()));
-        $div->append(Tag::h2('File'), Tag::pre($exception->getFile())->append(':', $exception->getLine())
-                                         ->setSeparator(''));
-        
-        // shorten Trace
-        $trace = Str::cast($exception->getTraceAsString())->replace(getcwd() . '/', '');
-        
-        
-        $div->append(Tag::h2('Trace'), Tag::pre($trace));
-        
-        return $div;
+        $output = '
+            <div class="quote">
+                <h2> ' . get_class($exception) .
+            '</h2> <h3>' . $exception->getMessage() . '</h3>
+            </div>';
+
+        $output .= '
+            <div class="exception-details">
+                <div>
+                     <strong>' . $this->app->getResponse()->getStatusCode() . '</strong>
+                      - ' . $this->app->getResponse()->getReasonPhrase() . '
+                   
+                </div>
+                <div>' . $exception->getFile() . ' line ' . $exception->getLine() . '</div>
+                
+                <div class="stacktrace-def">' . $this->renderStackTrace($exception) . '</div>
+            </div>
+        ';
+
+        return $output;
+    }
+
+    protected function renderStackTrace(\Throwable $exception)
+    {
+        $stacktrace = nl2br(str_replace(getcwd() . '/', '/', $exception->getTraceAsString()));
+
+        return '
+            <div class="quote togglable"><h4 class="stack-title">Stack trace</h4></div>
+            <div class="stacktrace panel">
+                ' . $stacktrace . '
+            </div>
+        ';
+    }
+
+    protected function renderConfig()
+    {
+        $html = '<table>';
+
+        foreach ($this->app->getConfig()->toArray() as $item => $value) {
+            $html .= '<tr>';
+            $html .= "<td class=''>{$item}</td>";
+            $html .= "<td class=''><pre>" . json_encode($value, JSON_PRETTY_PRINT) . "</pre></td>";
+            $html .= '</tr>';
+
+        }
+        $html .= '</table>';
+
+        // display config
+        $output = '
+            <div class="config">
+                <div class="quote togglable"><h2>Configuration (click to show)</h2></div>
+                <div class="config panel">' . $html . '</div>
+            </div>'
+        ;
+
+        return $output;
+    }
+
+    protected function renderCss()
+    {
+        return '
+        <style type="text/css">
+            html, body {
+              font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+              height: 100%;
+              background-color: whitesmoke;
+            }
+            body {
+              color: black;
+              text-align: left;
+            }
+            .exception-def, .stacktrace-def, .config {
+                margin: 2% 3%;
+                background-color: white;
+                border-radius: 4px;
+                border: 2px solid #ddd;
+            }
+            
+            .exception-def, .stacktrace-def {
+                -webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, .05);
+                    box-shadow: 0 5px 5px rgba(0, 0, 0, .05);
+            }
+            
+            .quote {
+                padding: 10px 15px;
+                border-bottom: 1px solid #ddd;
+                border-top-left-radius: 3px;
+                border-top-right-radius: 3px;
+                background-color: white;
+            }
+         
+            
+            .exception-def .exception-details {
+                padding: 10px;
+            }
+            
+            .stacktrace {
+                padding: 10px;
+                font-family: monospace;
+            }
+            
+            table, th, td, .panel, .togglable {
+                border: 1px solid #ddd;
+                border-top-left-radius: 3px;
+                border-top-right-radius: 3px;
+                border-collapse: collapse;
+                padding: 5px;
+            }
+            
+            table {
+                margin-left: 5%;
+            }
+          
+            
+            .togglable {
+                background-color: white;
+                cursor: pointer;
+                padding: 10px;
+                text-align: left;
+                transition: 0.4s;
+            }
+            
+            .togglable:hover, .active {
+                background-color: #c8c8c8; 
+            }
+            
+            .panel {
+                border: none;
+                border-collapse: collapse;
+                padding: 10px;
+                display: none;
+                background-color: white;
+            }
+            
+            .panel.show {
+                display: block;
+            }
+            
+            .stack-title {
+                margin: 2px;
+            }
+           
+            
+        </style>
+        ';
+    }
+
+    protected function renderJs()
+    {
+        return '
+        <script>
+            var acc = document.getElementsByClassName("togglable");
+            
+            for (var i = 0; i < acc.length; i++) {
+                acc[i].onclick = function(){
+                    this.classList.toggle("active");
+                    this.nextElementSibling.classList.toggle("show");
+              }
+            }
+            
+            var firstStack = document.getElementsByClassName("quote togglable")[0];
+            firstStack.classList.toggle("active");
+            firstStack.nextElementSibling.classList.toggle("show");
+        </script>        
+        ';
     }
 }
