@@ -4,6 +4,7 @@ namespace ObjectivePHP\Application\Operation;
 
 
 use ObjectivePHP\Application\ApplicationInterface;
+use ObjectivePHP\Message\Request\CliRequest;
 use Zend\Diactoros\Response\SapiEmitter;
 
 /**
@@ -18,11 +19,12 @@ class ResponseSender
      */
     public function __invoke(ApplicationInterface $app)
     {
-        $response = $app->getResponse();
-
-        $emitter = new SapiEmitter();
-
-        $emitter->emit($response);
+        if(!$app->getRequest() instanceof CliRequest)
+        {
+            $response = $app->getResponse();
+            $emitter  = new SapiEmitter();
+            $emitter->emit($response);
+        }
     }
 
 }

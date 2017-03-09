@@ -74,7 +74,6 @@
         public function setViewTemplate($viewTemplate)
         {
             $this->viewTemplate = $viewTemplate;
-
             return $this;
         }
 

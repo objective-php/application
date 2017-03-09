@@ -22,10 +22,11 @@
     "objective-php/services-factory": "1.0.*",
     "objective-php/events-handler": "1.0.*",
     "objective-php/data-processor": "1.0.*",
-    "objective-php/message": "0.9.*"
+    "objective-php/message": "dev-master as 0.9.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "5.*"
+    "phpunit/phpunit": "5.*",
+    "objective-php/router": "dev-master as 1.0.0"
   },
   "autoload": {
     "psr-4": {

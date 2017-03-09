@@ -2,7 +2,6 @@
     namespace ObjectivePHP\Application\Action\Parameter;
     
     use ObjectivePHP\Application\ApplicationAwareInterface;
-    use ObjectivePHP\Application\Exception;
     use ObjectivePHP\DataProcessor\DataProcessorInterface;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\Str;
@@ -59,9 +58,7 @@
          */
         public function __construct(DataProcessorInterface $dataProcessor, $reference, $mapping = null)
         {
-
             $this->setDataProcessor($dataProcessor);
-
             $this->setReference($reference);
 
             // if no mapping is defined, use $reference as mapping
@@ -71,7 +68,6 @@
             }
 
             $this->setQueryParameterMapping($mapping);
-
         }
 
         /**

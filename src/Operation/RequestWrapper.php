@@ -5,6 +5,7 @@
     
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Middleware\AbstractMiddleware;
+    use ObjectivePHP\Message\Request\CliRequest;
     use ObjectivePHP\Message\Request\HttpRequest;
 
     /**
@@ -25,12 +26,14 @@
                 $request = new HttpRequest($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
                 $request->setGet($_GET);
                 $request->setPost($_POST);
-                $this->getApplication()->setRequest($request);
+                
             }
             else
             {
-                // TODO handle cli requests
+                $request = new CliRequest($_SERVER['argv'][1] ?? null, 'CLI');
             }
+    
+            $this->getApplication()->setRequest($request);
 
         }
 
