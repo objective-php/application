@@ -44,6 +44,23 @@ class ParamTest extends \PHPUnit_Framework_TestCase
                 ['--param value1 -v', ['p' => 'param'], 'value1', '-v'],
             ];
     }
+    
+    public function testParamWithMultipleOption()
+    {
+        $param = new Param(['t' => 'test'], 'Test param', Param::MULTIPLE);
+        
+        $param->hydrate('-t test');
+        
+        $this->assertInternalType('array', $param->getValue());
+        $this->assertEquals(['test'], $param->getValue());
+        
+        $param->hydrate('-t test -t other');
+        
+        $this->assertInternalType('array', $param->getValue());
+        $this->assertEquals(['test', 'other'], $param->getValue());
+        
+        
+    }
     /*
     public function testHydrationChain()
     {

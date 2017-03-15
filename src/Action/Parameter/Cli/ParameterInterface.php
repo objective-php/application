@@ -27,4 +27,6 @@ interface ParameterInterface
     
     public function getValue();
     
+    public function getOptions() : int;
+    
 }

@@ -12,6 +12,8 @@ namespace ObjectivePHP\Application\Action;
 
 interface CliActionInterface
 {
+    public function getExpectedParameters();
+    
     public function getCommand() : string;
     
     public function getUsage() : string;

@@ -16,7 +16,8 @@ class Param extends AbstractParameter
     
     public function hydrate(string $cli): string
     {
-        $value = 0;
+        $multiple = $this->getOptions() & self::MULTIPLE;
+        $value = $multiple ? [] : '';
         
         // look for long name occurrences
         if ($long = $this->getLongName())
@@ -24,9 +25,14 @@ class Param extends AbstractParameter
             $pattern = '/(?:^|\s)(\-\-' . $long . '\s+(["\\\']{0,1})(.*?)(\2)(?:\s+|$))/';
             if (preg_match_all($pattern, $cli, $matches))
             {
-                foreach($matches[1] as $i => $match)
-                $value = $matches[3][$i];
-                $cli = str_replace($match, '', $cli);
+                foreach($matches[1] as $i => $match) {
+                    if ($multiple)
+                    {
+                        $value[] = $matches[3][$i];
+                    }
+                    else $value = $matches[3][$i];
+                    $cli = str_replace($match, '', $cli);
+                }
             }
         
         }
@@ -38,7 +44,8 @@ class Param extends AbstractParameter
             {
                 foreach ($matches[1] as $i => $match)
                 {
-                    $value = $matches[3][$i];
+                    if($multiple) $value[] = $matches[3][$i];
+                    else $value = $matches[3][$i];
                     $cli = str_replace($match, '', $cli);
                 }
             }
