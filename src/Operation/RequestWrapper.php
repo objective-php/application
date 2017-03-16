@@ -4,8 +4,9 @@
     
     
     use ObjectivePHP\Application\ApplicationInterface;
+    use ObjectivePHP\Application\Exception;
     use ObjectivePHP\Application\Middleware\AbstractMiddleware;
-    use ObjectivePHP\Message\Request\CliRequest;
+    use ObjectivePHP\Cli\Request\CliRequest;
     use ObjectivePHP\Message\Request\HttpRequest;
 
     /**
@@ -28,9 +29,12 @@
                 $request->setPost($_POST);
                 
             }
-            else
+            else if(class_exists(CliRequest::class))
             {
                 $request = new CliRequest($_SERVER['argv'][1] ?? null, 'CLI');
+            }
+            else {
+                throw new Exception("No request matches current environment");
             }
     
             $this->getApplication()->setRequest($request);
