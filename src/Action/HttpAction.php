@@ -81,7 +81,7 @@ abstract class HttpAction implements InvokableInterface, InjectionAnnotationProv
     /**
      * Delegated constructor
      *
-     * This should be overriden in children instead of overriding __construct()
+     * This should be overridden in children instead of overriding __construct()
      */
     public function init()
     {
@@ -245,5 +245,11 @@ abstract class HttpAction implements InvokableInterface, InjectionAnnotationProv
     {
         return 'Http action class';
     }
+    
+    public function getCallable()
+    {
+        return $this;
+    }
+    
     
 }
