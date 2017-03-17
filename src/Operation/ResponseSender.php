@@ -4,7 +4,7 @@ namespace ObjectivePHP\Application\Operation;
 
 
 use ObjectivePHP\Application\ApplicationInterface;
-use ObjectivePHP\Message\Request\CliRequest;
+use ObjectivePHP\Cli\Request\CliRequest;
 use Zend\Diactoros\Response\SapiEmitter;
 
 /**
