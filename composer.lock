@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "85b1fe2c3d394db26b44341eac37a47c",
-    "content-hash": "6af76b611af2e79fa14f4379da6bfdbe",
+    "hash": "1aec34a6ba26fec5b719927597aef601",
+    "content-hash": "9cbc76c22f8b593d691b0103bc510b2a",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -587,16 +587,16 @@
         },
         {
             "name": "objective-php/message",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/message.git",
-                "reference": "cbc133aded78423d1a08c8eb6efbc5a3790e3b3c"
+                "reference": "974faaeae23f6b3dec6f490e2ed7697828e44fef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/message/zipball/cbc133aded78423d1a08c8eb6efbc5a3790e3b3c",
-                "reference": "cbc133aded78423d1a08c8eb6efbc5a3790e3b3c",
+                "url": "https://api.github.com/repos/objective-php/message/zipball/974faaeae23f6b3dec6f490e2ed7697828e44fef",
+                "reference": "974faaeae23f6b3dec6f490e2ed7697828e44fef",
                 "shasum": ""
             },
             "require": {
@@ -625,7 +625,7 @@
                 }
             ],
             "description": "ObjectivePHP implementation for PSR-7",
-            "time": "2016-06-26 15:39:48"
+            "time": "2017-03-16 16:57:25"
         },
         {
             "name": "objective-php/notification",
@@ -1279,16 +1279,16 @@
         },
         {
             "name": "objective-php/router",
-            "version": "dev-master",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/router.git",
-                "reference": "0de2a24607976673e81db37f9daacb782ef27236"
+                "reference": "0765e7d180d4af57de4cb727822a5582c1a467bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/router/zipball/0de2a24607976673e81db37f9daacb782ef27236",
-                "reference": "0de2a24607976673e81db37f9daacb782ef27236",
+                "url": "https://api.github.com/repos/objective-php/router/zipball/0765e7d180d4af57de4cb727822a5582c1a467bc",
+                "reference": "0765e7d180d4af57de4cb727822a5582c1a467bc",
                 "shasum": ""
             },
             "require": {
@@ -1323,7 +1323,7 @@
                 "objective php",
                 "router"
             ],
-            "time": "2016-12-07 06:32:20"
+            "time": "2016-06-02 17:23:41"
         },
         {
             "name": "phpspec/prophecy",
@@ -1639,16 +1639,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.7.15",
+            "version": "5.7.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "b99112aecc01f62acf3d81a3f59646700a1849e5"
+                "reference": "dafc78e2a7d12139b0e97078d1082326bd09363d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b99112aecc01f62acf3d81a3f59646700a1849e5",
-                "reference": "b99112aecc01f62acf3d81a3f59646700a1849e5",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/dafc78e2a7d12139b0e97078d1082326bd09363d",
+                "reference": "dafc78e2a7d12139b0e97078d1082326bd09363d",
                 "shasum": ""
             },
             "require": {
@@ -1717,7 +1717,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2017-03-02 15:22:43"
+            "time": "2017-03-15 13:02:34"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -2293,16 +2293,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.2.4",
+            "version": "v3.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "9724c684646fcb5387d579b4bfaa63ee0b0c64c8"
+                "reference": "093e416ad096355149e265ea2e4cc1f9ee40ab1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/9724c684646fcb5387d579b4bfaa63ee0b0c64c8",
-                "reference": "9724c684646fcb5387d579b4bfaa63ee0b0c64c8",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/093e416ad096355149e265ea2e4cc1f9ee40ab1a",
+                "reference": "093e416ad096355149e265ea2e4cc1f9ee40ab1a",
                 "shasum": ""
             },
             "require": {
@@ -2344,28 +2344,12 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2017-02-16 22:46:52"
+            "time": "2017-03-07 16:47:02"
         }
     ],
-    "aliases": [
-        {
-            "alias": "0.9.0",
-            "alias_normalized": "0.9.0.0",
-            "version": "9999999-dev",
-            "package": "objective-php/message"
-        },
-        {
-            "alias": "1.0.0",
-            "alias_normalized": "1.0.0.0",
-            "version": "9999999-dev",
-            "package": "objective-php/router"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "objective-php/message": 20,
-        "objective-php/router": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
