@@ -8,6 +8,7 @@
     use ObjectivePHP\Application\Middleware\AbstractMiddleware;
     use ObjectivePHP\Cli\Request\CliRequest;
     use ObjectivePHP\Message\Request\HttpRequest;
+    use Zend\Diactoros\ServerRequestFactory;
 
     /**
      * Class RequestWrapper
@@ -24,7 +25,12 @@
         {
             if (isset($_SERVER['REQUEST_URI']))
             {
-                $request = new HttpRequest($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
+                $uri = ServerRequestFactory::marshalUriFromServer(
+                    $_SERVER,
+                    ServerRequestFactory::marshalHeaders($_SERVER)
+                );
+
+                $request = new HttpRequest($uri, $_SERVER['REQUEST_METHOD']);
                 $request->setGet($_GET);
                 $request->setPost($_POST);
                 
