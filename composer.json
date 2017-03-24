@@ -17,7 +17,7 @@
   ],
   "require": {
     "php": ">=7.0",
-    "objective-php/components": "1.*",
+    "objective-php/components": "~1.0.0",
     "objective-php/html": "1.*",
     "objective-php/services-factory": "1.0.*",
     "objective-php/events-handler": "1.0.*",
