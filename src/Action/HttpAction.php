@@ -93,7 +93,7 @@ abstract class HttpAction implements InvokableInterface, InjectionAnnotationProv
      *
      * @return mixed
      */
-    abstract function run(ApplicationInterface $app);
+    abstract public function run(ApplicationInterface $app);
     
     /**
      * Shorthand to access GET parameters
