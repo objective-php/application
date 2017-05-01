@@ -1,5 +1,6 @@
 <?php
 use ObjectivePHP\Application\AbstractApplication;
+use ObjectivePHP\Application\Config\Param;
 use ObjectivePHP\Events\EventsHandler;
 use ObjectivePHP\PHPUnit\TestCase;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
@@ -72,6 +73,25 @@ class AbstractApplicationTest extends TestCase
         $app->run();
         
         $this->assertNull($app->getExecutionTrace()['end']);
+    }
+
+    public function testParamsAreStoredInConfig()
+    {
+        $app = new class extends AbstractApplication {
+            public function init() {}
+        };
+        $app->setParam('test.param', 'test.value');
+
+        $this->assertEquals('test.value', $app->getParam('test.param'));
+        $this->assertEquals('test.value', $app->getConfig()->subset(Param::class)->get('test.param'));
+    }
+
+    public function testParamsAreFetchedFromConfig()
+    {
+        $app = $this->getMockForAbstractClass(AbstractApplication::class);
+        $app->getConfig()->import(new Param('test.param', 'test.value'));
+
+        $this->assertEquals('test.value', $app->getParam('test.param'));
     }
 }
 

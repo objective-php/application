@@ -3,6 +3,7 @@
     namespace ObjectivePHP\Application;
 
     use Composer\Autoload\ClassLoader;
+    use ObjectivePHP\Application\Config\Param;
     use ObjectivePHP\Application\Operation\ExceptionHandler;
     use ObjectivePHP\Application\Workflow\Hook;
     use ObjectivePHP\Application\Workflow\Step;
@@ -76,11 +77,6 @@
          * @var Collection
          */
         protected $steps;
-
-        /**
-         * @var Collection
-         */
-        protected $params;
 
         /**
          * @var array
@@ -389,7 +385,7 @@
          */
         public function getParams()
         {
-            return $this->params;
+            return $this->getConfig()->subset(Param::class);
         }
 
         /**
@@ -399,7 +395,11 @@
          */
         public function setParams($params)
         {
-            $this->params = $params;
+
+            foreach(Collection::cast($params) as $param => $value)
+            {
+                $this->getConfig()->import(new Param($param, $value));
+            }
 
             return $this;
         }
@@ -413,7 +413,13 @@
          */
         public function getParam($param, $default = null)
         {
-            return $this->params->get($param, $default);
+
+            if($this->getConfig()->subset(Param::class)->has($param))
+            {
+                return $this->getConfig()->subset(Param::class)->get($param);
+            }
+
+            return $default;
         }
 
 
@@ -425,7 +431,9 @@
          */
         public function setParam($param, $value)
         {
-            $this->params->set($param, $value);
+            $this->getConfig()->import(new Param($param, $value));
+
+            return $this;
         }
 
         /**
