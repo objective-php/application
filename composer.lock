@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4becdd661fcd0485cea2625b8540f8f6",
-    "content-hash": "b9747a270095ec3fd6d23a4449de673e",
+    "hash": "0f83f775e4ed74fe821b0545d65652fb",
+    "content-hash": "880bf8691d94fd51c238d464146c4b2a",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -1333,16 +1333,16 @@
         },
         {
             "name": "objective-php/cli",
-            "version": "v1.0.3",
+            "version": "v1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/cli.git",
-                "reference": "52b88f88dfa3da5ad58a36cdf7e965c230694c48"
+                "reference": "2efa4f959e8b026196fc4b51990ea7c4a6a9593c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/cli/zipball/52b88f88dfa3da5ad58a36cdf7e965c230694c48",
-                "reference": "52b88f88dfa3da5ad58a36cdf7e965c230694c48",
+                "url": "https://api.github.com/repos/objective-php/cli/zipball/2efa4f959e8b026196fc4b51990ea7c4a6a9593c",
+                "reference": "2efa4f959e8b026196fc4b51990ea7c4a6a9593c",
                 "shasum": ""
             },
             "require": {
@@ -1377,7 +1377,7 @@
                 "cli",
                 "objective php"
             ],
-            "time": "2017-03-23 11:37:13"
+            "time": "2017-05-10 15:18:20"
         },
         {
             "name": "objective-php/router",
@@ -2443,16 +2443,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.2.7",
+            "version": "v3.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "62b4cdb99d52cb1ff253c465eb1532a80cebb621"
+                "reference": "acec26fcf7f3031e094e910b94b002fa53d4e4d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/62b4cdb99d52cb1ff253c465eb1532a80cebb621",
-                "reference": "62b4cdb99d52cb1ff253c465eb1532a80cebb621",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/acec26fcf7f3031e094e910b94b002fa53d4e4d6",
+                "reference": "acec26fcf7f3031e094e910b94b002fa53d4e4d6",
                 "shasum": ""
             },
             "require": {
@@ -2494,7 +2494,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2017-03-20 09:45:15"
+            "time": "2017-05-01 14:55:58"
         }
     ],
     "aliases": [],
