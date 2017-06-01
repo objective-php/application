@@ -4,6 +4,7 @@
 
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Exception;
+    use ObjectivePHP\Application\Middleware\EmbeddedMiddleware;
     use ObjectivePHP\Application\Middleware\MiddlewareInterface;
     use ObjectivePHP\Application\Workflow\Filter\FiltersHandler;
     use ObjectivePHP\Invokable\Invokable;
@@ -64,8 +65,17 @@
 
                 $middleware = $this->getMiddleware();
 
-                if($middleware instanceof InvokableInterface) $middleware->setApplication($app);
+                if($middleware instanceof InvokableInterface) {
+                    $middleware->setApplication($app);
+                }
 
+                
+                $callable = ($middleware instanceof InvokableInterface) ? $middleware->getCallable() : $middleware;
+                
+                if(is_object($callable)) {
+                    $app->getServicesFactory()->injectDependencies($callable);
+                }
+                
                 return $middleware($app);
 
             }

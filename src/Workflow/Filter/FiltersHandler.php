@@ -14,6 +14,8 @@ use ObjectivePHP\Application\ApplicationInterface;
 use ObjectivePHP\Invokable\Invokable;
 use ObjectivePHP\Invokable\InvokableInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
+use ObjectivePHP\ServicesFactory\Exception\Exception as ServicesFactoryException;
+use ObjectivePHP\ServicesFactory\ServiceReference;
 
 trait FiltersHandler
 {
@@ -61,13 +63,27 @@ trait FiltersHandler
         }
         
         /**
-         * @var callable $filter
+         * @var Invokable $filter
          */
         foreach ($this->getFilters() as $filter)
         {
-            if ($filter instanceof InvokableInterface)
+            $filter->setApplication($app);
+            
+            if($filter instanceof ServiceReference)
             {
-                $filter->setApplication($app);
+                try {
+                    $filter = $app->getServicesFactory()->get($filter);
+                } catch(ServicesFactoryException $e)
+                {
+                    throw new FilterException(sprintf('The service "%s" set as workflow filter has not been found.', $filter->getId()), null, $e);
+                }
+            } else {
+                $callable = $filter->getCallable();
+                // if the filter is not a service, let's pass it to the injection loop anyway
+                if(is_object($callable)) {
+                    $app->getServicesFactory()->injectDependencies($callable);
+                }
+                $filter = $callable;
             }
             
             if (!$filter($app))

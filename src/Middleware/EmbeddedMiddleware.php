@@ -57,4 +57,11 @@ class EmbeddedMiddleware extends AbstractMiddleware
     {
         return 'Middleware embedding ' . $this->getInvokable()->getDescription();
     }
+    
+    public function getCallable()
+    {
+        return $this->getInvokable()->getCallable();
+    }
+    
+    
 }
