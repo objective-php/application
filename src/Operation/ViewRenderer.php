@@ -8,6 +8,7 @@ use ObjectivePHP\Application\Config\ViewsLocation;
 use ObjectivePHP\Application\Exception;
 use ObjectivePHP\Application\Middleware\AbstractMiddleware;
 use ObjectivePHP\Application\View\Helper\Vars;
+use ObjectivePHP\Html\Tag\Tag;
 
 /**
  * Class ViewRenderer
@@ -21,7 +22,12 @@ class ViewRenderer extends AbstractMiddleware
      * @var ApplicationInterface
      */
     protected $application;
-
+    
+    /**
+     * @var callable
+     */
+    protected $errorHandler;
+    
     /**
      * @param ApplicationInterface $app
      *
@@ -92,7 +98,11 @@ class ViewRenderer extends AbstractMiddleware
 
 
         ob_start();
+        // deactivate error handler during rendering
+        $previousErrorHandler = set_error_handler($this->getErrorHandler());
         include $viewPath;
+        // restore previous error handler
+        set_error_handler($previousErrorHandler);
         $output = ob_get_clean();
 
         return $output;
@@ -182,5 +192,61 @@ class ViewRenderer extends AbstractMiddleware
         throw new Exception(sprintf('No layout script matching layout name "%s" has been found (layouts locations: %s)', $layoutName, implode($layoutsLocations)));
     }
 
+    public function errorHandler($level, $message, $file, $line)
+    {
+        $levelLabel = '';
+        $color = '#000';
+        switch($level)
+        {
+            case 1:
+            case 16:
+            case 64:
+            case 256:
+            case 4096:
+                $levelLabel = 'error';
+                $color = '#F00';
+                break;
+                
+            case 2:
+            case 32:
+            case 128:
+            case 512:
+                $color = '#FA0';
+                $levelLabel = 'warning';
+                break;
+            
+            case 4:
+                $color = '#F00';
+                $levelLabel = 'parse';
+                break;
+            
+            case 8:
+            case 1024:
+                $color = '#FAF';
+                $levelLabel = 'notice';
+                break;
+                
+            case 2048:
+                $levelLabel = 'strict';
+                break;
+                
+            case 8192:
+            case 16384:
+                $levelLabel = 'deprecated';
+                break;
+            
+        }
+        
+        $file = ltrim(str_replace(getcwd(), '', $file), '/\\');
+        
+        Tag::span('[' . $levelLabel . '] ' . $file . ':' . $line . ' => ' . $message . '<br>')['style'] = 'color: ' . $color . ';font-weight:bold';
+    }
 
+    public function getErrorHandler()
+    {
+        if(is_null($this->errorHandler)) {
+            return [$this, 'errorHandler'];
+        }
+        
+    }
 }
