@@ -60,7 +60,12 @@ class EmbeddedMiddleware extends AbstractMiddleware
     
     public function getCallable()
     {
-        return $this->getInvokable()->getCallable();
+        $invokable = $this->getInvokable();
+        if($application = $this->getApplication()) {
+            $invokable->setApplication($this->getApplication());
+        }
+
+        return $invokable->getCallable();
     }
     
     
