@@ -1,8 +1,8 @@
 <?php
 
     namespace ObjectivePHP\Application\Operation;
-    
-    
+
+
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Exception;
     use ObjectivePHP\Application\Middleware\AbstractMiddleware;
@@ -25,15 +25,13 @@
         {
             if (isset($_SERVER['REQUEST_URI']))
             {
-                $uri = ServerRequestFactory::marshalUriFromServer(
-                    $_SERVER,
-                    ServerRequestFactory::marshalHeaders($_SERVER)
-                );
+                $headers = ServerRequestFactory::marshalHeaders($_SERVER);
+                $uri = ServerRequestFactory::marshalUriFromServer($_SERVER, $headers);
 
-                $request = new HttpRequest($uri, $_SERVER['REQUEST_METHOD']);
+                $request = new HttpRequest($uri, $_SERVER['REQUEST_METHOD'], 'php://input', $headers);
                 $request->setGet($_GET);
                 $request->setPost($_POST);
-                
+
             }
             else if(class_exists(CliRequest::class))
             {
@@ -42,7 +40,7 @@
             else {
                 throw new Exception("No request matches current environment");
             }
-    
+
             $this->getApplication()->setRequest($request);
 
         }
