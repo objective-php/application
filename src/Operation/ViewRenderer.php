@@ -194,6 +194,11 @@ class ViewRenderer extends AbstractMiddleware
 
     public function errorHandler($level, $message, $file, $line)
     {
+
+        if (ini_get('display_errors') == 0) {
+            return;
+        }
+
         $levelLabel = '';
         $color = '#000';
         switch($level)
