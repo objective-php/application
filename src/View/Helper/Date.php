@@ -1,39 +1,42 @@
 <?php
 
-    namespace ObjectivePHP\Application\View\Helper;
+namespace ObjectivePHP\Application\View\Helper;
+
+
+class Date
+{
+    /**
+     * @var string DateTime::format() compatible date format
+     */
+    protected static $defaultFormat = 'Y-m-d';
     
     
-    class Date
+    public static function format($dateTime, $format = null)
     {
-        /**
-         * @var string DateTime::format() compatible date format
-         */
-        protected static $defaultFormat = 'Y-m-d';
-
-
-        public static function format(\DateTime $dateTime, $format = null)
-        {
-            $format = $format ?: self::getDefaultFormat();
-
-            return $dateTime->format($format);
+        
+        if (!$dateTime instanceof \DateTime) {
+            $dateTime = \DateTime::createFromFormat(\DateTime::ISO8601, $dateTime);
         }
-
-        /**
-         * @return string
-         */
-        public static function getDefaultFormat()
-        {
-            return self::$defaultFormat;
-        }
-
-        /**
-         * @param string $defaultFormat
-         */
-        public static function setDefaultFormat($defaultFormat)
-        {
-            self::$defaultFormat = $defaultFormat;
-        }
-
-
-
+        
+        $format = $format ?: self::getDefaultFormat();
+        
+        return $dateTime->format($format);
     }
+    
+    /**
+     * @return string
+     */
+    public static function getDefaultFormat()
+    {
+        return self::$defaultFormat;
+    }
+    
+    /**
+     * @param string $defaultFormat
+     */
+    public static function setDefaultFormat($defaultFormat)
+    {
+        self::$defaultFormat = $defaultFormat;
+    }
+    
+}
