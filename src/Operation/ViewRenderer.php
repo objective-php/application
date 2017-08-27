@@ -8,6 +8,7 @@ use ObjectivePHP\Application\Config\ViewsLocation;
 use ObjectivePHP\Application\Exception;
 use ObjectivePHP\Application\Middleware\AbstractMiddleware;
 use ObjectivePHP\Application\View\Helper\Vars;
+use ObjectivePHP\Application\View\Plugin\PluginInterface;
 use ObjectivePHP\Html\Tag\Tag;
 
 /**
@@ -253,5 +254,32 @@ class ViewRenderer extends AbstractMiddleware
             return [$this, 'errorHandler'];
         }
         
+    }
+
+    /**
+    * Get a ViewHelper plugin
+     *
+    * @param string $name
+    * @param array $params
+    * @return PluginInterface
+    * @throws Exception
+    */
+    public function plugin(string $name, ...$params): PluginInterface
+    {
+        $app = $this->getApplication();
+
+        if (!class_exists($name)) {
+            throw new Exception(sprintf('No helper found for %s', $name));
+        }
+
+        $helper = new $name(...$params);
+
+        if (!$helper instanceof PluginInterface) {
+            throw new Exception(sprintf('%s has to be an %s instance', get_class($helper), PluginInterface::class));
+        }
+
+        $helper->setApplication($app);
+
+        return $helper;
     }
 }
