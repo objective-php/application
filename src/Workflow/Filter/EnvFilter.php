@@ -17,10 +17,21 @@ class EnvFilter extends AbstractFilter
      * @param ApplicationInterface $app
      * @return bool
      */
-    public function run(ApplicationInterface $app) : bool
+    public function run(ApplicationInterface $app): bool
     {
-        $env = (array) $this->getFilter();
+        $validEnvironments = (array) $this->getFilter();
+        $env = $app->getEnv();
 
-        return in_array($app->getEnv(), $env);
+        $result = false;
+        foreach ($validEnvironments as $validEnvironment) {
+            if (strpos($validEnvironment, '!') === 0) {
+                if ($env == substr($validEnvironment, 1)) return false;
+                else $result = true;
+            } else {
+                if ($env == $validEnvironment) return true;
+            }
+        }
+
+        return $result;
     }
 }
