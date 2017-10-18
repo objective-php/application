@@ -16,15 +16,17 @@ use ObjectivePHP\Message\Request\HttpRequest;
 use ObjectivePHP\Message\Request\Parameter\Container\HttpParameterContainer;
 use ObjectivePHP\PHPUnit\TestCase;
 
-class VersionnedApiMiddlewareTest extends TestCase
+class VersionedApiMiddlewareTest extends TestCase
 {
     
     public function testDefaultRouting()
     {
-
+        /** @var VersionedApiAction $middleware */
         $middleware = $this->getMockForAbstractClass(VersionedApiAction::class);
         $middleware->setApplication($this->getApplication());
 
+        $middleware->registerMiddleware('1.0', function() {});
+        
         $version = $middleware->route();
 
         $this->assertEquals('1.0', $version);
@@ -36,14 +38,16 @@ class VersionnedApiMiddlewareTest extends TestCase
 
         $middleware = $this->getMockForAbstractClass(VersionedApiAction::class);
         $middleware->setApplication($this->getApplication(['version' => '2.0']));
-
+    
+        $middleware->registerMiddleware('2.0', function () {
+        });
         $version = $middleware->route();
 
         $this->assertEquals('2.0', $version);
         
     }
     
-    public function testlistAvailableVersions()
+    public function testListAvailableVersions()
     {
         $middleware = $this->getMockForAbstractClass(VersionedApiAction::class);
         

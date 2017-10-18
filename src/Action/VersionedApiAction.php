@@ -14,17 +14,13 @@ abstract class VersionedApiAction extends SubRoutingAction
     public function route()
     {
         $request = $this->getApplication()->getRequest();
-        $getVersion = $request->getParameters()->get($this->getVersionParameter());
-        $headVersion = $request->getHeader($this->getVersionHeader());
-        $header = $headVersion[0] ?? null;
-        $version = $getVersion ?: $header;
-
-        if (empty($version)) {
-            $version = $this->getDefaultVersion();
-        }
+        $versionFromGet = $request->getParameters()->get($this->getVersionParameter());
+        $versionHeader = $request->getHeader($this->getVersionHeader());
+        $versionFromHeader = $versionHeader[0] ?? null;
+        $version = $versionFromGet ?: $versionFromHeader ?: $this->getDefaultVersion();
 
         if (!empty($version) && !in_array($version, $this->listAvailableVersions())) {
-            throw new Exception("Version not found", 404);
+            throw new Exception("No API matching requested version is registered", 404);
         }
 
         return $version;
