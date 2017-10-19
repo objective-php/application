@@ -104,4 +104,11 @@ abstract class VersionedApiAction extends SubRoutingAction
         $this->versionHeader = $versionHeader;
         return $this;
     }
+
+    /**
+     * @param $version
+     */
+    public function getAppropriateVersion($version)
+    {
+    }
 }
