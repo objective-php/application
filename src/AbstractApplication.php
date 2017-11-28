@@ -4,6 +4,7 @@
 
     use Composer\Autoload\ClassLoader;
     use ObjectivePHP\Application\Config\Param;
+    use ObjectivePHP\Application\Middleware\FilteredMiddlewareException;
     use ObjectivePHP\Application\Operation\ExceptionHandler;
     use ObjectivePHP\Application\Workflow\Hook;
     use ObjectivePHP\Application\Workflow\Step;
@@ -338,13 +339,18 @@
                     $step->each(function (Hook $hook)
                     {
                         $this->currentExecutionStack[] = $hook->getMiddleware();
-                        $result = $hook->run($this);
 
-                        if($result instanceof Response)
-                        {
-                            $emitter = new Response\SapiEmitter();
-                            $emitter->emit($result);
-                            exit();
+                        try {
+                            $result = $hook->run($this);
+
+                            if($result instanceof Response)
+                            {
+                                $emitter = new Response\SapiEmitter();
+                                $emitter->emit($result);
+                                exit();
+                            }
+                        } catch (FilteredMiddlewareException $e) {
+                            array_pop($this->currentExecutionStack);
                         }
                     }
                     );
