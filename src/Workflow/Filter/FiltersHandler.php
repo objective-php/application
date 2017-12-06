@@ -11,6 +11,7 @@ namespace ObjectivePHP\Application\Workflow\Filter;
 
 
 use ObjectivePHP\Application\ApplicationInterface;
+use ObjectivePHP\Application\Workflow\Hook;
 use ObjectivePHP\Invokable\Invokable;
 use ObjectivePHP\Invokable\InvokableInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
@@ -55,8 +56,16 @@ trait FiltersHandler
      */
     public function runFilters(ApplicationInterface $app)
     {
-        
-        if(is_null($this->filters))
+        $filters = $this->getFilters() ?? [];
+        if($this instanceof Hook) {
+            $middleware = $this->getMiddleware();
+
+            if ($middleware instanceof WorkflowFiltersProviderInterface) {
+                $filters = array_merge($filters, $middleware->getFilters());
+            }
+        }
+
+        if(!$filters)
         {
             // no filter has been set
             return true;
@@ -65,7 +74,7 @@ trait FiltersHandler
         /**
          * @var Invokable $filter
          */
-        foreach ($this->getFilters() as $filter)
+        foreach ($filters as $filter)
         {
             $filter->setApplication($app);
             
