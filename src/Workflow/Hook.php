@@ -4,14 +4,11 @@
 
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Exception;
-    use ObjectivePHP\Application\Middleware\EmbeddedMiddleware;
+    use ObjectivePHP\Application\Middleware\WorkflowFiltersProviderInterface;
+    use ObjectivePHP\Application\Middleware\FilteredMiddlewareException;
     use ObjectivePHP\Application\Middleware\MiddlewareInterface;
     use ObjectivePHP\Application\Workflow\Filter\FiltersHandler;
-    use ObjectivePHP\Invokable\Invokable;
     use ObjectivePHP\Invokable\InvokableInterface;
-    use ObjectivePHP\Primitives\Collection\Collection;
-    use ObjectivePHP\ServicesFactory\ServiceReference;
-
 
     /**
      * Class Hook
@@ -20,9 +17,9 @@
      */
     class Hook
     {
-        
+
         use FiltersHandler;
-        
+
         /**
          * @var
          */
@@ -69,15 +66,21 @@
                     $middleware->setApplication($app);
                 }
 
-                
+                if ($middleware instanceof WorkflowFiltersProviderInterface && !$middleware->runFilters()) {
+                    throw new FilteredMiddlewareException();
+                }
+
                 $callable = ($middleware instanceof InvokableInterface) ? $middleware->getCallable() : $middleware;
-                
+
                 if(is_object($callable)) {
                     $app->getServicesFactory()->injectDependencies($callable);
                 }
-                
-                return $middleware($app);
 
+                return $middleware($app);
+            }
+            catch (FilteredMiddlewareException $e)
+            {
+                throw $e;
             }
             catch(\Throwable $e)
             {
