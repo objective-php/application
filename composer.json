@@ -17,17 +17,10 @@
   ],
   "require": {
     "php": ">=7.0",
-    "objective-php/components": "^1.1.0",
-    "objective-php/html": "^1.0",
-    "objective-php/services-factory": "^1.1.0",
-    "objective-php/events-handler": "^1.0.0",
-    "objective-php/data-processor": "^1.0.0",
-    "objective-php/message": "^1.0.0"
+    "psr/http-message": "^1.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^5.0",
-    "objective-php/router": "^1.0.0",
-    "objective-php/cli": "^1.0.0"
+    "phpunit/phpunit": "5.*"
   },
   "autoload": {
     "psr-4": {
