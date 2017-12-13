@@ -3,16 +3,16 @@
 namespace ObjectivePHP\Application;
 
 /**
- * Interface Pluggable
- * @package ObjectivePHP\Application
+ * @deprecated What should we do about it ?
  */
 interface Pluggable
 {
     /**
-     * @param Application $application
-     * @return Application
+     * @param ApplicationInterface $application
+     * @param FilterProviderInterface $filters
+     * @return ApplicationInterface
      */
-    public function plug(Application $application): Application;
+    public function plug(ApplicationInterface $application, FilterProviderInterface $filters): ApplicationInterface;
 
     /**
      * @return string

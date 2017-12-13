@@ -6,7 +6,7 @@ namespace ObjectivePHP\Application;
  * Interface EventsHandler
  * @package ObjectivePHP\Application
  */
-interface EventsHandler
+interface EventsHandlerInterface
 {
     /**
      * @param string $evenName
