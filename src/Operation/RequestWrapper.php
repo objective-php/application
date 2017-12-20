@@ -45,7 +45,7 @@
                 throw new Exception("No request matches current environment");
             }
 
-            $this->getApplication()->setRequest($request);
+            $app->setRequest($request);
 
         }
 
