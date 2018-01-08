@@ -31,11 +31,10 @@
                 $request = new HttpRequest($uri, $_SERVER['REQUEST_METHOD'], 'php://input', $headers);
                 $request->setGet($_GET);
                 $request->setPost($_POST);
+
                 if(isset($_FILES)) {
                     $request->getParameters()->setFiles($_FILES);
-                    unset($_FILES);
                 }
-
             }
             else if(class_exists(CliRequest::class))
             {
