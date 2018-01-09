@@ -685,16 +685,16 @@
         },
         {
             "name": "objective-php/message",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/message.git",
-                "reference": "d527cfbf5ab0ff5a4aa1ae0f6fff3191130d9047"
+                "reference": "412cbff5eab8dcf1b6dfbceca72878cec4d222f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/message/zipball/d527cfbf5ab0ff5a4aa1ae0f6fff3191130d9047",
-                "reference": "d527cfbf5ab0ff5a4aa1ae0f6fff3191130d9047",
+                "url": "https://api.github.com/repos/objective-php/message/zipball/412cbff5eab8dcf1b6dfbceca72878cec4d222f1",
+                "reference": "412cbff5eab8dcf1b6dfbceca72878cec4d222f1",
                 "shasum": ""
             },
             "require": {
@@ -723,7 +723,7 @@
                 }
             ],
             "description": "ObjectivePHP implementation for PSR-7",
-            "time": "2017-05-23T16:51:19+00:00"
+            "time": "2018-01-09T16:08:04+00:00"
         },
         {
             "name": "objective-php/notification",
@@ -879,16 +879,16 @@
         },
         {
             "name": "objective-php/router",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/router.git",
-                "reference": "0765e7d180d4af57de4cb727822a5582c1a467bc"
+                "reference": "e5dc6874c3e51c412c32e534430b6457c23f2fd6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/router/zipball/0765e7d180d4af57de4cb727822a5582c1a467bc",
-                "reference": "0765e7d180d4af57de4cb727822a5582c1a467bc",
+                "url": "https://api.github.com/repos/objective-php/router/zipball/e5dc6874c3e51c412c32e534430b6457c23f2fd6",
+                "reference": "e5dc6874c3e51c412c32e534430b6457c23f2fd6",
                 "shasum": ""
             },
             "require": {
@@ -923,7 +923,7 @@
                 "objective php",
                 "router"
             ],
-            "time": "2016-06-02T17:23:41+00:00"
+            "time": "2018-01-09T16:04:27+00:00"
         },
         {
             "name": "objective-php/services-factory",
