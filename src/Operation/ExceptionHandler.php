@@ -90,6 +90,8 @@ class ExceptionHandler
             </html>
         ';
 
+        // clean buffer before render will prevent an exception from SapiEmitter
+        ob_clean();
 
         // manually emit response
         (new SapiEmitter())->emit((new HtmlResponse($output))->withStatus($code));
