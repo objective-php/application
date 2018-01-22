@@ -25,6 +25,9 @@ class ExceptionHandler
     /** @var \Throwable */
     protected $exception;
 
+    /** @var false|string $outputBuffer output buffer content produced before the uncaught exception is thrown */
+    protected $outputBuffer;
+
     public function __construct()
     {
         set_error_handler([$this, 'errorHandler']);
@@ -42,6 +45,7 @@ class ExceptionHandler
     public function __invoke(ApplicationInterface $app)
     {
         $this->app = $app;
+        $this->outputBuffer = ob_get_clean();
         $exception = $this->app->getException();
 
         if ($exception instanceof Exception
@@ -89,7 +93,6 @@ class ExceptionHandler
                             
             </html>
         ';
-
 
         // manually emit response
         (new SapiEmitter())->emit((new HtmlResponse($output))->withStatus($code));
