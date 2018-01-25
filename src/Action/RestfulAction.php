@@ -6,6 +6,7 @@ namespace ObjectivePHP\Application\Action;
 use ObjectivePHP\Application\Action\HttpAction;
 use ObjectivePHP\Application\Action\SubRoutingAction;
 use Zend\Diactoros\Response\JsonResponse;
+use ObjectivePHP\Primitives\String\Str;
 
 /**
  * Class AbstractRestfulAction
@@ -30,6 +31,16 @@ abstract class RestfulAction extends SubRoutingAction
      */
     public function route()
     {
+        $methodName = (new Str($this->getApplication()->getRequest()->getMatchedRoute()->getName()))
+            ->snakeCase()
+            ->camelCase()
+            ->getInternalValue();
+
+        $callable = $this->getCallable();
+        if (method_exists($callable, $methodName)) {
+            return $methodName;
+        }
+
         $verb = $this->getApplication()->getRequest()->getMethod();
 
         return strtolower($verb);

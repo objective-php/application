@@ -15,21 +15,43 @@ use ObjectivePHP\Application\Middleware\Exception;
 use ObjectivePHP\Message\Request\HttpRequest;
 use ObjectivePHP\Message\Request\Parameter\Container\HttpParameterContainer;
 use ObjectivePHP\PHPUnit\TestCase;
+use ObjectivePHP\Router\MatchedRoute;
 
 class AbstractRestfulActionTest extends TestCase
 {
 
-    public function testRouting()
+    public function testRoutingWhenMethodNameDoesNotExist()
     {
+        $applicationMock = $this->getApplication('get');
 
         $restfulMiddleware = new GetOnlyRestMiddleware();
-        $restfulMiddleware->setApplication($this->getApplication('get'));
+        $restfulMiddleware->setApplication($applicationMock);
 
         $reference = $restfulMiddleware->route();
 
         $this->assertEquals('get', $reference);
 
         $this->assertEquals([$restfulMiddleware, 'get'], $restfulMiddleware->getMiddleware($reference));
+
+    }
+
+    public function testRoutingWhenMethodNameDoesExist()
+    {
+        $applicationMock = $this->getApplication('get');
+
+        $restfulMiddleware = new class extends RestfulAction {
+            public function thisIsFakeName() {
+                return ['data' => 'value'];
+            }
+        };
+
+        $restfulMiddleware->setApplication($applicationMock);
+
+        $reference = $restfulMiddleware->route();
+
+        $this->assertEquals('thisIsFakeName', $reference);
+
+        $this->assertEquals([$restfulMiddleware, 'thisIsFakeName'], $restfulMiddleware->getMiddleware($reference));
 
     }
 
@@ -64,11 +86,14 @@ class AbstractRestfulActionTest extends TestCase
     {
         $application = $this->createMock(AbstractApplication::class);
 
+        $matchedRoute = $this->createMock(MatchedRoute::class);
+        $matchedRoute->method('getName')->willReturn('this-is_a-fake_Name');
+
         $request = $this->createMock(HttpRequest::class);
         $request->method('getGet')->willReturn([]);
         $request->method('getPost')->willReturn([]);
         $request->method('getMethod')->willReturn($method);
-
+        $request->method('getMatchedRoute')->willReturn($matchedRoute);
 
         $httpParameters = new HttpParameterContainer($request);
         $request->method('getParameters')->willReturn($httpParameters);
