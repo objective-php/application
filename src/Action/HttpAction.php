@@ -4,12 +4,10 @@ namespace ObjectivePHP\Application\Action;
 
 use ObjectivePHP\Application\ApplicationInterface;
 use ObjectivePHP\Application\Exception;
-use ObjectivePHP\DataProcessor\DataProcessorInterface;
 use ObjectivePHP\Events\EventsHandler;
 use ObjectivePHP\Invokable\InvokableInterface;
 use ObjectivePHP\Message\Request\Parameter\Container\HttpParameterContainer;
 use ObjectivePHP\Primitives\Collection\Collection;
-use ObjectivePHP\Primitives\String\Str;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
 use ObjectivePHP\ServicesFactory\Specs\InjectionAnnotationProvider;
 

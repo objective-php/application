@@ -2,25 +2,22 @@
     
     namespace ObjectivePHP\Application;
 
-    use ObjectivePHP\Application\Workflow\Step;
-    use ObjectivePHP\Application\Workflow\WorkflowInterface;
     use ObjectivePHP\Config\Config;
     use ObjectivePHP\Events\EventsHandler;
     use ObjectivePHP\Invokable\InvokableInterface;
-    use ObjectivePHP\Message\Request\RequestInterface;
-    use ObjectivePHP\Message\Response\ResponseInterface;
-    use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\ServicesFactory\ServicesFactory;
-    use Zend\Diactoros\Response;
+    use Psr\Http\Message\ResponseInterface;
+    use Psr\Http\Message\ServerRequestInterface;
+    use Psr\Http\Server\RequestHandlerInterface;
 
     /**
      * Interface ApplicationInterface
      *
      * @package ObjectivePHP\Application
      */
-    interface ApplicationInterface
+    interface ApplicationInterface extends RequestHandlerInterface
     {
-
+        
         /**
          * @return mixed
          */
@@ -47,40 +44,28 @@
         public function getConfig() : Config;
 
         /**
-         * @param RequestInterface $request
+         * @param ServerRequestInterface $request
          *
          * @return ApplicationInterface
          */
-        public function setRequest(RequestInterface $request) : ApplicationInterface;
+        public function setRequest(ServerRequestInterface $request) : ApplicationInterface;
 
         /**
-         * @return RequestInterface
+         * @return ServerRequestInterface
          */
-        public function getRequest() : RequestInterface;
+        public function getRequest() : ServerRequestInterface;
 
         /**
-         * @param Response $request
+         * @param ResponseInterface $response
          *
          * @return ApplicationInterface
          */
-        public function setResponse(Response $request) : ApplicationInterface;
+        public function setResponse(ResponseInterface $response) : ApplicationInterface;
 
         /**
          * @return ResponseInterface
          */
-        public function getResponse() : Response;
-
-        /**
-         * @param $step
-         *
-         * @return Step
-         */
-        public function getStep($step) : Step;
-
-        /**
-         * @return Collection
-         */
-        public function getSteps() : Collection;
+        public function getResponse() : ResponseInterface;
 
         /**
          * @param \Throwable $exception

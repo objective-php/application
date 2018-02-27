@@ -27,7 +27,7 @@ class RequestWrapperTest extends TestCase
     }
 
     /**
-     * @throws \ObjectivePHP\Application\Exception
+     * @throws \ObjectivePHP\Application\Package\Exception
      */
    public function testBodyContentsIfNotEmpty()
    {
@@ -53,7 +53,7 @@ class RequestWrapperTest extends TestCase
    }
 
     /**
-     * @throws \ObjectivePHP\Application\Exception
+     * @throws \ObjectivePHP\Application\Package\Exception
      */
     public function testBodyContentsIfStreamIsEmpty()
     {

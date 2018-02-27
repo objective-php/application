@@ -1,6 +1,6 @@
 <?php
 
-namespace ObjectivePHP\Application\Workflow;
+namespace ObjectivePHP\Application\Exception;
 
 use ObjectivePHP\Application\Exception;
 

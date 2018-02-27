@@ -2,7 +2,6 @@
 
     namespace ObjectivePHP\Application\Middleware;
 
-    use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Invokable\InvokableInterface;
     use ObjectivePHP\Notification\Stack;
 

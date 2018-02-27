@@ -2,9 +2,6 @@
 
     namespace ObjectivePHP\Application\Action;
 
-    use ObjectivePHP\Application\Middleware\AbstractMiddleware;
-    use ObjectivePHP\Application\Middleware\MiddlewareInterface;
-
     /**
      * Class DefaultAction
      *

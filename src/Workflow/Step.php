@@ -1,12 +1,12 @@
 <?php
 
-    namespace ObjectivePHP\Application\Workflow;
+    namespace ObjectivePHP\Application\Exception;
     
     
     use ObjectivePHP\Application\Exception;
+    use ObjectivePHP\Application\Exception\Filter\FiltersHandler;
     use ObjectivePHP\Application\Middleware\EmbeddedMiddleware;
     use ObjectivePHP\Application\Middleware\MiddlewareInterface;
-    use ObjectivePHP\Application\Workflow\Filter\FiltersHandler;
     use ObjectivePHP\Primitives\Collection\Collection;
 
     /**

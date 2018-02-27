@@ -7,9 +7,7 @@ use ObjectivePHP\Application\{
     ApplicationInterface, Exception
 };
 use Zend\Diactoros\{
-    Response,
-    Response\HtmlResponse,
-    Response\SapiEmitter
+    Response, Response\HtmlResponse, Response\SapiEmitter
 };
 
 /**

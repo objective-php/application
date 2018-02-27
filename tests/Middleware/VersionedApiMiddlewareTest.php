@@ -15,7 +15,6 @@ use ObjectivePHP\Application\Middleware\MiddlewareInterface;
 use ObjectivePHP\Message\Request\HttpRequest;
 use ObjectivePHP\Message\Request\Parameter\Container\HttpParameterContainer;
 use ObjectivePHP\PHPUnit\TestCase;
-use ObjectivePHP\Application\Action\Exception;
 
 class VersionedApiMiddlewareTest extends TestCase
 {

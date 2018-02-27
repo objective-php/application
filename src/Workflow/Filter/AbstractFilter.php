@@ -1,6 +1,6 @@
 <?php
 
-namespace ObjectivePHP\Application\Workflow\Filter;
+namespace ObjectivePHP\Application\Exception\Filter;
 
 use ObjectivePHP\Invokable\AbstractInvokable;
 

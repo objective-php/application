@@ -3,8 +3,8 @@
     namespace Test\ObjectivePHP\Application\Action\Param;
 
 
-    use ObjectivePHP\Application\Action\Parameter\ParameterProcessor;
     use ObjectivePHP\Application\Action\Parameter\ActionParameter;
+    use ObjectivePHP\Application\Action\Parameter\ParameterProcessor;
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\DataProcessor\StringProcessor;
 

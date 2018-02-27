@@ -3,10 +3,8 @@
 namespace ObjectivePHP\Application\Action;
 
 
-use ObjectivePHP\Application\Action\HttpAction;
-use ObjectivePHP\Application\Action\SubRoutingAction;
-use Zend\Diactoros\Response\JsonResponse;
 use ObjectivePHP\Primitives\String\Str;
+use Zend\Diactoros\Response\JsonResponse;
 
 /**
  * Class AbstractRestfulAction

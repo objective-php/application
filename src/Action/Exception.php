@@ -10,7 +10,7 @@
 namespace ObjectivePHP\Application\Action;
 
 
-class Exception extends \ObjectivePHP\Application\Exception
+class Exception extends \ObjectivePHP\Application\Package\Exception
 {
     
 }

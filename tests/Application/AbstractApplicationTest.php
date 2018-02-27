@@ -1,4 +1,5 @@
 <?php
+
 use ObjectivePHP\Application\AbstractApplication;
 use ObjectivePHP\Application\Config\Param;
 use ObjectivePHP\Events\EventsHandler;

@@ -6,11 +6,10 @@
      * Time: 12:16
      */
     
-    namespace ObjectivePHP\Application\Workflow\Filter;
+    namespace ObjectivePHP\Application\Exception\Filter;
 
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Exception;
-    use ObjectivePHP\Invokable\InvokableInterface;
 
     /**
      * Class RouteFilter

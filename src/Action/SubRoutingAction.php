@@ -10,7 +10,6 @@ namespace ObjectivePHP\Application\Action;
 
 
 use ObjectivePHP\Application\ApplicationInterface;
-use ObjectivePHP\Application\Middleware\AbstractMiddleware;
 use ObjectivePHP\Application\Middleware\EmbeddedMiddleware;
 use ObjectivePHP\Application\Middleware\Exception;
 use ObjectivePHP\Application\Middleware\MiddlewareInterface;
