@@ -4,11 +4,11 @@ namespace ObjectivePHP\Application;
 
 use Composer\Autoload\ClassLoader;
 use ObjectivePHP\Application\Config\Param;
-use ObjectivePHP\Application\Exception\Workflow;
 use ObjectivePHP\Application\Exception\WorkflowException;
 use ObjectivePHP\Application\Operation\ExceptionHandler;
 use ObjectivePHP\Application\Package\PackageInterface;
 use ObjectivePHP\Application\Workflow\Filter\FiltersProviderInterface;
+use ObjectivePHP\Application\Workflow\Event as WorkflowEvent;
 use ObjectivePHP\Config\Config;
 use ObjectivePHP\Config\Loader\DirectoryLoader;
 use ObjectivePHP\Events\EventsHandler;
@@ -21,6 +21,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Zend\Diactoros\Response;
+use Zend\Diactoros\Response\EmitterInterface;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**
@@ -105,20 +106,27 @@ abstract class AbstractApplication implements ApplicationInterface
      * @var Collection
      */
     protected $packages;
-    
+
     /**
      * AbstractApplication constructor.
      *
      * @param ClassLoader|null $autoloader
+     * @param EventsHandler|null $eventsHandler
+     * @throws \ObjectivePHP\Events\Exception
+     * @throws \ObjectivePHP\Primitives\Exception
+     * @throws \ObjectivePHP\ServicesFactory\Exception\ServiceNotFoundException
      */
-    public function __construct(ClassLoader $autoloader = null)
+    public function __construct(ClassLoader $autoloader = null, EventsHandler $eventsHandler = null)
     {
         if ($autoloader) {
             $this->setAutoloader($autoloader);
         }
-        
-        $this->getEventsHandler()->trigger(Workflow::BOOTSTRAP_INIT);
-        
+
+        $this
+            ->setEventsHandler($eventsHandler)
+            ->getEventsHandler()
+            ->trigger(WorkflowEvent::BOOTSTRAP_INIT);
+
         $this->middlewares  = (new Collection())->restrictTo(MiddlewareInterface::class);
         $this->packages  = (new Collection())->restrictTo(PackageInterface::class);
         $this->routeMatcher = (new Matcher())->setSeparator('/');
@@ -144,7 +152,7 @@ abstract class AbstractApplication implements ApplicationInterface
         // initialize application by plugging middlewares
         $this->init();
         
-        $this->getEventsHandler()->trigger(Workflow::BOOTSTRAP_DONE);
+        $this->getEventsHandler()->trigger(WorkflowEvent::BOOTSTRAP_DONE);
     }
     
     public function isCli()
@@ -265,15 +273,21 @@ abstract class AbstractApplication implements ApplicationInterface
         
         return $this;
     }
-    
-    public function run()
+
+    /**
+     * @param EmitterInterface|null $emitter
+     * @return mixed|void
+     */
+    public function run(EmitterInterface $emitter = null)
     {
         try {
             
-            $this->getEventsHandler()->trigger();
+            $this->getEventsHandler()->trigger(WorkflowEvent::REQUEST_HANDLING_START);
             
             $response = $this->handle($this->getRequest());
-            $emitter  = new Response\SapiEmitter();
+            if (is_null($emitter)) {
+                $emitter = new Response\SapiEmitter();
+            }
             $emitter->emit($response);
         } catch (\Throwable $e) {
             $this->setException($e);
@@ -284,7 +298,6 @@ abstract class AbstractApplication implements ApplicationInterface
     
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        
         /** @var MiddlewareInterface $middleware */
         $middleware = $this->getNextMiddleware();
         
@@ -357,7 +370,6 @@ abstract class AbstractApplication implements ApplicationInterface
             
             return $middleware;
         }
-        
     }
     
     /**

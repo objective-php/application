@@ -1,98 +1,58 @@
 <?php
 
 use ObjectivePHP\Application\AbstractApplication;
-use ObjectivePHP\Application\Config\Param;
+use ObjectivePHP\Application\Workflow\Event as WorkflowEvent;
 use ObjectivePHP\Events\EventsHandler;
 use ObjectivePHP\PHPUnit\TestCase;
-use ObjectivePHP\ServicesFactory\ServicesFactory;
+use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response\EmitterInterface;
 
 
 class AbstractApplicationTest extends TestCase
 {
-    
-    
-    public function testDefaultEventsHandlerIsInstantiatedOnGet()
+    /**
+     * @test
+     *
+     * ObjectivePHP application trigger 9 main events to allow developers customize the workflow.
+     * It MUST trigger consecutively :
+     *     - ObjectivePHP\Application\Workflow\Event::BOOTSTRAP_INIT
+     *     - ObjectivePHP\Application\Workflow\Event::BOOTSTRAP_DONE
+     *     - ObjectivePHP\Application\Workflow\Event::PACKAGES_INIT
+     *     - ObjectivePHP\Application\Workflow\Event::PACKAGES_READY
+     *     - ObjectivePHP\Application\Workflow\Event::ROUTING_START
+     *     - ObjectivePHP\Application\Workflow\Event::ROUTING_DONE
+     *     - ObjectivePHP\Application\Workflow\Event::REQUEST_HANDLING_START
+     *     - ObjectivePHP\Application\Workflow\Event::REQUEST_HANDLING_DONE
+     *     - ObjectivePHP\Application\Workflow\Event::RESPONSE_SENT
+     */
+    public function applicationTriggerWorkflowEvents()
     {
-        /**
-         * @var $application AbstractApplication
-         */
-        $application = $this->getMockForAbstractClass(AbstractApplication::class);
-        
-        $eventsHandler = $application->getEventsHandler();
-        
-        $this->assertInstanceOf(EventsHandler::class, $eventsHandler);
-    }
-    
-    public function testDefaultServicesFactoryIsInstantiatedOnGet()
-    {
-        /**
-         * @var $application AbstractApplication
-         */
-        $application = $this->getMockForAbstractClass(AbstractApplication::class);
-        
-        $servicesFactory = $application->getServicesFactory();
-        
-        $this->assertInstanceOf(ServicesFactory::class, $servicesFactory);
-    }
-    
-    public function testRun()
-    {
-        /**
-         * @var $application AbstractApplication
-         */
-        $application = $this->getMockForAbstractClass(AbstractApplication::class);
-        
-        $application->addSteps('test');
-        $application->getStep('test')->plug(function ()
-        {
-        })->as('first')
-        ;
-        $application->getStep('test')->plug(function ()
-        {
-        })->as('second')
-        ;
-        
-        $application->run();
-        
-        $this->assertCount(2, $application->getExecutionTrace()['test']);
-    }
-    
-    public function testRunFilteredStep()
-    {
-        /** @var AbstractApplication $app */
-        $app = $this->getMockForAbstractClass(AbstractApplication::class);
-        
-        $app->addSteps('begin', 'end');
-        $app->getStep('begin')->plug(function ()
-        {
-        })->as('first')
-        ;
-        $app->getStep('end')->plug(function ()
-        {
-        })->as('second')->addFilter(function() { return false;});
-        
-        $app->run();
-        
-        $this->assertNull($app->getExecutionTrace()['end']);
-    }
+        $spy = $this->createMock(EventsHandler::class);
+        $spy
+            ->expects($this->exactly(9))
+            ->method('trigger')
+            ->withConsecutive(
+                [WorkflowEvent::BOOTSTRAP_INIT],
+                [WorkflowEvent::BOOTSTRAP_DONE],
+                [WorkflowEvent::PACKAGES_INIT],
+                [WorkflowEvent::PACKAGES_READY],
+                [WorkflowEvent::ROUTING_START],
+                [WorkflowEvent::ROUTING_DONE],
+                [WorkflowEvent::REQUEST_HANDLING_START],
+                [WorkflowEvent::REQUEST_HANDLING_DONE],
+                [WorkflowEvent::RESPONSE_SENT]
+            );
 
-    public function testParamsAreStoredInConfig()
-    {
-        $app = new class extends AbstractApplication {
-            public function init() {}
-        };
-        $app->setParam('test.param', 'test.value');
+        $application = $this->getMockBuilder(AbstractApplication::class)
+            ->setConstructorArgs([null, $spy])
+            ->setMethods(['getRequest', 'handle'])
+            ->getMockForAbstractClass();
 
-        $this->assertEquals('test.value', $app->getParam('test.param'));
-        $this->assertEquals('test.value', $app->getConfig()->subset(Param::class)->get('test.param'));
-    }
+        $application
+            ->method('getRequest')
+            ->willReturn($this->createMock(ServerRequestInterface::class));
 
-    public function testParamsAreFetchedFromConfig()
-    {
-        $app = $this->getMockForAbstractClass(AbstractApplication::class);
-        $app->getConfig()->import(new Param('test.param', 'test.value'));
-
-        $this->assertEquals('test.value', $app->getParam('test.param'));
+        $application->run($this->createMock(EmitterInterface::class));
     }
 }
 
