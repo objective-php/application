@@ -56,48 +56,6 @@
         public function getRequest() : ServerRequestInterface;
 
         /**
-         * @param ResponseInterface $response
-         *
-         * @return ApplicationInterface
-         */
-        public function setResponse(ResponseInterface $response) : ApplicationInterface;
-
-        /**
-         * @return ResponseInterface
-         */
-        public function getResponse() : ResponseInterface;
-
-        /**
-         * @param \Throwable $exception
-         *
-         * @return ApplicationInterface
-         */
-        public function setException(\Throwable $exception) : ApplicationInterface;
-
-        /**
-         * @return \Throwable
-         */
-        public function getException() : \Throwable;
-
-        /**
-         * @param mixed $invokable
-         *
-         * @return ApplicationInterface
-         */
-        public function setExceptionHandler($invokable) : ApplicationInterface;
-
-        /**
-         * @return InvokableInterface
-         */
-        public function getExceptionHandler() : InvokableInterface;
-
-        /**
-         * @return array
-         */
-        public function getExecutionTrace() : array;
-
-
-        /**
          * @return string
          */
         public function getEnv() : string;

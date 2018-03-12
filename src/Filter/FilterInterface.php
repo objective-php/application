@@ -9,9 +9,7 @@
 namespace ObjectivePHP\Application\Filter;
 
 
-use ObjectivePHP\Application\ApplicationInterface;
-
 interface FilterInterface
 {
-    public function filter(ApplicationInterface $app) : bool;
+    public function filter() : bool;
 }

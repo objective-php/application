@@ -4,17 +4,14 @@ namespace ObjectivePHP\Application;
 
 use Composer\Autoload\ClassLoader;
 use ObjectivePHP\Application\Config\Param;
-use ObjectivePHP\Application\Exception\Workflow;
 use ObjectivePHP\Application\Exception\WorkflowException;
-use ObjectivePHP\Application\Operation\ExceptionHandler;
+use ObjectivePHP\Application\Filter\FiltersProviderInterface;
+use ObjectivePHP\Application\Middleware\MiddlewareRegistry;
 use ObjectivePHP\Application\Package\PackageInterface;
-use ObjectivePHP\Application\Workflow\Filter\FiltersProviderInterface;
+use ObjectivePHP\Application\Workflow\PackagesInitListener;
+use ObjectivePHP\Application\Workflow\PackagesReadyListener;
 use ObjectivePHP\Config\Config;
-use ObjectivePHP\Config\Loader\DirectoryLoader;
 use ObjectivePHP\Events\EventsHandler;
-use ObjectivePHP\Invokable\Invokable;
-use ObjectivePHP\Invokable\InvokableInterface;
-use ObjectivePHP\Matcher\Matcher;
 use ObjectivePHP\Primitives\Collection\Collection;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
 use Psr\Http\Message\ResponseInterface;
@@ -28,84 +25,53 @@ use Zend\Diactoros\ServerRequestFactory;
  *
  * @package ObjectivePHP\Application
  */
-abstract class AbstractApplication implements ApplicationInterface
+abstract class AbstractHttpApplication implements ApplicationInterface
 {
     /**
      * @var EventsHandler
      */
     protected $eventsHandler;
-    
+
     /**
      * @var ServicesFactory
      */
     protected $servicesFactory;
-    
-    /**
-     * @var InvokableInterface
-     */
-    protected $exceptionHandler;
-    
-    /**
-     * @var \Throwable
-     */
-    protected $exception;
-    
+
     /**
      * @var ClassLoader
      */
     protected $autoloader;
-    
+
     /**
      * @var string
      */
     protected $env;
-    
+
     /**
      * @var Config
      */
     protected $config;
-    
+
     /**
      * @var ServerRequestInterface
      */
     protected $request;
-    
+
     /**
-     * @var ResponseInterface
-     */
-    protected $response;
-    
-    
-    /**
-     * @var Collection
-     */
-    protected $steps;
-    
-    /**
-     * @var array
-     */
-    protected $executionTrace = [];
-    
-    /**
-     * @var
-     */
-    protected $currentExecutionStack;
-    
-    /**
-     * @var Matcher
-     */
-    protected $routeMatcher;
-    
-    /**
-     * @var  Collection
+     * @var  MiddlewareRegistry
      */
     protected $middlewares;
-    
+
+    /**
+     * @var  MiddlewareRegistry
+     */
+    protected $exceptionHandlers;
+
     /**
      * @var Collection
      */
     protected $packages;
-    
+
     /**
      * AbstractApplication constructor.
      *
@@ -116,60 +82,56 @@ abstract class AbstractApplication implements ApplicationInterface
         if ($autoloader) {
             $this->setAutoloader($autoloader);
         }
-        
+
         $this->getEventsHandler()->trigger(Workflow::BOOTSTRAP_INIT);
-        
-        $this->middlewares  = (new Collection())->restrictTo(MiddlewareInterface::class);
-        $this->packages  = (new Collection())->restrictTo(PackageInterface::class);
-        $this->routeMatcher = (new Matcher())->setSeparator('/');
-        
+
+        $this->middlewares = new MiddlewareRegistry();
+        $this->exceptionHandlers = (new MiddlewareRegistry())->setDefaultInsertionPosition(MiddlewareRegistry::BEFORE_LAST);
+        $this->packages = (new Collection())->restrictTo(PackageInterface::class);
+
         // set default Exception Handler
-        $this->setExceptionHandler(new ExceptionHandler());
-        
+        //$this->getExceptionHandlers()->register()
+
         // init http request
-        if (!$this->isCli()) {
-            $request = ServerRequestFactory::fromGlobals(
-                $_SERVER,
-                $_GET,
-                $_POST,
-                $_COOKIE,
-                $_FILES
-            );
-            
-            $this->setRequest($request);
-        }
+        $request = ServerRequestFactory::fromGlobals(
+            $_SERVER,
+            $_GET,
+            $_POST,
+            $_COOKIE,
+            $_FILES
+        );
+
+        $this->setRequest($request);
+
         // let ServicesFactory and EventsHandler know each other
         $this->getEventsHandler()->setServicesFactory($this->getServicesFactory());
-        
+
         // initialize application by plugging middlewares
         $this->init();
-        
+
         $this->getEventsHandler()->trigger(Workflow::BOOTSTRAP_DONE);
+
+
     }
-    
-    public function isCli()
-    {
-        return php_sapi_name() === 'cli';
-    }
-    
+
     protected function registerPackage(PackageInterface $package, ...$filters)
     {
         $this->packages->append($package);
     }
-    
+
     /**
      * @return EventsHandler
      */
     public function getEventsHandler(): EventsHandler
     {
-        
+
         if (is_null($this->eventsHandler)) {
             $this->eventsHandler = new EventsHandler();
         }
-        
+
         return $this->eventsHandler;
     }
-    
+
     /**
      * @param EventsHandler $eventsHandler
      *
@@ -178,10 +140,10 @@ abstract class AbstractApplication implements ApplicationInterface
     public function setEventsHandler(EventsHandler $eventsHandler): ApplicationInterface
     {
         $this->eventsHandler = $eventsHandler;
-        
+
         return $this;
     }
-    
+
     /**
      * @return ServicesFactory
      */
@@ -190,10 +152,10 @@ abstract class AbstractApplication implements ApplicationInterface
         if (is_null($this->servicesFactory)) {
             $this->servicesFactory = new ServicesFactory();
         }
-        
+
         return $this->servicesFactory;
     }
-    
+
     /**
      * @param ServicesFactory $servicesFactory
      *
@@ -202,10 +164,10 @@ abstract class AbstractApplication implements ApplicationInterface
     public function setServicesFactory(ServicesFactory $servicesFactory)
     {
         $this->servicesFactory = $servicesFactory;
-        
+
         return $this;
     }
-    
+
     /**
      * @return string
      */
@@ -213,7 +175,7 @@ abstract class AbstractApplication implements ApplicationInterface
     {
         return $this->env;
     }
-    
+
     /**
      * @param string $env
      *
@@ -222,22 +184,10 @@ abstract class AbstractApplication implements ApplicationInterface
     public function setEnv($env): ApplicationInterface
     {
         $this->env = $env;
-        
+
         return $this;
     }
-    
-    /**
-     *
-     */
-    public function loadConfig($path)
-    {
-        $configLoader = new DirectoryLoader();
-        
-        $this->config = $configLoader->load($path);
-        
-        return $this;
-    }
-    
+
     /**
      * @return bool
      */
@@ -245,62 +195,88 @@ abstract class AbstractApplication implements ApplicationInterface
     {
         return (bool)$this->request;
     }
-    
-    /**
-     * @return ResponseInterface
-     */
-    public function getResponse(): ResponseInterface
-    {
-        return $this->response;
-    }
-    
-    /**
-     * @param Response $response
-     *
-     * @return $this
-     */
-    public function setResponse(ResponseInterface $response): ApplicationInterface
-    {
-        $this->response = $response;
-        
-        return $this;
-    }
-    
+
     public function run()
     {
+        $packages = $this->getPackages();
+        /** @var PackageInterface $package */
+        foreach($packages as $package)
+        {
+            if($package instanceof PackagesInitListener)
+            {
+                $this->getEventsHandler()->bind(Workflow::PACKAGES_INIT, [$package, 'onPackagesInit']);
+            }
+
+            if($package instanceof PackagesReadyListener)
+            {
+                $this->getEventsHandler()->bind(Workflow::PACKAGES_INIT, [$package, 'onPackagesReady']);
+            }
+        }
+
+        $this->getEventsHandler()->trigger(Workflow::PACKAGES_INIT);
+
+
+
+        $this->getEventsHandler()->trigger(Workflow::PACKAGES_READY);
+
+        $emitter = new Response\SapiEmitter();
+
         try {
-            
-            $this->getEventsHandler()->trigger();
-            
+
+            $this->getEventsHandler()->trigger(Workflow::REQUEST_HANDLING_START, $this);
             $response = $this->handle($this->getRequest());
-            $emitter  = new Response\SapiEmitter();
+            $this->getEventsHandler()->trigger(Workflow::REQUEST_HANDLING_DONE, $this, ['response' => $response]);
             $emitter->emit($response);
-        } catch (\Throwable $e) {
-            $this->setException($e);
-            $exceptionHandler = $this->getExceptionHandler();
-            $exceptionHandler($this);
+            $this->getEventsHandler()->trigger(Workflow::RESPONSE_SENT);
+        } catch (\Throwable $exception) {
+
+            $request = $this->getRequest()->withAttribute('exception', $exception);
+
+            $response = $exceptionHandler->handle($request);
+
+            $emitter->emit($response);
+
         }
     }
-    
+
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        
+
         /** @var MiddlewareInterface $middleware */
         $middleware = $this->getNextMiddleware();
-        
+
         if (!$middleware) {
             throw new WorkflowException('No suitable middleware was found to handle the request.');
         }
-        
+
         $this->getEventsHandler()->trigger('application.workflow.middleware.before', $middleware);
-        
+
         $response = $middleware->process($request, $this);
-        
+
         $this->getEventsHandler()->trigger('application.workflow.middleware.after', $middleware);
-        
+
         return $response;
     }
-    
+
+    /**
+     * @return MiddlewareInterface|null
+     */
+    protected function getNextMiddleware()
+    {
+        while ($middleware = $this->getMiddlewares()->current()) {
+
+            $this->getMiddlewares()->next();
+            // filter step
+
+            if (($middleware instanceof FiltersProviderInterface) && !$middleware->runFilters($this)) {
+                continue;
+            }
+
+            return $middleware;
+        }
+
+    }
+
     /**
      * @return ServerRequestInterface
      */
@@ -308,7 +284,7 @@ abstract class AbstractApplication implements ApplicationInterface
     {
         return $this->request;
     }
-    
+
     /**
      * @param ServerRequestInterface $request
      *
@@ -317,57 +293,18 @@ abstract class AbstractApplication implements ApplicationInterface
     public function setRequest(ServerRequestInterface $request): ApplicationInterface
     {
         $this->request = $request;
-        
+
         return $this;
     }
-    
+
     /**
-     * @return InvokableInterface
+     * @return MiddlewareRegistry
      */
-    public function getExceptionHandler(): InvokableInterface
-    {
-        return $this->exceptionHandler;
-    }
-    
-    /**
-     * @param  $exceptionHandler
-     *
-     * @return $this
-     */
-    public function setExceptionHandler($exceptionHandler): ApplicationInterface
-    {
-        $this->exceptionHandler = Invokable::cast($exceptionHandler);
-        
-        return $this;
-    }
-    
-    /**
-     * @return MiddlewareInterface|null
-     */
-    protected function getNextMiddleware()
-    {
-        while ($middleware = $this->getMiddlewares()->current()) {
-            
-            $this->getMiddlewares()->next();
-            // filter step
-            
-            if (($middleware instanceof FiltersProviderInterface) && !$middleware->runFilters($this)) {
-                continue;
-            }
-            
-            return $middleware;
-        }
-        
-    }
-    
-    /**
-     * @return Collection
-     */
-    public function getMiddlewares(): Collection
+    public function getMiddlewares(): MiddlewareRegistry
     {
         return $this->middlewares;
     }
-    
+
     /**
      * @return ClassLoader
      */
@@ -375,7 +312,7 @@ abstract class AbstractApplication implements ApplicationInterface
     {
         return $this->autoloader;
     }
-    
+
     /**
      * @param ClassLoader $autoloader
      *
@@ -384,10 +321,10 @@ abstract class AbstractApplication implements ApplicationInterface
     public function setAutoloader(ClassLoader $autoloader)
     {
         $this->autoloader = $autoloader;
-        
+
         return $this;
     }
-    
+
     /**
      * @return Collection
      */
@@ -395,7 +332,7 @@ abstract class AbstractApplication implements ApplicationInterface
     {
         return $this->getConfig()->subset(Param::class);
     }
-    
+
     /**
      * @return Config
      */
@@ -405,10 +342,10 @@ abstract class AbstractApplication implements ApplicationInterface
         if (is_null($this->config)) {
             $this->config = new Config();
         }
-        
+
         return $this->config;
     }
-    
+
     /**
      * @param Config $config
      *
@@ -417,10 +354,10 @@ abstract class AbstractApplication implements ApplicationInterface
     public function setConfig(Config $config): ApplicationInterface
     {
         $this->config = $config;
-        
+
         return $this;
     }
-    
+
     /**
      * @param Collection $params
      *
@@ -428,14 +365,14 @@ abstract class AbstractApplication implements ApplicationInterface
      */
     public function setParams($params)
     {
-        
+
         foreach (Collection::cast($params) as $param => $value) {
             $this->getConfig()->import(new Param($param, $value));
         }
-        
+
         return $this;
     }
-    
+
     /**
      * @param      $param
      * @param null $default
@@ -445,14 +382,14 @@ abstract class AbstractApplication implements ApplicationInterface
      */
     public function getParam($param, $default = null)
     {
-        
+
         if ($this->getConfig()->subset(Param::class)->has($param)) {
             return $this->getConfig()->subset(Param::class)->get($param);
         }
-        
+
         return $default;
     }
-    
+
     /**
      * @param $param
      * @param $value
@@ -462,66 +399,50 @@ abstract class AbstractApplication implements ApplicationInterface
     public function setParam($param, $value)
     {
         $this->getConfig()->import(new Param($param, $value));
-        
+
         return $this;
     }
-    
-    /**
-     * @return Matcher
-     */
-    public function getRouteMatcher()
-    {
-        return $this->routeMatcher;
-    }
-    
-    /**
-     * @param Matcher $routeMatcher
-     *
-     * @return $this
-     */
-    public function setRouteMatcher($routeMatcher)
-    {
-        $this->routeMatcher = $routeMatcher;
-        
-        return $this;
-    }
-    
-    /**
-     * @return \Throwable
-     */
-    public function getException(): \Throwable
-    {
-        return $this->exception;
-    }
-    
-    /**
-     * @param \Throwable $exception
-     *
-     * @return $this
-     */
-    public function setException(\Throwable $exception): ApplicationInterface
-    {
-        $this->exception = $exception;
-        
-        return $this;
-    }
-    
-    /**
-     * @return array
-     */
-    public function getExecutionTrace(): array
-    {
-        return $this->executionTrace;
-    }
-    
+
     public function plug(MiddlewareInterface $middleware, ...$filters)
     {
         if ($middleware instanceof FiltersProviderInterface) {
             $middleware->getFilters()->append(...$filters);
         }
-        
+
         $this->middlewares->append($middleware);
     }
-    
-    
+
+    /**
+     * @return Collection
+     */
+    public function getPackages(): Collection
+    {
+        return $this->packages;
+    }
+
+    /**
+     * @param Collection $packages
+     */
+    public function setPackages(Collection $packages)
+    {
+        $this->packages = $packages;
+    }
+
+    /**
+     * @return MiddlewareRegistry
+     */
+    public function getExceptionHandlers(): MiddlewareRegistry
+    {
+        return $this->exceptionHandlers;
+    }
+
+    /**
+     * @param MiddlewareRegistry $exceptionHandlers
+     */
+    public function setExceptionHandlers(MiddlewareRegistry $exceptionHandlers)
+    {
+        $this->exceptionHandlers = $exceptionHandlers;
+    }
+
+
 }

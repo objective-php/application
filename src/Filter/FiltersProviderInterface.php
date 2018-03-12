@@ -19,6 +19,6 @@ interface FiltersProviderInterface
 
     public function clearFilters();
     
-    public function runFilters(ApplicationInterface $app);
+    public function runFilters();
 
 }

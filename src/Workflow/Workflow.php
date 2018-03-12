@@ -6,7 +6,7 @@
  * Time: 15:40
  */
 
-namespace ObjectivePHP\Application\Exception;
+namespace ObjectivePHP\Application;
 
 
 abstract class Workflow
