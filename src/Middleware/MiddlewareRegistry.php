@@ -9,12 +9,11 @@
 namespace ObjectivePHP\Application\Middleware;
 
 
-use ObjectivePHP\Application\ApplicationAwareInterface;
-use ObjectivePHP\Application\Filter\FiltersProviderInterface;
+use ObjectivePHP\Filter\FiltersProviderInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
 use Psr\Http\Server\MiddlewareInterface;
 
-class MiddlewareRegistry extends Collection implements ApplicationAwareInterface
+class MiddlewareRegistry extends Collection
 {
 
     const LAST = 'last';
@@ -30,9 +29,8 @@ class MiddlewareRegistry extends Collection implements ApplicationAwareInterface
      */
     public function __construct(array $input = [])
     {
-        $this->restrictTo(MiddlewareInterface::class);
-
         parent::__construct($input);
+        $this->restrictTo(MiddlewareInterface::class);
     }
 
     public function register(MiddlewareInterface $middleware, $position = null)
@@ -63,19 +61,21 @@ class MiddlewareRegistry extends Collection implements ApplicationAwareInterface
     public function setDefaultInsertionPosition(string $defaultInsertionPosition)
     {
         $this->defaultInsertionPosition = $defaultInsertionPosition;
+
+        return $this;
     }
 
     /**
      * @return MiddlewareInterface|null
      */
-    protected function getNextMiddleware()
+    public function getNextMiddleware()
     {
         while ($middleware = $this->current()) {
 
             $this->next();
             // filter step
 
-            if (($middleware instanceof FiltersProviderInterface) && !$middleware->runFilters()) {
+            if (($middleware instanceof FiltersProviderInterface) && !$middleware->getFilterEngine()->run()) {
                 continue;
             }
 

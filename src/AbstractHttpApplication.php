@@ -5,13 +5,14 @@ namespace ObjectivePHP\Application;
 use Composer\Autoload\ClassLoader;
 use ObjectivePHP\Application\Config\Param;
 use ObjectivePHP\Application\Exception\WorkflowException;
-use ObjectivePHP\Application\Filter\FiltersProviderInterface;
 use ObjectivePHP\Application\Middleware\MiddlewareRegistry;
 use ObjectivePHP\Application\Package\PackageInterface;
 use ObjectivePHP\Application\Workflow\PackagesInitListener;
 use ObjectivePHP\Application\Workflow\PackagesReadyListener;
+use ObjectivePHP\Application\Workflow\Workflow;
 use ObjectivePHP\Config\Config;
 use ObjectivePHP\Events\EventsHandler;
+use ObjectivePHP\Filter\FiltersProviderInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
 use Psr\Http\Message\ResponseInterface;
@@ -116,6 +117,10 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
     protected function registerPackage(PackageInterface $package, ...$filters)
     {
+        if($package instanceof FiltersProviderInterface && $filters)
+        {
+            $package->getFilterEngine()->registerFilter(...$filters);
+        }
         $this->packages->append($package);
     }
 
@@ -222,7 +227,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         $emitter = new Response\SapiEmitter();
 
         try {
-
             $this->getEventsHandler()->trigger(Workflow::REQUEST_HANDLING_START, $this);
             $response = $this->handle($this->getRequest());
             $this->getEventsHandler()->trigger(Workflow::REQUEST_HANDLING_DONE, $this, ['response' => $response]);
@@ -232,7 +236,7 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
             $request = $this->getRequest()->withAttribute('exception', $exception);
 
-            $response = $exceptionHandler->handle($request);
+            $response = $this->handleException($request);
 
             $emitter->emit($response);
 
@@ -254,6 +258,20 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         $response = $middleware->process($request, $this);
 
         $this->getEventsHandler()->trigger('application.workflow.middleware.after', $middleware);
+
+        return $response;
+    }
+
+    public function handleException(ServerRequestInterface $request) : ResponseInterface
+    {
+        /** @var MiddlewareInterface $middleware */
+        $middleware = $this->getExceptionHandlers()->getNextMiddleware();
+
+        if (!$middleware) {
+            throw new WorkflowException('No suitable middleware was found to handle the request.');
+        }
+
+        $response = $middleware->process($request, $this);
 
         return $response;
     }
@@ -406,7 +424,7 @@ abstract class AbstractHttpApplication implements ApplicationInterface
     public function plug(MiddlewareInterface $middleware, ...$filters)
     {
         if ($middleware instanceof FiltersProviderInterface) {
-            $middleware->getFilters()->append(...$filters);
+            $middleware->getFilterEngine()->registerFilter(...$filters);
         }
 
         $this->middlewares->append($middleware);

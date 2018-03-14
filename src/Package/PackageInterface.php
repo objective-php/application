@@ -3,9 +3,9 @@
 namespace ObjectivePHP\Application\Package;
 
 
-use ObjectivePHP\Application\Filter\FiltersProviderInterface;
+use ObjectivePHP\Filter\FiltersProviderInterface;
 
 interface PackageInterface extends FiltersProviderInterface
 {
-    
+
 }

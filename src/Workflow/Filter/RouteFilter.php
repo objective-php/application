@@ -16,7 +16,7 @@
      *
      * @package ObjectivePHP\Application\Workflow
      */
-    class RouteFilter extends AbstractFilter
+    class RouteFilter extends AbstractWorkflowFilter
     {
 
         /**
@@ -24,7 +24,7 @@
          * @return bool
          * @throws Exception
          */
-        public function run(ApplicationInterface $app) : bool
+        public function filter(ApplicationInterface $app) : bool
         {
             // check route filter
             if ($this->getFilter() != '*')
