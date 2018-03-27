@@ -5,6 +5,7 @@ namespace ObjectivePHP\Application;
 use Composer\Autoload\ClassLoader;
 use ObjectivePHP\Application\Config\ApplicationName;
 use ObjectivePHP\Application\Exception\WorkflowException;
+use ObjectivePHP\Application\ExceptionHandler\PhtmlExceptionHandler;
 use ObjectivePHP\Application\Middleware\MiddlewareRegistry;
 use ObjectivePHP\Application\Package\PackageInterface;
 use ObjectivePHP\Application\Workflow\PackagesInitListener;
@@ -86,6 +87,9 @@ abstract class AbstractHttpApplication implements ApplicationInterface
      */
     protected $router;
 
+    /** @var string */
+    protected $projectNamespace;
+
     /**
      * AbstractApplication constructor.
      *
@@ -93,8 +97,14 @@ abstract class AbstractHttpApplication implements ApplicationInterface
      */
     public function __construct(ClassLoader $autoloader = null)
     {
+
+
+        $this->projectNamespace = (new \ReflectionObject($this))->getNamespaceName();
+
         if ($autoloader) {
+            // register packages autoloading
             $this->setAutoloader($autoloader);
+            $this->getAutoloader()->addPsr4($this->getProjectNamespace() . '\\Package\\', 'packages/');
         }
 
         $this->eventsHandler = new EventsHandler();
@@ -106,6 +116,9 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         $this->exceptionHandlers = (new MiddlewareRegistry())->setDefaultInsertionPosition(MiddlewareRegistry::BEFORE_LAST);
         $this->packages = (new Collection())->restrictTo(PackageInterface::class);
         $this->router = (new MetaRouter())->registerRouter(new PathMapperRouter());
+
+        // register default exception handler
+        $this->getExceptionHandlers()->registerMiddleware(new PhtmlExceptionHandler(), MiddlewareRegistry::LAST);
 
         // register default configuration directives
         $this->getConfig()->registerDirective(...$this->getConfigDirectives());
@@ -142,11 +155,22 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
     }
 
+    /**
+     * @param $eventName
+     * @param null $origin
+     * @param array $context
+     * @throws \ObjectivePHP\Events\Exception
+     * @throws \ObjectivePHP\ServicesFactory\Exception\ServiceNotFoundException
+     */
     protected function triggerWorkflowEvent($eventName, $origin = null, $context = [])
     {
         $this->getEventsHandler()->trigger($eventName, $origin, $context, new WorkflowEvent($this));
     }
 
+    /**
+     * @param PackageInterface $package
+     * @param array ...$filters
+     */
     public function registerPackage(PackageInterface $package, ...$filters)
     {
         if ($package instanceof FiltersProviderInterface && $filters) {
@@ -224,6 +248,14 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         return (bool)$this->request;
     }
 
+    /**
+     * @return mixed|void
+     * @throws WorkflowException
+     * @throws \ObjectivePHP\Config\Exception\ConfigLoadingException
+     * @throws \ObjectivePHP\Events\Exception
+     * @throws \ObjectivePHP\Primitives\Exception
+     * @throws \ObjectivePHP\ServicesFactory\Exception\ServiceNotFoundException
+     */
     public function run()
     {
 
@@ -262,7 +294,7 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         $routingResult = $this->router->route($this);
         $action = $routingResult->getMatchedRoute()->getAction();
 
-        $this->getMiddlewares()->register($action);
+        $this->getMiddlewares()->registerMiddleware($action);
 
         $this->triggerWorkflowEvent(WorkflowEvent::ROUTING_DONE);
 
@@ -286,6 +318,14 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         }
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws WorkflowException
+     * @throws \ObjectivePHP\Events\Exception
+     * @throws \ObjectivePHP\Primitives\Exception
+     * @throws \ObjectivePHP\ServicesFactory\Exception\ServiceNotFoundException
+     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
 
@@ -305,11 +345,15 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         return $response;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws WorkflowException
+     */
     public function handleException(ServerRequestInterface $request): ResponseInterface
     {
         /** @var MiddlewareInterface $middleware */
         $middleware = $this->getExceptionHandlers()->getNextMiddleware();
-
         if (!$middleware) {
             throw new WorkflowException('No suitable middleware was found to handle the uncaught exception.', null, $request->getAttribute('exception'));
         }
@@ -412,6 +456,10 @@ abstract class AbstractHttpApplication implements ApplicationInterface
     }
 
 
+    /**
+     * @param MiddlewareInterface $middleware
+     * @param array ...$filters
+     */
     public function plug(MiddlewareInterface $middleware, ...$filters)
     {
         if ($middleware instanceof FiltersProviderInterface) {
@@ -468,13 +516,21 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         ];
     }
 
+    /**
+     * @return array
+     */
     protected function getConfigParams()
     {
         return [
             'application.name' => 'ObjectivePHP Starter Kit',
             'router.url-alias' => ['/' => 'Home'],
-            'router.action-namespace' => ['default' => (new \ReflectionObject($this))->getNamespaceName() . '\\Action']
+            'router.action-namespace' => ['default' => $this->getProjectNamespace() . '\\Action']
         ];
+    }
+
+    protected function getProjectNamespace()
+    {
+        return $this->projectNamespace;
     }
 
 }

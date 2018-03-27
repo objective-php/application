@@ -33,12 +33,11 @@ class MiddlewareRegistry extends Collection
         $this->restrictTo(MiddlewareInterface::class);
     }
 
-    public function register(MiddlewareInterface $middleware, $position = null)
+    public function registerMiddleware(MiddlewareInterface $middleware, $position = null)
     {
         $position = $position ?? $this->getDefaultInsertionPosition();
 
-        switch($position)
-        {
+        switch ($position) {
             case self::LAST:
                 $this->append($middleware);
                 break;
@@ -83,7 +82,6 @@ class MiddlewareRegistry extends Collection
         }
 
     }
-
 
 
 }
