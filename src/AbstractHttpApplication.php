@@ -3,17 +3,25 @@
 namespace ObjectivePHP\Application;
 
 use Composer\Autoload\ClassLoader;
-use ObjectivePHP\Application\Config\Param;
+use ObjectivePHP\Application\Config\ApplicationName;
 use ObjectivePHP\Application\Exception\WorkflowException;
 use ObjectivePHP\Application\Middleware\MiddlewareRegistry;
 use ObjectivePHP\Application\Package\PackageInterface;
 use ObjectivePHP\Application\Workflow\PackagesInitListener;
 use ObjectivePHP\Application\Workflow\PackagesReadyListener;
-use ObjectivePHP\Application\Workflow\Workflow;
+use ObjectivePHP\Application\Workflow\WorkflowEvent;
 use ObjectivePHP\Config\Config;
+use ObjectivePHP\Config\ConfigInterface;
+use ObjectivePHP\Config\ConfigProviderInterface;
+use ObjectivePHP\Config\Loader\FileLoader;
 use ObjectivePHP\Events\EventsHandler;
 use ObjectivePHP\Filter\FiltersProviderInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
+use ObjectivePHP\Router\Config\ActionNamespace;
+use ObjectivePHP\Router\Config\UrlAlias;
+use ObjectivePHP\Router\MetaRouter;
+use ObjectivePHP\Router\PathMapperRouter;
+use ObjectivePHP\Router\RouterInterface;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -74,6 +82,11 @@ abstract class AbstractHttpApplication implements ApplicationInterface
     protected $packages;
 
     /**
+     * @var RouterInterface
+     */
+    protected $router;
+
+    /**
      * AbstractApplication constructor.
      *
      * @param ClassLoader|null $autoloader
@@ -84,11 +97,25 @@ abstract class AbstractHttpApplication implements ApplicationInterface
             $this->setAutoloader($autoloader);
         }
 
-        $this->getEventsHandler()->trigger(Workflow::BOOTSTRAP_INIT);
+        $this->eventsHandler = new EventsHandler();
 
+        $this->triggerWorkflowEvent(WorkflowEvent::BOOTSTRAP_INIT);
+
+        $this->servicesFactory = new ServicesFactory();
         $this->middlewares = new MiddlewareRegistry();
         $this->exceptionHandlers = (new MiddlewareRegistry())->setDefaultInsertionPosition(MiddlewareRegistry::BEFORE_LAST);
         $this->packages = (new Collection())->restrictTo(PackageInterface::class);
+        $this->router = (new MetaRouter())->registerRouter(new PathMapperRouter());
+
+        // register default configuration directives
+        $this->getConfig()->registerDirective(...$this->getConfigDirectives());
+
+        // load default configuration parameters
+        $this->getConfig()->hydrate($this->getConfigParams());
+
+
+        // register application in services factory
+        $this->getServicesFactory()->registerService(['id' => 'application', 'instance' => $this]);
 
         // set default Exception Handler
         //$this->getExceptionHandlers()->register()
@@ -110,17 +137,22 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         // initialize application by plugging middlewares
         $this->init();
 
-        $this->getEventsHandler()->trigger(Workflow::BOOTSTRAP_DONE);
+        $this->triggerWorkflowEvent(WorkflowEvent::BOOTSTRAP_DONE);
 
 
     }
 
-    protected function registerPackage(PackageInterface $package, ...$filters)
+    protected function triggerWorkflowEvent($eventName, $origin = null, $context = [])
     {
-        if($package instanceof FiltersProviderInterface && $filters)
-        {
+        $this->getEventsHandler()->trigger($eventName, $origin, $context, new WorkflowEvent($this));
+    }
+
+    public function registerPackage(PackageInterface $package, ...$filters)
+    {
+        if ($package instanceof FiltersProviderInterface && $filters) {
             $package->getFilterEngine()->registerFilter(...$filters);
         }
+
         $this->packages->append($package);
     }
 
@@ -129,11 +161,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
      */
     public function getEventsHandler(): EventsHandler
     {
-
-        if (is_null($this->eventsHandler)) {
-            $this->eventsHandler = new EventsHandler();
-        }
-
         return $this->eventsHandler;
     }
 
@@ -154,10 +181,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
      */
     public function getServicesFactory(): ServicesFactory
     {
-        if (is_null($this->servicesFactory)) {
-            $this->servicesFactory = new ServicesFactory();
-        }
-
         return $this->servicesFactory;
     }
 
@@ -203,35 +226,55 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
     public function run()
     {
+
         $packages = $this->getPackages();
         /** @var PackageInterface $package */
-        foreach($packages as $package)
-        {
-            if($package instanceof PackagesInitListener)
-            {
-                $this->getEventsHandler()->bind(Workflow::PACKAGES_INIT, [$package, 'onPackagesInit']);
+        foreach ($packages as $package) {
+
+            if ($package instanceof FiltersProviderInterface) {
+                if (!$package->getFilterEngine()->filter($this)) continue;
             }
 
-            if($package instanceof PackagesReadyListener)
-            {
-                $this->getEventsHandler()->bind(Workflow::PACKAGES_INIT, [$package, 'onPackagesReady']);
+            if ($package instanceof ConfigProviderInterface) {
+                $this->getConfig()->merge($package->getConfig());
+            }
+
+            if ($package instanceof PackagesInitListener) {
+                $this->getEventsHandler()->bind(WorkflowEvent::PACKAGES_INIT, [$package, 'onPackagesInit']);
+            }
+
+            if ($package instanceof PackagesReadyListener) {
+                $this->getEventsHandler()->bind(WorkflowEvent::PACKAGES_INIT, [$package, 'onPackagesReady']);
             }
         }
 
-        $this->getEventsHandler()->trigger(Workflow::PACKAGES_INIT);
+        // read configuration
+        if (is_dir('app/config')) {
+            $this->getConfig()->hydrate((new FileLoader())->load('app/config'));
+        }
 
+        $this->triggerWorkflowEvent(WorkflowEvent::PACKAGES_INIT);
 
+        $this->triggerWorkflowEvent(WorkflowEvent::PACKAGES_READY);
 
-        $this->getEventsHandler()->trigger(Workflow::PACKAGES_READY);
+        $this->triggerWorkflowEvent(WorkflowEvent::ROUTING_START);
+
+        $routingResult = $this->router->route($this);
+        $action = $routingResult->getMatchedRoute()->getAction();
+
+        $this->getMiddlewares()->register($action);
+
+        $this->triggerWorkflowEvent(WorkflowEvent::ROUTING_DONE);
+
 
         $emitter = new Response\SapiEmitter();
 
         try {
-            $this->getEventsHandler()->trigger(Workflow::REQUEST_HANDLING_START, $this);
+            $this->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_START, $this);
             $response = $this->handle($this->getRequest());
-            $this->getEventsHandler()->trigger(Workflow::REQUEST_HANDLING_DONE, $this, ['response' => $response]);
+            $this->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_DONE, $this, ['response' => $response]);
             $emitter->emit($response);
-            $this->getEventsHandler()->trigger(Workflow::RESPONSE_SENT);
+            $this->triggerWorkflowEvent(WorkflowEvent::RESPONSE_SENT);
         } catch (\Throwable $exception) {
 
             $request = $this->getRequest()->withAttribute('exception', $exception);
@@ -253,22 +296,22 @@ abstract class AbstractHttpApplication implements ApplicationInterface
             throw new WorkflowException('No suitable middleware was found to handle the request.');
         }
 
-        $this->getEventsHandler()->trigger('application.workflow.middleware.before', $middleware);
+        $this->triggerWorkflowEvent('application.workflow.middleware.before', $middleware);
 
         $response = $middleware->process($request, $this);
 
-        $this->getEventsHandler()->trigger('application.workflow.middleware.after', $middleware);
+        $this->triggerWorkflowEvent('application.workflow.middleware.after', $middleware);
 
         return $response;
     }
 
-    public function handleException(ServerRequestInterface $request) : ResponseInterface
+    public function handleException(ServerRequestInterface $request): ResponseInterface
     {
         /** @var MiddlewareInterface $middleware */
         $middleware = $this->getExceptionHandlers()->getNextMiddleware();
 
         if (!$middleware) {
-            throw new WorkflowException('No suitable middleware was found to handle the request.');
+            throw new WorkflowException('No suitable middleware was found to handle the uncaught exception.', null, $request->getAttribute('exception'));
         }
 
         $response = $middleware->process($request, $this);
@@ -286,7 +329,7 @@ abstract class AbstractHttpApplication implements ApplicationInterface
             $this->getMiddlewares()->next();
             // filter step
 
-            if (($middleware instanceof FiltersProviderInterface) && !$middleware->runFilters($this)) {
+            if (($middleware instanceof FiltersProviderInterface) && !$middleware->getFilterEngine()->run($this)) {
                 continue;
             }
 
@@ -326,7 +369,7 @@ abstract class AbstractHttpApplication implements ApplicationInterface
     /**
      * @return ClassLoader
      */
-    public function getAutoloader()
+    public function getAutoloader(): ClassLoader
     {
         return $this->autoloader;
     }
@@ -344,17 +387,9 @@ abstract class AbstractHttpApplication implements ApplicationInterface
     }
 
     /**
-     * @return Collection
-     */
-    public function getParams()
-    {
-        return $this->getConfig()->subset(Param::class);
-    }
-
-    /**
      * @return Config
      */
-    public function getConfig(): Config
+    public function getConfig(): ConfigInterface
     {
         // init Config
         if (is_null($this->config)) {
@@ -369,57 +404,13 @@ abstract class AbstractHttpApplication implements ApplicationInterface
      *
      * @return $this
      */
-    public function setConfig(Config $config): ApplicationInterface
+    public function setConfig(ConfigInterface $config): ApplicationInterface
     {
         $this->config = $config;
 
         return $this;
     }
 
-    /**
-     * @param Collection $params
-     *
-     * @return $this
-     */
-    public function setParams($params)
-    {
-
-        foreach (Collection::cast($params) as $param => $value) {
-            $this->getConfig()->import(new Param($param, $value));
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param      $param
-     * @param null $default
-     *
-     * @return mixed|null
-     * @throws \ObjectivePHP\Primitives\Exception
-     */
-    public function getParam($param, $default = null)
-    {
-
-        if ($this->getConfig()->subset(Param::class)->has($param)) {
-            return $this->getConfig()->subset(Param::class)->get($param);
-        }
-
-        return $default;
-    }
-
-    /**
-     * @param $param
-     * @param $value
-     *
-     * @throws \ObjectivePHP\Primitives\Exception
-     */
-    public function setParam($param, $value)
-    {
-        $this->getConfig()->import(new Param($param, $value));
-
-        return $this;
-    }
 
     public function plug(MiddlewareInterface $middleware, ...$filters)
     {
@@ -462,5 +453,28 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         $this->exceptionHandlers = $exceptionHandlers;
     }
 
+    /**
+     * Defines default application config directives
+     */
+    protected function getConfigDirectives(): array
+    {
+        return [
+            // application config
+            new ApplicationName(),
+            // meta router config
+            new UrlAlias(),
+            new ActionNamespace()
+
+        ];
+    }
+
+    protected function getConfigParams()
+    {
+        return [
+            'application.name' => 'ObjectivePHP Starter Kit',
+            'router.url-alias' => ['/' => 'Home'],
+            'router.action-namespace' => ['default' => (new \ReflectionObject($this))->getNamespaceName() . '\\Action']
+        ];
+    }
 
 }

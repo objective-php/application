@@ -9,11 +9,9 @@
 namespace ObjectivePHP\Application\Workflow;
 
 
-use ObjectivePHP\Events\EventInterface;
-
 interface PackagesReadyListener
 {
 
-    public function onPackagesReady(EventInterface $event);
-    
+    public function onPackagesReady(WorkflowEventInterface $event);
+
 }
