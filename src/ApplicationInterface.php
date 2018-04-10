@@ -5,6 +5,7 @@ namespace ObjectivePHP\Application;
 use Composer\Autoload\ClassLoader;
 use ObjectivePHP\Config\Config;
 use ObjectivePHP\Config\ConfigInterface;
+use ObjectivePHP\Config\ConfigProviderInterface;
 use ObjectivePHP\Events\EventsHandler;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
 use Psr\Http\Message\ServerRequestInterface;
@@ -15,7 +16,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  *
  * @package ObjectivePHP\Application
  */
-interface ApplicationInterface extends RequestHandlerInterface
+interface ApplicationInterface extends RequestHandlerInterface, ConfigProviderInterface
 {
 
     /**

@@ -12,9 +12,10 @@ use ObjectivePHP\Application\Workflow\PackagesInitListener;
 use ObjectivePHP\Application\Workflow\PackagesReadyListener;
 use ObjectivePHP\Application\Workflow\WorkflowEvent;
 use ObjectivePHP\Config\Config;
+use ObjectivePHP\Config\ConfigAccessorsTrait;
 use ObjectivePHP\Config\ConfigInterface;
 use ObjectivePHP\Config\ConfigProviderInterface;
-use ObjectivePHP\Config\Loader\FileLoader;
+use ObjectivePHP\Config\Loader\FileLoader\FileLoader;
 use ObjectivePHP\Events\EventsHandler;
 use ObjectivePHP\Filter\FiltersProviderInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
@@ -24,6 +25,7 @@ use ObjectivePHP\Router\MetaRouter;
 use ObjectivePHP\Router\PathMapperRouter;
 use ObjectivePHP\Router\RouterInterface;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
+use ObjectivePHP\ServicesFactory\Specification\PrefabServiceSpecification;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -37,6 +39,9 @@ use Zend\Diactoros\ServerRequestFactory;
  */
 abstract class AbstractHttpApplication implements ApplicationInterface
 {
+
+    use ConfigAccessorsTrait;
+
     /**
      * @var EventsHandler
      */
@@ -56,11 +61,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
      * @var string
      */
     protected $env;
-
-    /**
-     * @var Config
-     */
-    protected $config;
 
     /**
      * @var ServerRequestInterface
@@ -111,7 +111,7 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
         $this->triggerWorkflowEvent(WorkflowEvent::BOOTSTRAP_INIT);
 
-        $this->servicesFactory = new ServicesFactory();
+        $this->servicesFactory = (new ServicesFactory())->registerService(new PrefabServiceSpecification('application', $this));
         $this->middlewares = new MiddlewareRegistry();
         $this->exceptionHandlers = (new MiddlewareRegistry())->setDefaultInsertionPosition(MiddlewareRegistry::BEFORE_LAST);
         $this->packages = (new Collection())->restrictTo(PackageInterface::class);
@@ -258,50 +258,49 @@ abstract class AbstractHttpApplication implements ApplicationInterface
      */
     public function run()
     {
-
-        $packages = $this->getPackages();
-        /** @var PackageInterface $package */
-        foreach ($packages as $package) {
-
-            if ($package instanceof FiltersProviderInterface) {
-                if (!$package->getFilterEngine()->filter($this)) continue;
-            }
-
-            if ($package instanceof ConfigProviderInterface) {
-                $this->getConfig()->merge($package->getConfig());
-            }
-
-            if ($package instanceof PackagesInitListener) {
-                $this->getEventsHandler()->bind(WorkflowEvent::PACKAGES_INIT, [$package, 'onPackagesInit']);
-            }
-
-            if ($package instanceof PackagesReadyListener) {
-                $this->getEventsHandler()->bind(WorkflowEvent::PACKAGES_INIT, [$package, 'onPackagesReady']);
-            }
-        }
-
-        // read configuration
-        if (is_dir('app/config')) {
-            $this->getConfig()->hydrate((new FileLoader())->load('app/config'));
-        }
-
-        $this->triggerWorkflowEvent(WorkflowEvent::PACKAGES_INIT);
-
-        $this->triggerWorkflowEvent(WorkflowEvent::PACKAGES_READY);
-
-        $this->triggerWorkflowEvent(WorkflowEvent::ROUTING_START);
-
-        $routingResult = $this->router->route($this);
-        $action = $routingResult->getMatchedRoute()->getAction();
-
-        $this->getMiddlewares()->registerMiddleware($action);
-
-        $this->triggerWorkflowEvent(WorkflowEvent::ROUTING_DONE);
-
-
-        $emitter = new Response\SapiEmitter();
-
         try {
+            $emitter = new Response\SapiEmitter();
+            $packages = $this->getPackages();
+
+            /** @var PackageInterface $package */
+            foreach ($packages as $package) {
+
+                if ($package instanceof FiltersProviderInterface) {
+                    if (!$package->getFilterEngine()->filter($this)) continue;
+                }
+
+                if ($package instanceof ConfigProviderInterface) {
+                    $this->getConfig()->merge($package->getConfig());
+                }
+
+                if ($package instanceof PackagesInitListener) {
+                    $this->getEventsHandler()->bind(WorkflowEvent::PACKAGES_INIT, [$package, 'onPackagesInit']);
+                }
+
+                if ($package instanceof PackagesReadyListener) {
+                    $this->getEventsHandler()->bind(WorkflowEvent::PACKAGES_INIT, [$package, 'onPackagesReady']);
+                }
+            }
+
+            // read configuration
+            if (is_dir('app/config')) {
+                $this->getConfig()->hydrate((new FileLoader())->load('app/config'));
+            }
+
+            $this->triggerWorkflowEvent(WorkflowEvent::PACKAGES_INIT);
+
+            $this->triggerWorkflowEvent(WorkflowEvent::PACKAGES_READY);
+
+            $this->triggerWorkflowEvent(WorkflowEvent::ROUTING_START);
+
+            $routingResult = $this->getRouter()->route($this->getRequest(), $this);
+            $action = $routingResult->getMatchedRoute()->getAction();
+
+            $this->getMiddlewares()->registerMiddleware($action);
+
+            $this->triggerWorkflowEvent(WorkflowEvent::ROUTING_DONE);
+
+
             $this->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_START, $this);
             $response = $this->handle($this->getRequest());
             $this->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_DONE, $this, ['response' => $response]);
@@ -316,6 +315,22 @@ abstract class AbstractHttpApplication implements ApplicationInterface
             $emitter->emit($response);
 
         }
+    }
+
+    /**
+     * @return RouterInterface
+     */
+    public function getRouter(): RouterInterface
+    {
+        return $this->router;
+    }
+
+    /**
+     * @param RouterInterface $router
+     */
+    public function setRouter(RouterInterface $router)
+    {
+        $this->router = $router;
     }
 
     /**
@@ -335,6 +350,8 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         if (!$middleware) {
             throw new WorkflowException('No suitable middleware was found to handle the request.');
         }
+
+        $this->getServicesFactory()->injectDependencies($middleware);
 
         $this->triggerWorkflowEvent('application.workflow.middleware.before', $middleware);
 
@@ -444,19 +461,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
     }
 
     /**
-     * @param Config $config
-     *
-     * @return $this
-     */
-    public function setConfig(ConfigInterface $config): ApplicationInterface
-    {
-        $this->config = $config;
-
-        return $this;
-    }
-
-
-    /**
      * @param MiddlewareInterface $middleware
      * @param array ...$filters
      */
@@ -512,7 +516,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
             // meta router config
             new UrlAlias(),
             new ActionNamespace()
-
         ];
     }
 

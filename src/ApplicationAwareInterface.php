@@ -2,7 +2,8 @@
 
 namespace ObjectivePHP\Application;
 
-use ObjectivePHP\ServicesFactory\Specs\InjectionAnnotationProvider;
+use ObjectivePHP\ServicesFactory\Specification\InjectionAnnotationProvider;
+
 
 /**
  * Interface ApplicationAwareInterface
