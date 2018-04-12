@@ -4,6 +4,7 @@ namespace ObjectivePHP\Application;
 
 use Composer\Autoload\ClassLoader;
 use ObjectivePHP\Application\Config\ApplicationName;
+use ObjectivePHP\Application\Exception\Handler\DefaultExceptionRenderer;
 use ObjectivePHP\Application\Exception\WorkflowException;
 use ObjectivePHP\Application\ExceptionHandler\PhtmlExceptionHandler;
 use ObjectivePHP\Application\Middleware\MiddlewareRegistry;
@@ -104,7 +105,9 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         if ($autoloader) {
             // register packages autoloading
             $this->setAutoloader($autoloader);
-            $this->getAutoloader()->addPsr4($this->getProjectNamespace() . '\\Package\\', 'packages/');
+            // register default local packages storage
+            $reflectionObject = new \ReflectionObject($this);
+            $this->getAutoloader()->addPsr4($reflectionObject->getNamespaceName() . '\\Package\\', 'packages/');
         }
 
         $this->eventsHandler = new EventsHandler();
@@ -113,7 +116,7 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
         $this->servicesFactory = (new ServicesFactory())->registerService(new PrefabServiceSpecification('application', $this));
         $this->middlewares = new MiddlewareRegistry();
-        $this->exceptionHandlers = (new MiddlewareRegistry())->setDefaultInsertionPosition(MiddlewareRegistry::BEFORE_LAST);
+        $this->exceptionHandlers = (new MiddlewareRegistry())->setDefaultInsertionPosition(MiddlewareRegistry::BEFORE_LAST)->registerMiddleware(new DefaultExceptionRenderer());
         $this->packages = (new Collection())->restrictTo(PackageInterface::class);
         $this->router = (new MetaRouter())->registerRouter(new PathMapperRouter());
 
@@ -125,7 +128,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
         // load default configuration parameters
         $this->getConfig()->hydrate($this->getConfigParams());
-
 
         // register application in services factory
         $this->getServicesFactory()->registerService(['id' => 'application', 'instance' => $this]);
@@ -173,6 +175,11 @@ abstract class AbstractHttpApplication implements ApplicationInterface
      */
     public function registerPackage(PackageInterface $package, ...$filters)
     {
+        // register package autoload
+        $reflectionObject = new \ReflectionObject($package);
+        $this->getAutoloader()->addPsr4($reflectionObject->getNamespaceName() . '\\', dirname($reflectionObject->getFileName()) . '/src' );
+        
+        
         if ($package instanceof FiltersProviderInterface && $filters) {
             $package->getFilterEngine()->registerFilter(...$filters);
         }
@@ -258,12 +265,12 @@ abstract class AbstractHttpApplication implements ApplicationInterface
      */
     public function run()
     {
+        $emitter = new Response\SapiEmitter();
+    
         try {
-            $emitter = new Response\SapiEmitter();
-            $packages = $this->getPackages();
-
-            /** @var PackageInterface $package */
-            foreach ($packages as $package) {
+        $packages = $this->getPackages();
+        /** @var PackageInterface $package */
+        foreach ($packages as $package) {
 
                 if ($package instanceof FiltersProviderInterface) {
                     if (!$package->getFilterEngine()->filter($this)) continue;
@@ -374,6 +381,8 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         if (!$middleware) {
             throw new WorkflowException('No suitable middleware was found to handle the uncaught exception.', null, $request->getAttribute('exception'));
         }
+        
+        $this->getServicesFactory()->injectDependencies($middleware);
 
         $response = $middleware->process($request, $this);
 

@@ -1,0 +1,21 @@
+<h1>An exception occurred</h1>
+<?php
+/** @var \Exception $e */
+$e = $this->get('exception');
+$i = 1;
+do {
+    ?>
+    <h2>Exception #<?= $i ?> of type <i><?= get_class($e) ?></i></h2>
+    <p>in <b><?= $e->getFile() . ':' . $e->getLine() ?></b></p>
+    <p>Message: <i><?= $e->getMessage() ?></i></p>
+    <?php
+      if($code = $e->getCode())
+      {
+          ?>
+          <p>Code: <i><?= $code ?></i></p>
+          <?php
+      }
+    ?>
+    
+    <?php
+} while($e = $e->getPrevious());

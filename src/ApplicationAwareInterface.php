@@ -4,7 +4,6 @@ namespace ObjectivePHP\Application;
 
 use ObjectivePHP\ServicesFactory\Specification\InjectionAnnotationProvider;
 
-
 /**
  * Interface ApplicationAwareInterface
  *

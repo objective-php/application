@@ -42,8 +42,17 @@ class MiddlewareRegistry extends Collection
                 $this->append($middleware);
                 break;
 
-            // TODO handle other insertion positions
+            case self::BEFORE_LAST:
+                $middlewares = $this->getInternalValue();
+                $last = array_pop($middlewares);
+                $middlewares[] = $middleware;
+                $middlewares[] = $last;
+                $this->setInternalValue(array_filter($middlewares));
+                break;
+                
         }
+        
+        return $this;
     }
 
     /**
