@@ -24,9 +24,16 @@ class DefaultExceptionRenderer extends PhtmlAction
     {
         $exception = $request->getAttribute('exception');
         $response = $this->render(compact('exception'));
+        $code = $exception->getCode() ?: 500;
+        try {
+            $response = $response->withStatus($code);
+        } catch (\InvalidArgumentException $e) {
+            // force status to 500 if Exception status code is not valid
+            $response = $response->withStatus(500);
+        }
         
-        return $response->withStatus($exception->getCode() ?: 500);
         
+        return $response;
     }
 
 }

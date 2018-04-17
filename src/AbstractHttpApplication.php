@@ -25,6 +25,7 @@ use ObjectivePHP\Router\Config\UrlAlias;
 use ObjectivePHP\Router\MetaRouter;
 use ObjectivePHP\Router\PathMapperRouter;
 use ObjectivePHP\Router\RouterInterface;
+use ObjectivePHP\ServicesFactory\Config\ServiceDefinition;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
 use ObjectivePHP\ServicesFactory\Specification\PrefabServiceSpecification;
 use Psr\Http\Message\ResponseInterface;
@@ -128,6 +129,9 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
         // load default configuration parameters
         $this->getConfig()->hydrate($this->getConfigParams());
+
+        // register application in services factory
+        $this->getServicesFactory()->setConfig($this->getConfig());
 
         // init http request
         $request = ServerRequestFactory::fromGlobals(
@@ -290,6 +294,16 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
             $this->triggerWorkflowEvent(WorkflowEvent::PACKAGES_INIT);
 
+            // load services
+            $servicesDefinitions = $this->getConfig()->getRaw(ServiceDefinition::KEY);
+            $services = [];
+            
+            foreach ($servicesDefinitions as $id => $servicesDefinition) {
+                $service = array_merge(['id' => $id], $servicesDefinition->getSpecifications());
+                $this->getServicesFactory()->registerRawService($service);
+            }
+            //var_dump($this->getServicesFactory()->get('manager.test')); exit;
+        
             $this->triggerWorkflowEvent(WorkflowEvent::PACKAGES_READY);
 
             $this->triggerWorkflowEvent(WorkflowEvent::ROUTING_START);
@@ -338,7 +352,7 @@ abstract class AbstractHttpApplication implements ApplicationInterface
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      * @throws WorkflowException
-     * @throws \ObjectivePHP\Events\Exception
+     * @throws \ObjectivePHP\Events\Exception\EventException
      * @throws \ObjectivePHP\Primitives\Exception
      * @throws \ObjectivePHP\ServicesFactory\Exception\ServiceNotFoundException
      */
@@ -518,7 +532,8 @@ abstract class AbstractHttpApplication implements ApplicationInterface
             new ApplicationName(),
             // meta router config
             new UrlAlias(),
-            new ActionNamespace()
+            new ActionNamespace(),
+            new ServiceDefinition()
         ];
     }
 
