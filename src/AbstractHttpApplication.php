@@ -129,12 +129,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         // load default configuration parameters
         $this->getConfig()->hydrate($this->getConfigParams());
 
-        // register application in services factory
-        $this->getServicesFactory()->registerService(['id' => 'application', 'instance' => $this]);
-
-        // set default Exception Handler
-        //$this->getExceptionHandlers()->register()
-
         // init http request
         $request = ServerRequestFactory::fromGlobals(
             $_SERVER,
@@ -285,7 +279,7 @@ abstract class AbstractHttpApplication implements ApplicationInterface
                 }
 
                 if ($package instanceof PackagesReadyListener) {
-                    $this->getEventsHandler()->bind(WorkflowEvent::PACKAGES_INIT, [$package, 'onPackagesReady']);
+                    $this->getEventsHandler()->bind(WorkflowEvent::PACKAGES_READY, [$package, 'onPackagesReady']);
                 }
             }
 
