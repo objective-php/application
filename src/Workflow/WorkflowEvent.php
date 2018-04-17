@@ -9,13 +9,13 @@
 namespace ObjectivePHP\Application\Workflow;
 
 
-use ObjectivePHP\Application\ApplicationAwareTrait;
+use ObjectivePHP\Application\ApplicationAccessorsTrait;
 use ObjectivePHP\Application\ApplicationInterface;
 use ObjectivePHP\Events\Event;
 
 class WorkflowEvent extends Event implements WorkflowEventInterface
 {
-    use ApplicationAwareTrait;
+    use ApplicationAccessorsTrait;
 
     const BOOTSTRAP_INIT = 'workflow.bootstrap.init';
     const BOOTSTRAP_DONE = 'workflow.bootstrap.done';

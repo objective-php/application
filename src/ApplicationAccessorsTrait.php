@@ -10,7 +10,7 @@ namespace ObjectivePHP\Application;
 
 use ObjectivePHP\ServicesFactory\Annotation\Inject;
 
-trait ApplicationAwareTrait
+trait ApplicationAccessorsTrait
 {
     /**
      * @Inject(service="application")
