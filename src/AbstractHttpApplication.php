@@ -7,6 +7,7 @@ use ObjectivePHP\Application\Config\ApplicationName;
 use ObjectivePHP\Application\Exception\Handler\DefaultExceptionRenderer;
 use ObjectivePHP\Application\Exception\WorkflowException;
 use ObjectivePHP\Application\ExceptionHandler\PhtmlExceptionHandler;
+use ObjectivePHP\Application\Injector\DefaultInjector;
 use ObjectivePHP\Application\Middleware\MiddlewareRegistry;
 use ObjectivePHP\Application\Package\PackageInterface;
 use ObjectivePHP\Application\Workflow\PackagesInitListener;
@@ -41,7 +42,6 @@ use Zend\Diactoros\ServerRequestFactory;
  */
 abstract class AbstractHttpApplication implements ApplicationInterface
 {
-
     use ConfigAccessorsTrait;
 
     /**
@@ -96,10 +96,20 @@ abstract class AbstractHttpApplication implements ApplicationInterface
      * AbstractApplication constructor.
      *
      * @param ClassLoader|null $autoloader
+     *
+     * @throws \ObjectivePHP\Events\Exception\EventException
+     * @throws \ObjectivePHP\Primitives\Exception
+     * @throws \ObjectivePHP\ServicesFactory\Exception\ServiceNotFoundException
+     * @throws \ObjectivePHP\ServicesFactory\Exception\ServicesFactoryException
      */
     public function __construct(ClassLoader $autoloader = null)
     {
+        $buffer = $this->cleanBuffer();
 
+        ob_start();
+        if ($buffer) {
+            echo $buffer;
+        }
 
         $this->projectNamespace = (new \ReflectionObject($this))->getNamespaceName();
 
@@ -115,10 +125,17 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
         $this->triggerWorkflowEvent(WorkflowEvent::BOOTSTRAP_INIT);
 
-        $this->servicesFactory = (new ServicesFactory())->registerService(new PrefabServiceSpecification('application', $this));
+        $this->servicesFactory = (new ServicesFactory())
+            ->registerService(new PrefabServiceSpecification('application', $this));
+
         $this->middlewares = new MiddlewareRegistry();
-        $this->exceptionHandlers = (new MiddlewareRegistry())->setDefaultInsertionPosition(MiddlewareRegistry::BEFORE_LAST)->registerMiddleware(new DefaultExceptionRenderer());
+
+        $this->exceptionHandlers = (new MiddlewareRegistry())
+            ->setDefaultInsertionPosition(MiddlewareRegistry::BEFORE_LAST)
+            ->registerMiddleware(new DefaultExceptionRenderer());
+
         $this->packages = (new Collection())->restrictTo(PackageInterface::class);
+
         $this->router = (new MetaRouter())->registerRouter(new PathMapperRouter());
 
         // register default exception handler
@@ -132,6 +149,9 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
         // register application in services factory
         $this->getServicesFactory()->setConfig($this->getConfig());
+
+        // register default injector
+        $this->getServicesFactory()->registerInjector(new DefaultInjector());
 
         // init http request
         $request = ServerRequestFactory::fromGlobals(
@@ -151,15 +171,15 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         $this->init();
 
         $this->triggerWorkflowEvent(WorkflowEvent::BOOTSTRAP_DONE);
-
-
     }
 
     /**
-     * @param $eventName
-     * @param null $origin
+     * @param       $eventName
+     * @param null  $origin
      * @param array $context
-     * @throws \ObjectivePHP\Events\Exception
+     *
+     * @throws \ObjectivePHP\Events\Exception\EventException
+     * @throws \ObjectivePHP\Primitives\Exception
      * @throws \ObjectivePHP\ServicesFactory\Exception\ServiceNotFoundException
      */
     protected function triggerWorkflowEvent($eventName, $origin = null, $context = [])
@@ -175,9 +195,11 @@ abstract class AbstractHttpApplication implements ApplicationInterface
     {
         // register package autoload
         $reflectionObject = new \ReflectionObject($package);
-        $this->getAutoloader()->addPsr4($reflectionObject->getNamespaceName() . '\\', dirname($reflectionObject->getFileName()) . '/src' );
-        
-        
+        $this->getAutoloader()->addPsr4(
+            $reflectionObject->getNamespaceName() . '\\',
+            dirname($reflectionObject->getFileName()) . '/src'
+        );
+
         if ($package instanceof FiltersProviderInterface && $filters) {
             $package->getFilterEngine()->registerFilter(...$filters);
         }
@@ -254,24 +276,21 @@ abstract class AbstractHttpApplication implements ApplicationInterface
     }
 
     /**
-     * @return mixed|void
-     * @throws WorkflowException
-     * @throws \ObjectivePHP\Config\Exception\ConfigLoadingException
-     * @throws \ObjectivePHP\Events\Exception
-     * @throws \ObjectivePHP\Primitives\Exception
-     * @throws \ObjectivePHP\ServicesFactory\Exception\ServiceNotFoundException
+     * {@inheritdoc}
      */
     public function run()
     {
         $emitter = new Response\SapiEmitter();
-    
-        try {
-        $packages = $this->getPackages();
-        /** @var PackageInterface $package */
-        foreach ($packages as $package) {
 
+        try {
+            $packages = $this->getPackages();
+
+            /** @var PackageInterface $package */
+            foreach ($packages as $package) {
                 if ($package instanceof FiltersProviderInterface) {
-                    if (!$package->getFilterEngine()->filter($this)) continue;
+                    if (!$package->getFilterEngine()->filter($this)) {
+                        continue;
+                    }
                 }
 
                 if ($package instanceof ConfigProviderInterface) {
@@ -295,15 +314,14 @@ abstract class AbstractHttpApplication implements ApplicationInterface
             $this->triggerWorkflowEvent(WorkflowEvent::PACKAGES_INIT);
 
             // load services
+            /** @var ServiceDefinition[] $servicesDefinitions */
             $servicesDefinitions = $this->getConfig()->getRaw(ServiceDefinition::KEY);
-            $services = [];
-            
+
             foreach ($servicesDefinitions as $id => $servicesDefinition) {
                 $service = array_merge(['id' => $id], $servicesDefinition->getSpecifications());
                 $this->getServicesFactory()->registerRawService($service);
             }
-            //var_dump($this->getServicesFactory()->get('manager.test')); exit;
-        
+
             $this->triggerWorkflowEvent(WorkflowEvent::PACKAGES_READY);
 
             $this->triggerWorkflowEvent(WorkflowEvent::ROUTING_START);
@@ -315,20 +333,30 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
             $this->triggerWorkflowEvent(WorkflowEvent::ROUTING_DONE);
 
-
             $this->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_START, $this);
+
             $response = $this->handle($this->getRequest());
+
             $this->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_DONE, $this, ['response' => $response]);
+
+            if ($buffer = $this->cleanBuffer()) {
+                $response->getBody()->write($buffer);
+            }
+
             $emitter->emit($response);
+
+            ob_start();
+
             $this->triggerWorkflowEvent(WorkflowEvent::RESPONSE_SENT);
         } catch (\Throwable $exception) {
-
-            $request = $this->getRequest()->withAttribute('exception', $exception);
+            $request = $this->getRequest()
+                ->withAttribute('exception', $exception)
+                ->withAttribute('buffer', $this->cleanBuffer())
+                ->withAttribute('headers', headers_list());
 
             $response = $this->handleException($request);
 
             $emitter->emit($response);
-
         }
     }
 
@@ -350,15 +378,16 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
     /**
      * @param ServerRequestInterface $request
+     *
      * @return ResponseInterface
      * @throws WorkflowException
      * @throws \ObjectivePHP\Events\Exception\EventException
      * @throws \ObjectivePHP\Primitives\Exception
      * @throws \ObjectivePHP\ServicesFactory\Exception\ServiceNotFoundException
+     * @throws \ObjectivePHP\ServicesFactory\Exception\ServicesFactoryException
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-
         /** @var MiddlewareInterface $middleware */
         $middleware = $this->getNextMiddleware();
 
@@ -379,17 +408,23 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
     /**
      * @param ServerRequestInterface $request
+     *
      * @return ResponseInterface
      * @throws WorkflowException
+     * @throws \ObjectivePHP\ServicesFactory\Exception\ServicesFactoryException
      */
     public function handleException(ServerRequestInterface $request): ResponseInterface
     {
         /** @var MiddlewareInterface $middleware */
         $middleware = $this->getExceptionHandlers()->getNextMiddleware();
         if (!$middleware) {
-            throw new WorkflowException('No suitable middleware was found to handle the uncaught exception.', null, $request->getAttribute('exception'));
+            throw new WorkflowException(
+                'No suitable middleware was found to handle the uncaught exception.',
+                null,
+                $request->getAttribute('exception')
+            );
         }
-        
+
         $this->getServicesFactory()->injectDependencies($middleware);
 
         $response = $middleware->process($request, $this);
@@ -403,7 +438,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
     protected function getNextMiddleware()
     {
         while ($middleware = $this->getMiddlewares()->current()) {
-
             $this->getMiddlewares()->next();
             // filter step
 
@@ -413,7 +447,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
             return $middleware;
         }
-
     }
 
     /**
@@ -554,4 +587,18 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         return $this->projectNamespace;
     }
 
+    /**
+     * Clean and return buffer
+     *
+     * @return string
+     */
+    protected function cleanBuffer(): string
+    {
+        $buffer = '';
+        while (ob_get_level() > 0) {
+            $buffer .= ob_get_clean();
+        }
+
+        return $buffer;
+    }
 }

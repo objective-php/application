@@ -9,15 +9,34 @@ do {
     <p>in <b><?= $e->getFile() . ':' . $e->getLine() ?></b></p>
     <p>Message: <i><?= $e->getMessage() ?></i></p>
     <?php
-      if($code = $e->getCode())
+      if ($code = $e->getCode())
       {
           ?>
           <p>Code: <i><?= $code ?></i></p>
           <?php
       }
-      
+
       echo '<pre>' . $e->getTraceAsString() . '</pre>';
     ?>
-    
+
     <?php
-} while($e = $e->getPrevious());
+} while ($e = $e->getPrevious());
+?>
+
+<?php if ($buffer = $this->get('buffer')) : ?>
+<h2>Output buffer</h2>
+
+<pre>
+<?= htmlspecialchars($buffer, ENT_QUOTES|ENT_SUBSTITUTE) ?>
+</pre>
+<?php endif; ?>
+
+<?php if ($headers = $this->get('headers')) : ?>
+    <h2>HTTP headers sent</h2>
+
+    <ul>
+    <?php foreach ($headers as $header) : ?>
+        <li><code><?= htmlspecialchars($header, ENT_QUOTES|ENT_SUBSTITUTE) ?></code></li>
+    <?php endforeach; ?>
+    </ul>
+<?php endif; ?>
