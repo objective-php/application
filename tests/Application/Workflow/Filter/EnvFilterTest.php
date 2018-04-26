@@ -3,7 +3,7 @@
 namespace Tests\ObjectivePHP\Application\Workflow\Filter;
 
 use ObjectivePHP\Application\ApplicationInterface;
-use ObjectivePHP\Application\Workflow\Filter\EnvFilter;
+use ObjectivePHP\Application\Exception\Filter\EnvFilter;
 
 class EnvFilterTest extends \PHPUnit_Framework_TestCase
 {

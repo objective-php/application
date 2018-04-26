@@ -10,7 +10,7 @@
 namespace ObjectivePHP\Application\Action\Parameter;
 
 
-class Exception extends \ObjectivePHP\Application\Action\Exception
+class Exception extends \ObjectivePHP\Application\Package\Action\Exception
 {
     
 }

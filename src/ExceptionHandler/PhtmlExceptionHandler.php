@@ -1,15 +1,17 @@
 <?php
 
-namespace ObjectivePHP\Application\Operation;
+namespace ObjectivePHP\Application\ExceptionHandler;
 
 
 use ObjectivePHP\Application\{
-    ApplicationInterface, Exception
+    ApplicationInterface
 };
+use ObjectivePHP\Middleware\Action\PhtmlAction\PhtmlAction;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\{
-    Response,
-    Response\HtmlResponse,
-    Response\SapiEmitter
+    Response, Response\HtmlResponse
 };
 
 /**
@@ -17,7 +19,7 @@ use Zend\Diactoros\{
  *
  * @package ObjectivePHP\Application\Task\Common
  */
-class ExceptionHandler
+class PhtmlExceptionHandler extends PhtmlAction
 {
     /** @var ApplicationInterface */
     protected $app;
@@ -27,6 +29,13 @@ class ExceptionHandler
 
     /** @var false|string $outputBuffer output buffer content produced before the uncaught exception is thrown */
     protected $outputBuffer;
+
+    /** @var ServerRequestInterface */
+    protected $request;
+
+    /** @var int HTTP Response status code */
+    protected $statusCode;
+
 
     public function __construct()
     {
@@ -42,31 +51,17 @@ class ExceptionHandler
         }
     }
 
-    public function __invoke(ApplicationInterface $app)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $this->app = $app;
+        $this->app = $handler;
+        $this->request = $request;
+
         $this->outputBuffer = ob_get_clean();
-        $exception = $this->app->getException();
+        $exception = $request->getAttribute('exception');
 
-        if ($exception instanceof Exception
-            && preg_match('/^Failed running hook "(.*)" of type:/', $exception->getMessage(), $m)
-            && $exception->getPrevious()
-        ) {
-            $this->exception = $exception->getPrevious();
-        } else {
-            $this->exception = $exception;
-        }
-
-        $code = ($this->exception->getCode() < 100 || $this->exception->getCode() > 599) ? 500 : $this->exception->getCode();
-        $this->app->setResponse((new Response())->withStatus($code));
-
-        if (php_sapi_name() == 'cli') {
-            throw $exception;
-        }
+        $this->statusCode = ($exception->getCode() < 100 || $exception->getCode() > 599) ? 500 : $exception->getCode();
 
         $exceptions = '';
-        $exception = $this->exception;
-        $config = in_array($this->app->getEnv(), ['prod', 'production']) ? '' : $this->renderConfig();
 
         do {
             $exceptions .= '<div class="exception-def">' . $this->renderException($exception) . '</div>';
@@ -86,7 +81,6 @@ class ExceptionHandler
                 
                 <body>
                     <div>' . $exceptions . '</div>
-                    <div>' . $config . '</div>
                     
                     ' . $this->renderJs() . '
                 </body>
@@ -95,12 +89,30 @@ class ExceptionHandler
         ';
 
         // manually emit response
-        (new SapiEmitter())->emit((new HtmlResponse($output))->withStatus($code));
+        return (new HtmlResponse($output))->withStatus($this->getStatusCode());
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
+    }
+
+    /**
+     * @param int $statusCode
+     */
+    public function setStatusCode(int $statusCode)
+    {
+        $this->statusCode = $statusCode;
     }
 
 
     protected function renderException(\Throwable $exception)
     {
+        $tmpResponse = (new Response())->withStatus($this->getStatusCode());
+
         $output = '
             <div class="quote">
                 <h2> ' . get_class($exception) .
@@ -110,8 +122,8 @@ class ExceptionHandler
         $output .= '
             <div class="exception-details">
                 <div>
-                     <strong>' . $this->app->getResponse()->getStatusCode() . '</strong>
-                      - ' . $this->app->getResponse()->getReasonPhrase() . '
+                     <strong>' . $this->getStatusCode() . '</strong>
+                      - ' . $tmpResponse->getReasonPhrase() . '
                    
                 </div>
                 <div>' . $exception->getFile() . ' line ' . $exception->getLine() . '</div>
@@ -133,30 +145,6 @@ class ExceptionHandler
                 ' . $stacktrace . '
             </div>
         ';
-    }
-
-    protected function renderConfig()
-    {
-        $html = '<table>';
-
-        foreach ($this->app->getConfig()->toArray() as $item => $value) {
-            $html .= '<tr>';
-            $html .= "<td class=''>{$item}</td>";
-            $html .= "<td class=''><pre>" . json_encode($value, JSON_PRETTY_PRINT) . "</pre></td>";
-            $html .= '</tr>';
-
-        }
-        $html .= '</table>';
-
-        // display config
-        $output = '
-            <div class="config">
-                <div class="quote togglable"><h2>Configuration (click to show)</h2></div>
-                <div class="config panel">' . $html . '</div>
-            </div>'
-        ;
-
-        return $output;
     }
 
     protected function renderCss()

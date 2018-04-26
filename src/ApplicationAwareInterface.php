@@ -1,16 +1,18 @@
 <?php
 
-    namespace ObjectivePHP\Application;
+namespace ObjectivePHP\Application;
 
+use ObjectivePHP\ServicesFactory\Specification\InjectionAnnotationProvider;
+
+/**
+ * Interface ApplicationAwareInterface
+ *
+ * @package ObjectivePHP\Application
+ */
+interface ApplicationAwareInterface extends InjectionAnnotationProvider
+{
     /**
-     * Interface ApplicationAwareInterface
-     *
-     * @package ObjectivePHP\Application
+     * @param ApplicationInterface $application
      */
-    interface ApplicationAwareInterface
-    {
-        /**
-         * @param ApplicationInterface $application
-         */
-        public function setApplication(ApplicationInterface $application);
-    }
+    public function setApplication(ApplicationInterface $application);
+}

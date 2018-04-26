@@ -9,14 +9,14 @@
 namespace Test\ObjectivePHP\Application\Workflow;
 
 
-use ObjectivePHP\Application\Workflow\Hook;
-use ObjectivePHP\Application\Workflow\Step;
+use ObjectivePHP\Application\Exception\Hook;
+use ObjectivePHP\Application\Exception\Step;
 use ObjectivePHP\PHPUnit\TestCase;
 
 class StepTest extends TestCase
 {
     /**
-     * @throws \ObjectivePHP\Application\Exception
+     * @throws \ObjectivePHP\Application\Package\Exception
      * @throws \ObjectivePHP\Primitives\Exception
      */
     public function testAliasing()

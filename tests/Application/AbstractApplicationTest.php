@@ -1,5 +1,6 @@
 <?php
-use ObjectivePHP\Application\AbstractApplication;
+
+use ObjectivePHP\Application\AbstractHttpApplication;
 use ObjectivePHP\Application\Config\Param;
 use ObjectivePHP\Events\EventsHandler;
 use ObjectivePHP\PHPUnit\TestCase;
@@ -13,9 +14,9 @@ class AbstractApplicationTest extends TestCase
     public function testDefaultEventsHandlerIsInstantiatedOnGet()
     {
         /**
-         * @var $application AbstractApplication
+         * @var $application AbstractHttpApplication
          */
-        $application = $this->getMockForAbstractClass(AbstractApplication::class);
+        $application = $this->getMockForAbstractClass(AbstractHttpApplication::class);
         
         $eventsHandler = $application->getEventsHandler();
         
@@ -25,9 +26,9 @@ class AbstractApplicationTest extends TestCase
     public function testDefaultServicesFactoryIsInstantiatedOnGet()
     {
         /**
-         * @var $application AbstractApplication
+         * @var $application AbstractHttpApplication
          */
-        $application = $this->getMockForAbstractClass(AbstractApplication::class);
+        $application = $this->getMockForAbstractClass(AbstractHttpApplication::class);
         
         $servicesFactory = $application->getServicesFactory();
         
@@ -37,9 +38,9 @@ class AbstractApplicationTest extends TestCase
     public function testRun()
     {
         /**
-         * @var $application AbstractApplication
+         * @var $application AbstractHttpApplication
          */
-        $application = $this->getMockForAbstractClass(AbstractApplication::class);
+        $application = $this->getMockForAbstractClass(AbstractHttpApplication::class);
         
         $application->addSteps('test');
         $application->getStep('test')->plug(function ()
@@ -58,8 +59,8 @@ class AbstractApplicationTest extends TestCase
     
     public function testRunFilteredStep()
     {
-        /** @var AbstractApplication $app */
-        $app = $this->getMockForAbstractClass(AbstractApplication::class);
+        /** @var AbstractHttpApplication $app */
+        $app = $this->getMockForAbstractClass(AbstractHttpApplication::class);
         
         $app->addSteps('begin', 'end');
         $app->getStep('begin')->plug(function ()
@@ -77,7 +78,7 @@ class AbstractApplicationTest extends TestCase
 
     public function testParamsAreStoredInConfig()
     {
-        $app = new class extends AbstractApplication {
+        $app = new class extends AbstractHttpApplication {
             public function init() {}
         };
         $app->setParam('test.param', 'test.value');
@@ -88,7 +89,7 @@ class AbstractApplicationTest extends TestCase
 
     public function testParamsAreFetchedFromConfig()
     {
-        $app = $this->getMockForAbstractClass(AbstractApplication::class);
+        $app = $this->getMockForAbstractClass(AbstractHttpApplication::class);
         $app->getConfig()->import(new Param('test.param', 'test.value'));
 
         $this->assertEquals('test.value', $app->getParam('test.param'));

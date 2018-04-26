@@ -6,18 +6,17 @@
      * Time: 12:16
      */
     
-    namespace ObjectivePHP\Application\Workflow\Filter;
+    namespace ObjectivePHP\Application\Exception\Filter;
 
     use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\Application\Exception;
-    use ObjectivePHP\Invokable\InvokableInterface;
 
     /**
      * Class RouteFilter
      *
      * @package ObjectivePHP\Application\Workflow
      */
-    class RouteFilter extends AbstractFilter
+    class RouteFilter extends AbstractWorkflowFilter
     {
 
         /**
@@ -25,7 +24,7 @@
          * @return bool
          * @throws Exception
          */
-        public function run(ApplicationInterface $app) : bool
+        public function filter(ApplicationInterface $app) : bool
         {
             // check route filter
             if ($this->getFilter() != '*')

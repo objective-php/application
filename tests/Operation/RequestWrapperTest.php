@@ -2,7 +2,7 @@
 
 namespace Test\ObjectivePHP\Application\Middleware;
 
-use ObjectivePHP\Application\AbstractApplication;
+use ObjectivePHP\Application\AbstractHttpApplication;
 use ObjectivePHP\Application\Operation\RequestWrapper;
 use ObjectivePHP\PHPUnit\TestCase;
 use Zend\Diactoros\PhpInputStream;
@@ -27,13 +27,13 @@ class RequestWrapperTest extends TestCase
     }
 
     /**
-     * @throws \ObjectivePHP\Application\Exception
+     * @throws \ObjectivePHP\Application\Package\Exception
      */
    public function testBodyContentsIfNotEmpty()
    {
        $_SERVER['REQUEST_URI'] = 'fake';
 
-       $app = new class extends AbstractApplication {
+       $app = new class extends AbstractHttpApplication {
            public function init()
            {
            }
@@ -53,13 +53,13 @@ class RequestWrapperTest extends TestCase
    }
 
     /**
-     * @throws \ObjectivePHP\Application\Exception
+     * @throws \ObjectivePHP\Application\Package\Exception
      */
     public function testBodyContentsIfStreamIsEmpty()
     {
         $_SERVER['REQUEST_URI'] = 'fake';
 
-        $app = new class extends AbstractApplication {
+        $app = new class extends AbstractHttpApplication {
             public function init()
             {
             }

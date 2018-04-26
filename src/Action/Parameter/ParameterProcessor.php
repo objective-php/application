@@ -2,10 +2,10 @@
     namespace ObjectivePHP\Application\Action\Parameter;
     
     use ObjectivePHP\Application\ApplicationAwareInterface;
+    use ObjectivePHP\Application\ApplicationInterface;
     use ObjectivePHP\DataProcessor\DataProcessorInterface;
     use ObjectivePHP\Primitives\Collection\Collection;
     use ObjectivePHP\Primitives\String\Str;
-    use ObjectivePHP\Application\ApplicationInterface;
 
     class ParameterProcessor implements ParameterProcessorInterface
     {

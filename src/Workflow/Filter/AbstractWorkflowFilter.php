@@ -1,15 +1,15 @@
 <?php
 
-namespace ObjectivePHP\Application\Workflow\Filter;
+namespace ObjectivePHP\Application\Exception\Filter;
 
-use ObjectivePHP\Invokable\AbstractInvokable;
+use ObjectivePHP\Application\Filter\FilterInterface;
 
 /**
  * Class AbstractFilter
  *
  * @package ObjectivePHP\Application\Workflow
  */
-abstract class AbstractFilter extends AbstractInvokable
+abstract class AbstractWorkflowFilter implements FilterInterface
 {
     protected $filter;
 

@@ -6,18 +6,18 @@
  * Time: 19:36
  */
 
-namespace ObjectivePHP\Application\Workflow\Filter;
+namespace ObjectivePHP\Application\Exception\Filter;
 
 
 use ObjectivePHP\Application\ApplicationInterface;
 
-class EnvFilter extends AbstractFilter
+class EnvFilter extends AbstractWorkflowFilter
 {
     /**
      * @param ApplicationInterface $app
      * @return bool
      */
-    public function run(ApplicationInterface $app): bool
+    public function filter(ApplicationInterface $app): bool
     {
         $validEnvironments = (array) $this->getFilter();
         $env = $app->getEnv();

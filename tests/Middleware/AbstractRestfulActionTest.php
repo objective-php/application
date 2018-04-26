@@ -9,7 +9,7 @@
 namespace Test\ObjectivePHP\Application\Middleware;
 
 
-use ObjectivePHP\Application\AbstractApplication;
+use ObjectivePHP\Application\AbstractHttpApplication;
 use ObjectivePHP\Application\Action\RestfulAction;
 use ObjectivePHP\Application\Middleware\Exception;
 use ObjectivePHP\Message\Request\HttpRequest;
@@ -80,11 +80,11 @@ class AbstractRestfulActionTest extends TestCase
 
     /**
      * @param $method
-     * @return AbstractApplication
+     * @return AbstractHttpApplication
      */
     protected function getApplication($method)
     {
-        $application = $this->createMock(AbstractApplication::class);
+        $application = $this->createMock(AbstractHttpApplication::class);
 
         $matchedRoute = $this->createMock(MatchedRoute::class);
         $matchedRoute->method('getName')->willReturn('this-is_a-fake_Name');
