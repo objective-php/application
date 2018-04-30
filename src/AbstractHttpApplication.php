@@ -4,9 +4,7 @@ namespace ObjectivePHP\Application;
 
 use Composer\Autoload\ClassLoader;
 use ObjectivePHP\Application\Config\ApplicationName;
-use ObjectivePHP\Application\Exception\Handler\DefaultExceptionRenderer;
 use ObjectivePHP\Application\Exception\WorkflowException;
-use ObjectivePHP\Application\ExceptionHandler\PhtmlExceptionHandler;
 use ObjectivePHP\Application\Injector\DefaultInjector;
 use ObjectivePHP\Application\Middleware\MiddlewareRegistry;
 use ObjectivePHP\Application\Package\PackageInterface;
@@ -34,6 +32,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\Stream;
 
 /**
  * Class AbstractApplication
@@ -130,16 +129,11 @@ abstract class AbstractHttpApplication implements ApplicationInterface
 
         $this->middlewares = new MiddlewareRegistry();
 
-        $this->exceptionHandlers = (new MiddlewareRegistry())
-            ->setDefaultInsertionPosition(MiddlewareRegistry::BEFORE_LAST)
-            ->registerMiddleware(new DefaultExceptionRenderer());
+        $this->exceptionHandlers = (new MiddlewareRegistry());
 
         $this->packages = (new Collection())->restrictTo(PackageInterface::class);
 
         $this->router = (new MetaRouter())->registerRouter(new PathMapperRouter());
-
-        // register default exception handler
-        $this->getExceptionHandlers()->registerMiddleware(new PhtmlExceptionHandler(), MiddlewareRegistry::LAST);
 
         // register default configuration directives
         $this->getConfig()->registerDirective(...$this->getConfigDirectives());
@@ -340,7 +334,10 @@ abstract class AbstractHttpApplication implements ApplicationInterface
             $this->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_DONE, $this, ['response' => $response]);
 
             if ($buffer = $this->cleanBuffer()) {
-                $response->getBody()->write($buffer);
+                $response->getBody()->rewind();
+                $content = $buffer . $response->getBody()->getContents();
+                $response = $response->withBody(new Stream('php://memory', 'wb+'));
+                $response->getBody()->write($content);
             }
 
             $emitter->emit($response);

@@ -27,7 +27,7 @@
     "psr/http-server-handler": "^1.0",
     "zendframework/zend-diactoros": "^1.7",
     "psr/http-server-middleware": "^1.0",
-    "objective-php/filter": "1.0"
+    "objective-php/filter": "^1.0.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^5.0"
