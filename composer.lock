@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9ee733f2bcc66866988f84327ad4f197",
+    "content-hash": "c49af06ad0afede7c9c525d32460ab82",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -551,7 +551,7 @@
         },
         {
             "name": "objective-php/services-factory",
-            "version": "dev-master",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/services-factory.git",
@@ -2130,16 +2130,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.4.8",
+            "version": "v3.4.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "a42f9da85c7c38d59f5e53f076fe81a091f894d0"
+                "reference": "033cfa61ef06ee0847e056e530201842b6e926c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/a42f9da85c7c38d59f5e53f076fe81a091f894d0",
-                "reference": "a42f9da85c7c38d59f5e53f076fe81a091f894d0",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/033cfa61ef06ee0847e056e530201842b6e926c3",
+                "reference": "033cfa61ef06ee0847e056e530201842b6e926c3",
                 "shasum": ""
             },
             "require": {
@@ -2184,21 +2184,12 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2018-04-03T05:14:20+00:00"
+            "time": "2018-04-08T08:21:29+00:00"
         }
     ],
-    "aliases": [
-        {
-            "alias": "v2.0.0",
-            "alias_normalized": "2.0.0.0",
-            "version": "9999999-dev",
-            "package": "objective-php/services-factory"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "objective-php/services-factory": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
