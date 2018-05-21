@@ -39,29 +39,13 @@ use Zend\Diactoros\Stream;
  *
  * @package ObjectivePHP\Application
  */
-abstract class AbstractHttpApplication implements ApplicationInterface
+abstract class AbstractHttpApplication extends AbstractApplication implements HttpApplicationInterface
 {
-    use ConfigAccessorsTrait;
 
     /**
-     * @var EventsHandler
+     * @var RouterInterface
      */
-    protected $eventsHandler;
-
-    /**
-     * @var ServicesFactory
-     */
-    protected $servicesFactory;
-
-    /**
-     * @var ClassLoader
-     */
-    protected $autoloader;
-
-    /**
-     * @var string
-     */
-    protected $env;
+    protected $router;
 
     /**
      * @var ServerRequestInterface
@@ -78,18 +62,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
      */
     protected $exceptionHandlers;
 
-    /**
-     * @var Collection
-     */
-    protected $packages;
-
-    /**
-     * @var RouterInterface
-     */
-    protected $router;
-
-    /** @var string */
-    protected $projectNamespace;
 
     /**
      * AbstractApplication constructor.
@@ -109,8 +81,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         if ($buffer) {
             echo $buffer;
         }
-
-        $this->projectNamespace = (new \ReflectionObject($this))->getNamespaceName();
 
         if ($autoloader) {
             // register packages autoloading
@@ -165,100 +135,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         $this->init();
 
         $this->triggerWorkflowEvent(WorkflowEvent::BOOTSTRAP_DONE);
-    }
-
-    /**
-     * @param       $eventName
-     * @param null  $origin
-     * @param array $context
-     *
-     * @throws \ObjectivePHP\Events\Exception\EventException
-     * @throws \ObjectivePHP\Primitives\Exception
-     * @throws \ObjectivePHP\ServicesFactory\Exception\ServiceNotFoundException
-     */
-    protected function triggerWorkflowEvent($eventName, $origin = null, $context = [])
-    {
-        $this->getEventsHandler()->trigger($eventName, $origin, $context, new WorkflowEvent($this));
-    }
-
-    /**
-     * @param PackageInterface $package
-     * @param array ...$filters
-     */
-    public function registerPackage(PackageInterface $package, ...$filters)
-    {
-        // register package autoload
-        $reflectionObject = new \ReflectionObject($package);
-        $this->getAutoloader()->addPsr4(
-            $reflectionObject->getNamespaceName() . '\\',
-            dirname($reflectionObject->getFileName()) . '/src'
-        );
-
-        if ($package instanceof FiltersProviderInterface && $filters) {
-            $package->getFilterEngine()->registerFilter(...$filters);
-        }
-
-        $this->packages->append($package);
-    }
-
-    /**
-     * @return EventsHandler
-     */
-    public function getEventsHandler(): EventsHandler
-    {
-        return $this->eventsHandler;
-    }
-
-    /**
-     * @param EventsHandler $eventsHandler
-     *
-     * @return $this
-     */
-    public function setEventsHandler(EventsHandler $eventsHandler): ApplicationInterface
-    {
-        $this->eventsHandler = $eventsHandler;
-
-        return $this;
-    }
-
-    /**
-     * @return ServicesFactory
-     */
-    public function getServicesFactory(): ServicesFactory
-    {
-        return $this->servicesFactory;
-    }
-
-    /**
-     * @param ServicesFactory $servicesFactory
-     *
-     * @return $this
-     */
-    public function setServicesFactory(ServicesFactory $servicesFactory)
-    {
-        $this->servicesFactory = $servicesFactory;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEnv(): string
-    {
-        return $this->env;
-    }
-
-    /**
-     * @param string $env
-     *
-     * @return $this
-     */
-    public function setEnv($env): ApplicationInterface
-    {
-        $this->env = $env;
-
-        return $this;
     }
 
     /**
@@ -357,21 +233,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         }
     }
 
-    /**
-     * @return RouterInterface
-     */
-    public function getRouter(): RouterInterface
-    {
-        return $this->router;
-    }
-
-    /**
-     * @param RouterInterface $router
-     */
-    public function setRouter(RouterInterface $router)
-    {
-        $this->router = $router;
-    }
 
     /**
      * @param ServerRequestInterface $request
@@ -474,38 +335,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         return $this->middlewares;
     }
 
-    /**
-     * @return ClassLoader
-     */
-    public function getAutoloader(): ClassLoader
-    {
-        return $this->autoloader;
-    }
-
-    /**
-     * @param ClassLoader $autoloader
-     *
-     * @return $this
-     */
-    public function setAutoloader(ClassLoader $autoloader)
-    {
-        $this->autoloader = $autoloader;
-
-        return $this;
-    }
-
-    /**
-     * @return Config
-     */
-    public function getConfig(): ConfigInterface
-    {
-        // init Config
-        if (is_null($this->config)) {
-            $this->config = new Config();
-        }
-
-        return $this->config;
-    }
 
     /**
      * @param MiddlewareInterface $middleware
@@ -520,21 +349,6 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         $this->middlewares->append($middleware);
     }
 
-    /**
-     * @return Collection
-     */
-    public function getPackages(): Collection
-    {
-        return $this->packages;
-    }
-
-    /**
-     * @param Collection $packages
-     */
-    public function setPackages(Collection $packages)
-    {
-        $this->packages = $packages;
-    }
 
     /**
      * @return MiddlewareRegistry
@@ -552,50 +366,47 @@ abstract class AbstractHttpApplication implements ApplicationInterface
         $this->exceptionHandlers = $exceptionHandlers;
     }
 
-    /**
-     * Defines default application config directives
-     */
-    protected function getConfigDirectives(): array
-    {
-        return [
-            // application config
-            new ApplicationName(),
-            // meta router config
-            new UrlAlias(),
-            new ActionNamespace(),
-            new ServiceDefinition()
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    protected function getConfigParams()
-    {
-        return [
-            'application.name' => 'ObjectivePHP Starter Kit',
-            'router.url-alias' => ['/' => 'Home'],
-            'router.action-namespace' => ['default' => $this->getProjectNamespace() . '\\Action']
-        ];
-    }
-
-    protected function getProjectNamespace()
-    {
-        return $this->projectNamespace;
-    }
-
-    /**
-     * Clean and return buffer
-     *
-     * @return string
-     */
-    protected function cleanBuffer(): string
-    {
-        $buffer = '';
-        while (ob_get_level() > 0) {
-            $buffer .= ob_get_clean();
+        /**
+         * Defines default application config directives
+         */
+        protected function getConfigDirectives(): array
+        {
+            return [
+                // application config
+                new ApplicationName(),
+                // meta router config
+                new UrlAlias(),
+                new ActionNamespace(),
+                new ServiceDefinition()
+            ];
         }
 
-        return $buffer;
+        /**
+         * @return array
+         */
+        protected function getConfigParams()
+        {
+            return [
+                'application.name' => 'ObjectivePHP Starter Kit',
+                'router.url-alias' => ['/' => 'Home'],
+                'router.action-namespace' => ['default' => $this->getProjectNamespace() . '\\Action']
+            ];
+        }
+
+
+    /**
+     * @return RouterInterface
+     */
+    public function getRouter(): RouterInterface
+    {
+        return $this->router;
+    }
+
+    /**
+     * @param RouterInterface $router
+     */
+    public function setRouter(RouterInterface $router)
+    {
+        $this->router = $router;
     }
 }

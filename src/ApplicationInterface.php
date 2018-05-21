@@ -7,6 +7,8 @@ use ObjectivePHP\Config\Config;
 use ObjectivePHP\Config\ConfigInterface;
 use ObjectivePHP\Config\ConfigProviderInterface;
 use ObjectivePHP\Events\EventsHandler;
+use ObjectivePHP\Primitives\Collection\Collection;
+use ObjectivePHP\Router\RouterInterface;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -16,7 +18,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  *
  * @package ObjectivePHP\Application
  */
-interface ApplicationInterface extends RequestHandlerInterface, ConfigProviderInterface
+interface ApplicationInterface extends ConfigProviderInterface
 {
 
     /**
@@ -45,18 +47,6 @@ interface ApplicationInterface extends RequestHandlerInterface, ConfigProviderIn
     public function getConfig(): ConfigInterface;
 
     /**
-     * @param ServerRequestInterface $request
-     *
-     * @return ApplicationInterface
-     */
-    public function setRequest(ServerRequestInterface $request): ApplicationInterface;
-
-    /**
-     * @return ServerRequestInterface
-     */
-    public function getRequest(): ServerRequestInterface;
-
-    /**
      * @return string
      */
     public function getEnv(): string;
@@ -65,4 +55,9 @@ interface ApplicationInterface extends RequestHandlerInterface, ConfigProviderIn
      * @return ClassLoader
      */
     public function getAutoloader(): ClassLoader;
+
+    /**
+     * @return Collection
+     */
+    public function getPackages(): Collection;
 }
