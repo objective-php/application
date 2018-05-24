@@ -8,10 +8,7 @@ use ObjectivePHP\Config\ConfigInterface;
 use ObjectivePHP\Config\ConfigProviderInterface;
 use ObjectivePHP\Events\EventsHandler;
 use ObjectivePHP\Primitives\Collection\Collection;
-use ObjectivePHP\Router\RouterInterface;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Interface ApplicationInterface
@@ -20,7 +17,6 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 interface ApplicationInterface extends ConfigProviderInterface
 {
-
     /**
      * @return mixed
      */

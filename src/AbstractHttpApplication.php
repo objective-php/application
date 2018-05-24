@@ -11,9 +11,6 @@ use ObjectivePHP\Application\Package\PackageInterface;
 use ObjectivePHP\Application\Workflow\PackagesInitListener;
 use ObjectivePHP\Application\Workflow\PackagesReadyListener;
 use ObjectivePHP\Application\Workflow\WorkflowEvent;
-use ObjectivePHP\Config\Config;
-use ObjectivePHP\Config\ConfigAccessorsTrait;
-use ObjectivePHP\Config\ConfigInterface;
 use ObjectivePHP\Config\ConfigProviderInterface;
 use ObjectivePHP\Config\Loader\FileLoader\FileLoader;
 use ObjectivePHP\Events\EventsHandler;
@@ -41,7 +38,6 @@ use Zend\Diactoros\Stream;
  */
 abstract class AbstractHttpApplication extends AbstractApplication implements HttpApplicationInterface
 {
-
     /**
      * @var RouterInterface
      */
@@ -61,7 +57,6 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
      * @var  MiddlewareRegistry
      */
     protected $exceptionHandlers;
-
 
     /**
      * AbstractApplication constructor.
@@ -366,32 +361,32 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
         $this->exceptionHandlers = $exceptionHandlers;
     }
 
-        /**
-         * Defines default application config directives
-         */
-        protected function getConfigDirectives(): array
-        {
-            return [
-                // application config
-                new ApplicationName(),
-                // meta router config
-                new UrlAlias(),
-                new ActionNamespace(),
-                new ServiceDefinition()
-            ];
-        }
+    /**
+     * Defines default application config directives
+     */
+    protected function getConfigDirectives(): array
+    {
+        return [
+            // application config
+            new ApplicationName(),
+            // meta router config
+            new UrlAlias(),
+            new ActionNamespace(),
+            new ServiceDefinition()
+        ];
+    }
 
-        /**
-         * @return array
-         */
-        protected function getConfigParams()
-        {
-            return [
-                'application.name' => 'ObjectivePHP Starter Kit',
-                'router.url-alias' => ['/' => 'Home'],
-                'router.action-namespace' => ['default' => $this->getProjectNamespace() . '\\Action']
-            ];
-        }
+    /**
+     * @return array
+     */
+    protected function getConfigParams()
+    {
+        return [
+            'application.name' => 'ObjectivePHP Starter Kit',
+            'router.url-alias' => ['/' => 'Home'],
+            'router.action-namespace' => ['default' => $this->getProjectNamespace() . '\\Action']
+        ];
+    }
 
 
     /**

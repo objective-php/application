@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: gde
- * Date: 15/05/2018
- * Time: 12:03
- */
 
 namespace ObjectivePHP\Application;
-
 
 use Composer\Autoload\ClassLoader;
 use ObjectivePHP\Application\Package\PackageInterface;
@@ -18,12 +11,15 @@ use ObjectivePHP\Config\ConfigInterface;
 use ObjectivePHP\Events\EventsHandler;
 use ObjectivePHP\Filter\FiltersProviderInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
-use ObjectivePHP\Router\RouterInterface;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
 
-class AbstractApplication
+/**
+ * Class AbstractApplication
+ *
+ * @package ObjectivePHP\Application
+ */
+abstract class AbstractApplication
 {
-
     use ConfigAccessorsTrait;
 
     /**
@@ -31,20 +27,26 @@ class AbstractApplication
      */
     protected $servicesFactory;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $projectNamespace;
+
     /**
      * @var ClassLoader
      */
     protected $autoloader;
+
     /**
      * @var EventsHandler
      */
     protected $eventsHandler;
+
     /**
      * @var string
      */
     protected $env;
+
     /**
      * @var Collection
      */
@@ -123,7 +125,7 @@ class AbstractApplication
      *
      * @return $this
      */
-    public function setEnv($env): ApplicationInterface
+    public function setEnv($env)
     {
         $this->env = $env;
 

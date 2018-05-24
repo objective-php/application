@@ -8,13 +8,10 @@
 
 namespace ObjectivePHP\Application;
 
-use Composer\Autoload\ClassLoader;
 use ObjectivePHP\Application\Middleware\MiddlewareRegistry;
-use ObjectivePHP\Primitives\Collection\Collection;
 use ObjectivePHP\Router\RouterInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-
 
 /**
  * Class AbstractApplication
@@ -23,7 +20,6 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 interface HttpApplicationInterface extends RequestHandlerInterface, ApplicationInterface
 {
-
     /**
      * @return bool
      */
