@@ -1,21 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: gde
- * Date: 12/03/2018
- * Time: 19:02
- */
 
 namespace ObjectivePHP\Application\Middleware;
-
 
 use ObjectivePHP\Filter\FiltersProviderInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
 use Psr\Http\Server\MiddlewareInterface;
 
+/**
+ * Class MiddlewareRegistry
+ *
+ * @package ObjectivePHP\Application\Middleware
+ */
 class MiddlewareRegistry extends Collection
 {
-
     const LAST = 'last';
     const BEFORE_LAST = 'before_last';
     const FIRST = 'first';
@@ -24,8 +21,11 @@ class MiddlewareRegistry extends Collection
     protected $defaultInsertionPosition = self::LAST;
 
     /**
+     * MiddlewareRegistry constructor.
+     *
      * @param array $input
      *
+     * @throws \ObjectivePHP\Primitives\Exception
      */
     public function __construct(array $input = [])
     {
@@ -49,26 +49,15 @@ class MiddlewareRegistry extends Collection
                 $middlewares[] = $last;
                 $this->setInternalValue(array_filter($middlewares));
                 break;
-                
+
+            case self::FIRST:
+                $this->prepend($middleware);
+                break;
+
+            case self::CURRENT:
+                $this->set($this->key(), $middleware);
+                break;
         }
-        
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDefaultInsertionPosition(): string
-    {
-        return $this->defaultInsertionPosition;
-    }
-
-    /**
-     * @param string $defaultInsertionPosition
-     */
-    public function setDefaultInsertionPosition(string $defaultInsertionPosition)
-    {
-        $this->defaultInsertionPosition = $defaultInsertionPosition;
 
         return $this;
     }
@@ -79,7 +68,6 @@ class MiddlewareRegistry extends Collection
     public function getNextMiddleware()
     {
         while ($middleware = $this->current()) {
-
             $this->next();
             // filter step
 
@@ -89,8 +77,17 @@ class MiddlewareRegistry extends Collection
 
             return $middleware;
         }
-
     }
 
+    public function getDefaultInsertionPosition(): string
+    {
+        return $this->defaultInsertionPosition;
+    }
 
+    public function setDefaultInsertionPosition(string $defaultInsertionPosition)
+    {
+        $this->defaultInsertionPosition = $defaultInsertionPosition;
+
+        return $this;
+    }
 }

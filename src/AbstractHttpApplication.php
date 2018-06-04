@@ -21,6 +21,7 @@ use ObjectivePHP\Router\Config\UrlAlias;
 use ObjectivePHP\Router\MetaRouter;
 use ObjectivePHP\Router\PathMapperRouter;
 use ObjectivePHP\Router\RouterInterface;
+use ObjectivePHP\Router\RoutingResult;
 use ObjectivePHP\ServicesFactory\Config\ServiceDefinition;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
 use ObjectivePHP\ServicesFactory\Specification\PrefabServiceSpecification;
@@ -49,14 +50,19 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
     protected $request;
 
     /**
-     * @var  MiddlewareRegistry
+     * @var MiddlewareRegistry
      */
     protected $middlewares;
 
     /**
-     * @var  MiddlewareRegistry
+     * @var MiddlewareRegistry
      */
     protected $exceptionHandlers;
+
+    /**
+     * @var RoutingResult
+     */
+    protected $routingResult;
 
     /**
      * AbstractApplication constructor.
@@ -191,10 +197,11 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
 
             $this->triggerWorkflowEvent(WorkflowEvent::ROUTING_START);
 
-            $routingResult = $this->getRouter()->route($this->getRequest(), $this);
-            $action = $routingResult->getMatchedRoute()->getAction();
+            $this->setRoutingResult($this->getRouter()->route($this->getRequest(), $this));
 
-            $this->getMiddlewares()->registerMiddleware($action);
+            if ($this->getRoutingResult()->didMatch()) {
+                $this->getMiddlewares()->registerMiddleware($this->getRoutingResult()->getMatchedRoute()->getAction());
+            }
 
             $this->triggerWorkflowEvent(WorkflowEvent::ROUTING_DONE);
 
@@ -245,7 +252,11 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
         $middleware = $this->getNextMiddleware();
 
         if (!$middleware) {
-            throw new WorkflowException('No suitable middleware was found to handle the request.');
+            if ($this->getRoutingResult()->didMatch()) {
+                throw new WorkflowException('No suitable middleware was found to handle the request.', 404);
+            }
+
+            throw new WorkflowException('No route matched requested URL', 404);
         }
 
         $this->getServicesFactory()->injectDependencies($middleware);
@@ -403,5 +414,29 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
     public function setRouter(RouterInterface $router)
     {
         $this->router = $router;
+    }
+
+    /**
+     * Get RoutingResult
+     *
+     * @return RoutingResult|null
+     */
+    public function getRoutingResult()
+    {
+        return $this->routingResult;
+    }
+
+    /**
+     * Set RoutingResult
+     *
+     * @param RoutingResult $routingResult
+     *
+     * @return $this
+     */
+    public function setRoutingResult(RoutingResult $routingResult)
+    {
+        $this->routingResult = $routingResult;
+
+        return $this;
     }
 }
