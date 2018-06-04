@@ -3,6 +3,7 @@
 namespace ObjectivePHP\Application;
 
 use Composer\Autoload\ClassLoader;
+use ObjectivePHP\Application\Injector\DefaultInjector;
 use ObjectivePHP\Application\Package\PackageInterface;
 use ObjectivePHP\Application\Workflow\WorkflowEvent;
 use ObjectivePHP\Config\Config;
@@ -12,6 +13,7 @@ use ObjectivePHP\Events\EventsHandler;
 use ObjectivePHP\Filter\FiltersProviderInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
+use ObjectivePHP\ServicesFactory\Specification\PrefabServiceSpecification;
 
 /**
  * Class AbstractApplication
@@ -51,6 +53,61 @@ abstract class AbstractApplication
      * @var Collection
      */
     protected $packages;
+
+    /**
+     * AbstractApplication constructor.
+     * @throws \ObjectivePHP\Primitives\Exception
+     * @throws \ObjectivePHP\ServicesFactory\Exception\ServicesFactoryException
+     * @throws \ObjectivePHP\Config\Exception\ConfigException
+     */
+    public function __construct(ClassLoader $autoloader = null)
+    {
+        $buffer = $this->cleanBuffer();
+
+        ob_start();
+        if ($buffer) {
+            echo $buffer;
+        }
+
+        if ($autoloader) {
+            // register packages autoloading
+            $this->setAutoloader($autoloader);
+            // register default local packages storage
+            $reflectionObject = new \ReflectionObject($this);
+            $this->getAutoloader()->addPsr4($reflectionObject->getNamespaceName() . '\\Package\\', 'packages/');
+        }
+
+        $this->packages = (new Collection())->restrictTo(PackageInterface::class);
+
+        $this->eventsHandler = new EventsHandler();
+
+        // register default configuration directives
+        $this->getConfig()->registerDirective(...$this->getConfigDirectives());
+
+        // load default configuration parameters
+        $this->getConfig()->hydrate($this->getConfigParams());
+
+        $this->servicesFactory = (new ServicesFactory())
+            ->registerService(new PrefabServiceSpecification('application', $this));
+
+        // register application in services factory
+        $this->getServicesFactory()->setConfig($this->getConfig());
+
+        // register default injector
+        $this->getServicesFactory()->registerInjector(new DefaultInjector());
+
+        // let ServicesFactory and EventsHandler know each other
+        $this->getEventsHandler()->setServicesFactory($this->getServicesFactory());
+
+        // initialize application by plugging middlewares
+        $this->init();
+    }
+
+    /**
+     * Delegated constructor
+     * Implement this method in your own Application class
+     */
+    abstract public function init();
 
     /**
      * @param PackageInterface $package
@@ -221,5 +278,21 @@ abstract class AbstractApplication
     protected function triggerWorkflowEvent($eventName, $origin = null, $context = [])
     {
         $this->getEventsHandler()->trigger($eventName, $origin, $context, new WorkflowEvent($this));
+    }
+
+    /**
+     * @return array
+     */
+    protected function getConfigDirectives(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getConfigParams(): array
+    {
+        return [];
     }
 }

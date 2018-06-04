@@ -69,73 +69,22 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
      *
      * @param ClassLoader|null $autoloader
      *
-     * @throws \ObjectivePHP\Events\Exception\EventException
      * @throws \ObjectivePHP\Primitives\Exception
-     * @throws \ObjectivePHP\ServicesFactory\Exception\ServiceNotFoundException
      * @throws \ObjectivePHP\ServicesFactory\Exception\ServicesFactoryException
+     * @throws \ObjectivePHP\Config\Exception\ConfigException
      */
     public function __construct(ClassLoader $autoloader = null)
     {
-        $buffer = $this->cleanBuffer();
-
-        ob_start();
-        if ($buffer) {
-            echo $buffer;
-        }
-
-        if ($autoloader) {
-            // register packages autoloading
-            $this->setAutoloader($autoloader);
-            // register default local packages storage
-            $reflectionObject = new \ReflectionObject($this);
-            $this->getAutoloader()->addPsr4($reflectionObject->getNamespaceName() . '\\Package\\', 'packages/');
-        }
-
-        $this->eventsHandler = new EventsHandler();
-
-        $this->triggerWorkflowEvent(WorkflowEvent::BOOTSTRAP_INIT);
-
-        $this->servicesFactory = (new ServicesFactory())
-            ->registerService(new PrefabServiceSpecification('application', $this));
-
         $this->middlewares = new MiddlewareRegistry();
 
         $this->exceptionHandlers = (new MiddlewareRegistry());
 
-        $this->packages = (new Collection())->restrictTo(PackageInterface::class);
-
         $this->router = (new MetaRouter())->registerRouter(new PathMapperRouter());
 
-        // register default configuration directives
-        $this->getConfig()->registerDirective(...$this->getConfigDirectives());
-
-        // load default configuration parameters
-        $this->getConfig()->hydrate($this->getConfigParams());
-
-        // register application in services factory
-        $this->getServicesFactory()->setConfig($this->getConfig());
-
-        // register default injector
-        $this->getServicesFactory()->registerInjector(new DefaultInjector());
-
         // init http request
-        $request = ServerRequestFactory::fromGlobals(
-            $_SERVER,
-            $_GET,
-            $_POST,
-            $_COOKIE,
-            $_FILES
-        );
+        $this->setRequest(ServerRequestFactory::fromGlobals());
 
-        $this->setRequest($request);
-
-        // let ServicesFactory and EventsHandler know each other
-        $this->getEventsHandler()->setServicesFactory($this->getServicesFactory());
-
-        // initialize application by plugging middlewares
-        $this->init();
-
-        $this->triggerWorkflowEvent(WorkflowEvent::BOOTSTRAP_DONE);
+        parent::__construct($autoloader);
     }
 
     /**
@@ -390,7 +339,7 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
     /**
      * @return array
      */
-    protected function getConfigParams()
+    protected function getConfigParams(): array
     {
         return [
             'application.name' => 'ObjectivePHP Starter Kit',

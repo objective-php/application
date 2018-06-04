@@ -18,8 +18,6 @@ class WorkflowEvent extends Event implements WorkflowEventInterface
     use ApplicationAccessorsTrait;
 
     // common
-    const BOOTSTRAP_INIT = 'workflow.bootstrap.init';
-    const BOOTSTRAP_DONE = 'workflow.bootstrap.done';
     const PACKAGES_INIT = 'workflow.packages.init';
     const PACKAGES_READY = 'workflow.packages.ready';
 
