@@ -4,6 +4,7 @@ namespace ObjectivePHP\Application\Injector;
 
 use ObjectivePHP\Application\ApplicationAwareInterface;
 use ObjectivePHP\Config\ConfigAwareInterface;
+use ObjectivePHP\Events\EventsHandlerAwareInterface;
 use ObjectivePHP\ServicesFactory\Injector\InjectorInterface;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
 use ObjectivePHP\ServicesFactory\Specification\ServiceSpecificationInterface;
@@ -26,6 +27,10 @@ class DefaultInjector implements InjectorInterface
 
         if ($instance instanceof ConfigAwareInterface) {
             $instance->setConfig($servicesFactory->getConfig());
+        }
+
+        if ($instance instanceof EventsHandlerAwareInterface) {
+            $instance->setEventsHandler($servicesFactory->get('application')->getEventsHandler());
         }
     }
 }
