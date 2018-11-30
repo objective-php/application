@@ -178,8 +178,8 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
             }
 
             // read configuration
-            if (is_dir('app/config')) {
-                $this->getConfig()->hydrate((new FileLoader())->load('app/config'));
+            if (is_dir($this->getConfigPath())) {
+                $this->getConfig()->hydrate((new FileLoader())->load($this->getConfigPath()));
             }
 
             $this->triggerWorkflowEvent(WorkflowEvent::PACKAGES_INIT);

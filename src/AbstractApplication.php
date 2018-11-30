@@ -22,6 +22,8 @@ abstract class AbstractApplication
 {
     use ConfigAccessorsTrait;
 
+    const DEFAULT_CONFIG_PATH = 'app/config';
+
     /**
      * @var ServicesFactory
      */
@@ -51,6 +53,11 @@ abstract class AbstractApplication
      * @var Collection
      */
     protected $packages;
+
+    /**
+     * @var string
+     */
+    protected $configPath = self::DEFAULT_CONFIG_PATH;
 
     /**
      * @param PackageInterface $package
@@ -149,6 +156,26 @@ abstract class AbstractApplication
     public function setAutoloader(ClassLoader $autoloader)
     {
         $this->autoloader = $autoloader;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getConfigPath(): string
+    {
+        return $this->configPath;
+    }
+
+    /**
+     * @param string $configPath
+     *
+     * @return $this
+     */
+    public function setConfigPath(string $configPath): self
+    {
+        $this->configPath = $configPath;
 
         return $this;
     }
