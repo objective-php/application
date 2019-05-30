@@ -3,9 +3,12 @@
 namespace ObjectivePHP\Application\Package;
 
 
-interface PackageInterface
+use ObjectivePHP\Application\Workflow\PackagesInitListener;
+use ObjectivePHP\Application\Workflow\PackagesReadyListener;
+use ObjectivePHP\Config\DirectivesProviderInterface;
+use ObjectivePHP\Config\ParametersProviderInterface;
+
+interface PackageInterface extends PackagesInitListener, PackagesReadyListener, DirectivesProviderInterface, ParametersProviderInterface
 {
-
-
 
 }

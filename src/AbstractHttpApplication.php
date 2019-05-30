@@ -12,7 +12,9 @@ use ObjectivePHP\Application\Workflow\PackagesInitListener;
 use ObjectivePHP\Application\Workflow\PackagesReadyListener;
 use ObjectivePHP\Application\Workflow\WorkflowEvent;
 use ObjectivePHP\Config\ConfigProviderInterface;
+use ObjectivePHP\Config\DirectivesProviderInterface;
 use ObjectivePHP\Config\Loader\FileLoader\FileLoader;
+use ObjectivePHP\Config\ParametersProviderInterface;
 use ObjectivePHP\Events\EventsHandler;
 use ObjectivePHP\Filter\FiltersProviderInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
@@ -74,7 +76,7 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
      * @throws \ObjectivePHP\ServicesFactory\Exception\ServiceNotFoundException
      * @throws \ObjectivePHP\ServicesFactory\Exception\ServicesFactoryException
      */
-    public function __construct(ClassLoader $autoloader = null)
+    public function __construct(AbstractEngine $engine)
     {
         $buffer = $this->cleanBuffer();
 
@@ -83,37 +85,17 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
             echo $buffer;
         }
 
-        if ($autoloader) {
-            // register packages autoloading
-            $this->setAutoloader($autoloader);
-            // register default local packages storage
-            $reflectionObject = new \ReflectionObject($this);
-            $this->getAutoloader()->addPsr4($reflectionObject->getNamespaceName() . '\\Package\\', 'packages/');
-        }
+        $this->setEngine($engine);
 
-        $this->eventsHandler = new EventsHandler();
-
-        $this->triggerWorkflowEvent(WorkflowEvent::BOOTSTRAP_INIT);
-
-        $this->servicesFactory = (new ServicesFactory())
+        $this->getServicesFactory()
             ->registerService(new PrefabServiceSpecification('application', $this));
 
         $this->middlewares = new MiddlewareRegistry();
 
         $this->exceptionHandlers = (new MiddlewareRegistry());
 
-        $this->packages = (new Collection())->restrictTo(PackageInterface::class);
 
         $this->router = (new MetaRouter())->registerRouter(new PathMapperRouter());
-
-        // register default configuration directives
-        $this->getConfig()->registerDirective(...$this->getConfigDirectives());
-
-        // load default configuration parameters
-        $this->getConfig()->hydrate($this->getConfigParams());
-
-        // register application in services factory
-        $this->getServicesFactory()->setConfig($this->getConfig());
 
         // register default injector
         $this->getServicesFactory()->registerInjector(new DefaultInjector());
@@ -135,7 +117,6 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
         // initialize application by plugging middlewares
         $this->init();
 
-        $this->triggerWorkflowEvent(WorkflowEvent::BOOTSTRAP_DONE);
     }
 
     /**
@@ -154,62 +135,27 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
         $emitter = new Response\SapiEmitter();
 
         try {
-            $packages = $this->getPackages();
 
-            /** @var PackageInterface $package */
-            foreach ($packages as $package) {
-                if ($package instanceof FiltersProviderInterface) {
-                    if (!$package->getFilterEngine()->filter($this)) {
-                        continue;
-                    }
-                }
+            $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::ROUTING_START);
 
-                if ($package instanceof ConfigProviderInterface) {
-                    $this->getConfig()->merge($package->getConfig());
-                }
-
-                if ($package instanceof PackagesInitListener) {
-                    $this->getEventsHandler()->bind(WorkflowEvent::PACKAGES_INIT, [$package, 'onPackagesInit']);
-                }
-
-                if ($package instanceof PackagesReadyListener) {
-                    $this->getEventsHandler()->bind(WorkflowEvent::PACKAGES_READY, [$package, 'onPackagesReady']);
-                }
+            try {
+                $this->setRoutingResult($this->getRouter()->route($this->getRequest(), $this));
+            } catch (\Throwable $e) {
+                var_dump($this->getEngine()->getConfig()->getDirectives());
+                die($e->getMessage());
             }
-
-            // read configuration
-            if (is_dir($this->getConfigPath())) {
-                $this->getConfig()->hydrate((new FileLoader())->load($this->getConfigPath()));
-            }
-
-            $this->triggerWorkflowEvent(WorkflowEvent::PACKAGES_INIT);
-
-            // load services
-            /** @var ServiceDefinition[] $servicesDefinitions */
-            $servicesDefinitions = $this->getConfig()->getRaw(ServiceDefinition::KEY);
-
-            foreach ($servicesDefinitions as $id => $servicesDefinition) {
-                $service = array_merge(['id' => $id], $servicesDefinition->getSpecifications());
-                $this->getServicesFactory()->registerRawService($service);
-            }
-
-            $this->triggerWorkflowEvent(WorkflowEvent::PACKAGES_READY);
-
-            $this->triggerWorkflowEvent(WorkflowEvent::ROUTING_START);
-
-            $this->setRoutingResult($this->getRouter()->route($this->getRequest(), $this));
 
             if ($this->getRoutingResult()->didMatch()) {
                 $this->getMiddlewares()->registerMiddleware($this->getRoutingResult()->getMatchedRoute()->getAction());
             }
 
-            $this->triggerWorkflowEvent(WorkflowEvent::ROUTING_DONE);
+            $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::ROUTING_DONE);
 
-            $this->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_START, $this);
+            $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_START, $this);
 
             $response = $this->handle($this->getRequest());
 
-            $this->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_DONE, $this, ['response' => $response]);
+            $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_DONE, $this, ['response' => $response]);
 
             if ($buffer = $this->cleanBuffer()) {
                 $response->getBody()->rewind();
@@ -221,8 +167,8 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
             $emitter->emit($response);
 
             ob_start();
+            $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::RESPONSE_SENT);
 
-            $this->triggerWorkflowEvent(WorkflowEvent::RESPONSE_SENT);
         } catch (\Throwable $exception) {
             $request = $this->getRequest()
                 ->withAttribute('exception', $exception)
@@ -230,6 +176,10 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
                 ->withAttribute('headers', headers_list());
 
             $response = $this->handleException($request);
+
+            if($response->getStatusCode() == 200) {
+                $response = $response->withStatus(500);
+            }
 
             $emitter->emit($response);
         }
@@ -261,11 +211,11 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
 
         $this->getServicesFactory()->injectDependencies($middleware);
 
-        $this->triggerWorkflowEvent('application.workflow.middleware.before', $middleware);
+        $this->getEngine()->triggerWorkflowEvent('application.workflow.middleware.before', $middleware);
 
         $response = $middleware->process($request, $this);
 
-        $this->triggerWorkflowEvent('application.workflow.middleware.after', $middleware);
+        $this->getEngine()->triggerWorkflowEvent('application.workflow.middleware.after', $middleware);
 
         return $response;
     }
@@ -375,30 +325,13 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
     /**
      * Defines default application config directives
      */
-    protected function getConfigDirectives(): array
+    public function getDirectives(): array
     {
         return [
             // application config
-            new ApplicationName(),
-            // meta router config
-            new UrlAlias(),
-            new ActionNamespace(),
-            new ServiceDefinition()
+            new ApplicationName()
         ];
     }
-
-    /**
-     * @return array
-     */
-    protected function getConfigParams()
-    {
-        return [
-            'application.name' => 'ObjectivePHP Starter Kit',
-            'router.url-alias' => ['/' => 'Home'],
-            'router.action-namespace' => ['default' => $this->getProjectNamespace() . '\\Action']
-        ];
-    }
-
 
     /**
      * @return RouterInterface
@@ -439,4 +372,5 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
 
         return $this;
     }
+
 }

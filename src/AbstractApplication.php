@@ -12,6 +12,7 @@ use ObjectivePHP\Events\EventsHandler;
 use ObjectivePHP\Filter\FiltersProviderInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
+use ObjectivePHP\Application\AbstractEngine;
 
 /**
  * Class AbstractApplication
@@ -20,83 +21,18 @@ use ObjectivePHP\ServicesFactory\ServicesFactory;
  */
 abstract class AbstractApplication
 {
-    use ConfigAccessorsTrait;
-
-    const DEFAULT_CONFIG_PATH = 'app/config';
 
     /**
-     * @var ServicesFactory
+     * @var AbstractEngine
      */
-    protected $servicesFactory;
-
-    /**
-     * @var string
-     */
-    protected $projectNamespace;
-
-    /**
-     * @var ClassLoader
-     */
-    protected $autoloader;
-
-    /**
-     * @var EventsHandler
-     */
-    protected $eventsHandler;
-
-    /**
-     * @var string
-     */
-    protected $env;
-
-    /**
-     * @var Collection
-     */
-    protected $packages;
-
-    /**
-     * @var string
-     */
-    protected $configPath = self::DEFAULT_CONFIG_PATH;
-
-    /**
-     * @param PackageInterface $package
-     * @param array ...$filters
-     */
-    public function registerPackage(PackageInterface $package, ...$filters)
-    {
-        // register package autoload
-        $reflectionObject = new \ReflectionObject($package);
-        $this->getAutoloader()->addPsr4(
-            $reflectionObject->getNamespaceName() . '\\',
-            dirname($reflectionObject->getFileName()) . '/src'
-        );
-
-        if ($package instanceof FiltersProviderInterface && $filters) {
-            $package->getFilterEngine()->registerFilter(...$filters);
-        }
-
-        $this->packages->append($package);
-    }
+    protected $engine;
 
     /**
      * @return EventsHandler
      */
     public function getEventsHandler(): EventsHandler
     {
-        return $this->eventsHandler;
-    }
-
-    /**
-     * @param EventsHandler $eventsHandler
-     *
-     * @return $this
-     */
-    public function setEventsHandler(EventsHandler $eventsHandler): ApplicationInterface
-    {
-        $this->eventsHandler = $eventsHandler;
-
-        return $this;
+        return $this->getEngine()->getEventsHandler();
     }
 
     /**
@@ -104,19 +40,7 @@ abstract class AbstractApplication
      */
     public function getServicesFactory(): ServicesFactory
     {
-        return $this->servicesFactory;
-    }
-
-    /**
-     * @param ServicesFactory $servicesFactory
-     *
-     * @return $this
-     */
-    public function setServicesFactory(ServicesFactory $servicesFactory)
-    {
-        $this->servicesFactory = $servicesFactory;
-
-        return $this;
+        return $this->getEngine()->getServicesFactory();
     }
 
     /**
@@ -124,73 +48,25 @@ abstract class AbstractApplication
      */
     public function getEnv(): string
     {
-        return $this->env;
+        return $this->getEngine()->getEnv();
     }
-
-    /**
-     * @param string $env
-     *
-     * @return $this
-     */
-    public function setEnv($env)
-    {
-        $this->env = $env;
-
-        return $this;
-    }
-
 
     /**
      * @return ClassLoader
      */
     public function getAutoloader(): ClassLoader
     {
-        return $this->autoloader;
+        return $this->getEngine()->getAutoloader();
     }
 
-    /**
-     * @param ClassLoader $autoloader
-     *
-     * @return $this
-     */
-    public function setAutoloader(ClassLoader $autoloader)
-    {
-        $this->autoloader = $autoloader;
 
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getConfigPath(): string
-    {
-        return $this->configPath;
-    }
-
-    /**
-     * @param string $configPath
-     *
-     * @return $this
-     */
-    public function setConfigPath(string $configPath): self
-    {
-        $this->configPath = $configPath;
-
-        return $this;
-    }
 
     /**
      * @return Config
      */
     public function getConfig(): ConfigInterface
     {
-        // init Config
-        if (is_null($this->config)) {
-            $this->config = new Config();
-        }
-
-        return $this->config;
+        return $this->getEngine()->getConfig();
     }
 
     /**
@@ -198,28 +74,9 @@ abstract class AbstractApplication
      */
     public function getPackages(): Collection
     {
-        return $this->packages;
+        return $this->getEngine()->getPackages();
     }
 
-    /**
-     * @param Collection $packages
-     */
-    public function setPackages(Collection $packages)
-    {
-        $this->packages = $packages;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getProjectNamespace()
-    {
-        if (is_null($this->projectNamespace)) {
-            $this->projectNamespace = (new \ReflectionObject($this))->getNamespaceName();
-        }
-
-        return $this->projectNamespace;
-    }
 
     /**
      * Clean and return buffer
@@ -237,16 +94,35 @@ abstract class AbstractApplication
     }
 
     /**
-     * @param       $eventName
-     * @param null  $origin
-     * @param array $context
-     *
-     * @throws \ObjectivePHP\Events\Exception\EventException
-     * @throws \ObjectivePHP\Primitives\Exception
-     * @throws \ObjectivePHP\ServicesFactory\Exception\ServiceNotFoundException
+     * @return AbstractEngine
      */
-    protected function triggerWorkflowEvent($eventName, $origin = null, $context = [])
+    public function getEngine(): AbstractEngine
     {
-        $this->getEventsHandler()->trigger($eventName, $origin, $context, new WorkflowEvent($this));
+        return $this->engine;
+    }
+
+    /**
+     * @param AbstractEngine $engine
+     * @return AbstractApplication
+     */
+    public function setEngine(AbstractEngine $engine): AbstractApplication
+    {
+        $this->engine = $engine;
+        return $this;
+    }
+
+    public function getDirectives() : array
+    {
+        return [];
+    }
+
+    public function getParameters() : array
+    {
+        return [];
+    }
+
+    public function hasConfig(): bool
+    {
+        return $this->getEngine()->hasConfig();
     }
 }
