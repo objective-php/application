@@ -1,6 +1,8 @@
 language: php
 php:
-  - "7.1"
+  - "7.3"
+before_script:
+  - composer install
 notifications:
   email:
     - "team@objective-php.org"
