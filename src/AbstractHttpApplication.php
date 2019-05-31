@@ -20,9 +20,8 @@ use ObjectivePHP\Filter\FiltersProviderInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
 use ObjectivePHP\Router\Config\ActionNamespace;
 use ObjectivePHP\Router\Config\UrlAlias;
-use ObjectivePHP\Router\MetaRouter;
-use ObjectivePHP\Router\PathMapperRouter;
-use ObjectivePHP\Router\RouterInterface;
+use ObjectivePHP\Router\Router\MetaRouter;
+use ObjectivePHP\Router\Router\RouterInterface;
 use ObjectivePHP\Router\RoutingResult;
 use ObjectivePHP\ServicesFactory\Config\ServiceDefinition;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
@@ -94,9 +93,15 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
 
         $this->exceptionHandlers = (new MiddlewareRegistry());
 
+<<<<<<< HEAD
 
         $this->router = (new MetaRouter())->registerRouter(new PathMapperRouter());
 
+=======
+
+        $this->router = (new MetaRouter());
+
+>>>>>>> Integrate new router structure
         // register default injector
         $this->getServicesFactory()->registerInjector(new DefaultInjector());
 
@@ -135,6 +140,7 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
         $emitter = new Response\SapiEmitter();
 
         try {
+<<<<<<< HEAD
 
             $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::ROUTING_START);
 
@@ -145,17 +151,33 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
                 die($e->getMessage());
             }
 
+=======
+
+            $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::ROUTING_START, $this);
+
+            $this->setRoutingResult($this->getRouter()->route($this->getRequest(), $this));
+
+>>>>>>> Integrate new router structure
             if ($this->getRoutingResult()->didMatch()) {
                 $this->getMiddlewares()->registerMiddleware($this->getRoutingResult()->getMatchedRoute()->getAction());
             }
 
+<<<<<<< HEAD
             $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::ROUTING_DONE);
+=======
+            $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::ROUTING_DONE, $this);
+>>>>>>> Integrate new router structure
 
             $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_START, $this);
 
             $response = $this->handle($this->getRequest());
 
+<<<<<<< HEAD
             $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_DONE, $this, ['response' => $response]);
+=======
+            $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_DONE, $this);
+            $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::RESPONSE_READY, $this, ['response' => $response]);
+>>>>>>> Integrate new router structure
 
             if ($buffer = $this->cleanBuffer()) {
                 $response->getBody()->rewind();
@@ -181,6 +203,10 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
                 $response = $response->withStatus(500);
             }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> Integrate new router structure
             $emitter->emit($response);
         }
     }
@@ -211,11 +237,19 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
 
         $this->getServicesFactory()->injectDependencies($middleware);
 
+<<<<<<< HEAD
         $this->getEngine()->triggerWorkflowEvent('application.workflow.middleware.before', $middleware);
 
         $response = $middleware->process($request, $this);
 
         $this->getEngine()->triggerWorkflowEvent('application.workflow.middleware.after', $middleware);
+=======
+        $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::MIDDLEWARE_START, $middleware);
+
+        $response = $middleware->process($request, $this);
+
+        $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::MIDDLEWARE_DONE, $middleware);
+>>>>>>> Integrate new router structure
 
         return $response;
     }

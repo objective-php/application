@@ -9,7 +9,7 @@
 namespace ObjectivePHP\Application;
 
 use ObjectivePHP\Application\Middleware\MiddlewareRegistry;
-use ObjectivePHP\Router\RouterInterface;
+use ObjectivePHP\Router\Router\RouterInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 

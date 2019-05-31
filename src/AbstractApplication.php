@@ -13,13 +13,17 @@ use ObjectivePHP\Filter\FiltersProviderInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
 use ObjectivePHP\Application\AbstractEngine;
+<<<<<<< HEAD
+=======
+use ObjectivePHP\ServicesFactory\ServicesFactoryProviderInterface;
+>>>>>>> Integrate new router structure
 
 /**
  * Class AbstractApplication
  *
  * @package ObjectivePHP\Application
  */
-abstract class AbstractApplication
+abstract class AbstractApplication implements ServicesFactoryProviderInterface
 {
 
     /**
@@ -41,7 +45,16 @@ abstract class AbstractApplication
     public function getServicesFactory(): ServicesFactory
     {
         return $this->getEngine()->getServicesFactory();
+<<<<<<< HEAD
+=======
     }
+
+    public function hasServicesFactory(): bool
+    {
+        return (bool) $this->getEngine()->getServicesFactory();
+>>>>>>> Integrate new router structure
+    }
+
 
     /**
      * @return string

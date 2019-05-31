@@ -6,7 +6,7 @@
  * Time: 19:36
  */
 
-namespace ObjectivePHP\Application\Exception\Filter;
+namespace ObjectivePHP\Application\Filter;
 
 
 use ObjectivePHP\Application\ApplicationInterface;
