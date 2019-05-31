@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f05b871078e663ad62af2e0b836824ce",
+    "content-hash": "2ef7bf7de67eeabcd23a74ae9b0cad79",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -161,16 +161,16 @@
         },
         {
             "name": "objective-php/config",
-            "version": "v2.1.0",
+            "version": "v3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/config.git",
-                "reference": "b53cbcaf0aea2b12c416b9ff1fba2d508d72f711"
+                "reference": "6cc9e85140f8f771a7d583c0e121be23aed5acbf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/config/zipball/b53cbcaf0aea2b12c416b9ff1fba2d508d72f711",
-                "reference": "b53cbcaf0aea2b12c416b9ff1fba2d508d72f711",
+                "url": "https://api.github.com/repos/objective-php/config/zipball/6cc9e85140f8f771a7d583c0e121be23aed5acbf",
+                "reference": "6cc9e85140f8f771a7d583c0e121be23aed5acbf",
                 "shasum": ""
             },
             "require": {
@@ -204,7 +204,7 @@
                 "config",
                 "objective-php"
             ],
-            "time": "2019-05-30T12:01:24+00:00"
+            "time": "2019-05-31T07:39:41+00:00"
         },
         {
             "name": "objective-php/docu-mentor",
@@ -552,7 +552,7 @@
         },
         {
             "name": "objective-php/router",
-            "version": "v3.0.0-alpha1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/router.git",
@@ -603,30 +603,30 @@
         },
         {
             "name": "objective-php/services-factory",
-            "version": "v2.1.1",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/objective-php/services-factory.git",
-                "reference": "1749b2dff6044abede9a12617f94cf69228d7695"
+                "reference": "d4f816ea407ed9c40425a500d351aba85bc40a7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/objective-php/services-factory/zipball/1749b2dff6044abede9a12617f94cf69228d7695",
-                "reference": "1749b2dff6044abede9a12617f94cf69228d7695",
+                "url": "https://api.github.com/repos/objective-php/services-factory/zipball/d4f816ea407ed9c40425a500d351aba85bc40a7c",
+                "reference": "d4f816ea407ed9c40425a500d351aba85bc40a7c",
                 "shasum": ""
             },
             "require": {
                 "container-interop/container-interop": "^1.1",
                 "doctrine/annotations": "~1.4.0",
-                "objective-php/config": "^2.0",
+                "objective-php/config": "^3.0.0",
                 "objective-php/docu-mentor": "^1.0",
-                "objective-php/matcher": "~1.0.0",
-                "objective-php/primitives": "~1.3.0",
-                "php": ">=7.1",
+                "objective-php/matcher": "^1.0.0",
+                "objective-php/primitives": "^1.3.0",
+                "php": ">=7.3",
                 "phpdocumentor/reflection-docblock": "^4.3"
             },
             "require-dev": {
-                "codeception/codeception": "^2.4",
+                "codeception/codeception": "^3.0",
                 "zendframework/zend-servicemanager": "^2.7.6"
             },
             "type": "library",
@@ -653,7 +653,7 @@
                 "objective php",
                 "services"
             ],
-            "time": "2019-05-26T20:53:11+00:00"
+            "time": "2019-05-31T15:08:07+00:00"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -4168,6 +4168,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "objective-php/config": 20,
         "objective-php/router": 20
     },
     "prefer-stable": false,
