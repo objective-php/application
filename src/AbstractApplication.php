@@ -3,20 +3,12 @@
 namespace ObjectivePHP\Application;
 
 use Composer\Autoload\ClassLoader;
-use ObjectivePHP\Application\Package\PackageInterface;
-use ObjectivePHP\Application\Workflow\WorkflowEvent;
 use ObjectivePHP\Config\Config;
-use ObjectivePHP\Config\ConfigAccessorsTrait;
 use ObjectivePHP\Config\ConfigInterface;
 use ObjectivePHP\Events\EventsHandler;
-use ObjectivePHP\Filter\FiltersProviderInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
-use ObjectivePHP\Application\AbstractEngine;
-<<<<<<< HEAD
-=======
 use ObjectivePHP\ServicesFactory\ServicesFactoryProviderInterface;
->>>>>>> Integrate new router structure
 
 /**
  * Class AbstractApplication
@@ -45,16 +37,12 @@ abstract class AbstractApplication implements ServicesFactoryProviderInterface
     public function getServicesFactory(): ServicesFactory
     {
         return $this->getEngine()->getServicesFactory();
-<<<<<<< HEAD
-=======
     }
 
     public function hasServicesFactory(): bool
     {
-        return (bool) $this->getEngine()->getServicesFactory();
->>>>>>> Integrate new router structure
+        return (bool)$this->getEngine()->getServicesFactory();
     }
-
 
     /**
      * @return string
@@ -71,8 +59,6 @@ abstract class AbstractApplication implements ServicesFactoryProviderInterface
     {
         return $this->getEngine()->getAutoloader();
     }
-
-
 
     /**
      * @return Config
@@ -124,12 +110,12 @@ abstract class AbstractApplication implements ServicesFactoryProviderInterface
         return $this;
     }
 
-    public function getDirectives() : array
+    public function getDirectives(): array
     {
         return [];
     }
 
-    public function getParameters() : array
+    public function getParameters(): array
     {
         return [];
     }

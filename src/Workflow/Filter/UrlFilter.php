@@ -3,7 +3,7 @@
 namespace ObjectivePHP\Application\Exception\Filter;
 
 use ObjectivePHP\Application\ApplicationInterface;
-use ObjectivePHP\Application\Exception;
+use ObjectivePHP\Application\Exception\ApplicationException;
 
 /**
  * Class RouteFilter
@@ -15,7 +15,7 @@ class UrlFilter extends AbstractFilter
     /**
      * @param ApplicationInterface $app
      * @return bool
-     * @throws Exception
+     * @throws ApplicationException
      */
     public function run(ApplicationInterface $app) : bool
     {
@@ -30,7 +30,7 @@ class UrlFilter extends AbstractFilter
             $request = $app->getRequest();
 
             if (!$request) {
-                throw new Exception(
+                throw new ApplicationException(
                     sprintf('Cannot run UrlFilter for filter "%s": no request has been set', $this->getFilter())
                 );
             }

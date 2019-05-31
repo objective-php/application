@@ -9,15 +9,10 @@ use ObjectivePHP\Application\Package\PackageInterface;
 use ObjectivePHP\Application\Workflow\PackagesInitListener;
 use ObjectivePHP\Application\Workflow\PackagesReadyListener;
 use ObjectivePHP\Application\Workflow\WorkflowEvent;
-<<<<<<< HEAD
-=======
-use ObjectivePHP\Cli\Application\CliApplicationInterface;
 use ObjectivePHP\Cli\Config\CliCommandsPaths;
->>>>>>> Integrate new router structure
 use ObjectivePHP\Config\Config;
 use ObjectivePHP\Config\ConfigAccessorsTrait;
 use ObjectivePHP\Config\ConfigProviderInterface;
-use ObjectivePHP\Config\Directive\DirectiveInterface;
 use ObjectivePHP\Config\DirectivesProviderInterface;
 use ObjectivePHP\Config\Loader\FileLoader\FileLoader;
 use ObjectivePHP\Config\ParametersProviderInterface;
@@ -122,11 +117,6 @@ abstract class AbstractEngine implements DirectivesProviderInterface, Parameters
         $application = new $applicationClass($this);
         $this->setApplication($application);
         $this->servicesFactory->registerRawService(['id' => 'application', 'instance' => $application]);
-<<<<<<< HEAD
-        $this->triggerWorkflowEvent(WorkflowEvent::BOOTSTRAP_DONE);
-
-=======
-
 
         // add default objective-php/application cli command path
         if($application instanceof CliApplicationInterface)
@@ -137,7 +127,6 @@ abstract class AbstractEngine implements DirectivesProviderInterface, Parameters
         }
 
         $this->triggerWorkflowEvent(WorkflowEvent::BOOTSTRAP_DONE);
->>>>>>> Integrate new router structure
         $this->init();
 
         /** @var PackageInterface $package */

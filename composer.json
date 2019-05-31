@@ -23,7 +23,7 @@
     "objective-php/notification": "^1.0.0",
     "objective-php/services-factory": "^2.1.0",
     "objective-php/events-handler": "^2.0.0",
-    "objective-php/router": "^2.0.0",
+    "objective-php/router": "~2.1.0",
     "psr/http-server-handler": "^1.0",
     "zendframework/zend-diactoros": "^1.7",
     "psr/http-server-middleware": "^1.0",

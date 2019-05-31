@@ -2,7 +2,7 @@
 
 namespace ObjectivePHP\Application\Session;
 
-use ObjectivePHP\Application\Exception;
+use ObjectivePHP\Application\Exception\ApplicationException;
 use ObjectivePHP\Matcher\Matcher;
 use ObjectivePHP\Primitives\Collection\Collection;
 
@@ -50,7 +50,7 @@ class Session
             $status = session_status();
 
             if ($status == PHP_SESSION_DISABLED) {
-                throw new Exception('Session are disabled on server');
+                throw new ApplicationException('Session are disabled on server');
             }
 
             if ($status == PHP_SESSION_NONE) {
@@ -61,7 +61,7 @@ class Session
         } elseif ($mode == self::SESSION_MODE_MOCK) {
             self::$data = [];
         } else {
-            throw new Exception(sprintf('Unkown Session mode "%s"', $mode));
+            throw new ApplicationException(sprintf('Unkown Session mode "%s"', $mode));
         }
 
     }

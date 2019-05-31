@@ -5,11 +5,11 @@
      * Date: 08/12/2015
      * Time: 12:16
      */
-    
+
     namespace ObjectivePHP\Application\Exception\Filter;
 
     use ObjectivePHP\Application\ApplicationInterface;
-    use ObjectivePHP\Application\Exception;
+    use ObjectivePHP\Application\Exception\ApplicationException;
 
     /**
      * Class RouteFilter
@@ -22,7 +22,7 @@
         /**
          * @param ApplicationInterface $app
          * @return bool
-         * @throws Exception
+         * @throws ApplicationException
          */
         public function filter(ApplicationInterface $app) : bool
         {
@@ -34,14 +34,14 @@
 
                 if (!$request)
                 {
-                    throw new Exception('Cannot run RouteFilter: no request has been set');
+                    throw new ApplicationException('Cannot run RouteFilter: no request has been set');
                 }
 
                 $route = $request->getRoute();
 
                 if (!$route)
                 {
-                    throw new Exception('Cannot run RouteFilter: no route has been set');
+                    throw new ApplicationException('Cannot run RouteFilter: no route has been set');
                 }
 
 

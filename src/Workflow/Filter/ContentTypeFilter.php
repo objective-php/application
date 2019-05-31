@@ -10,7 +10,7 @@ namespace ObjectivePHP\Application\Exception\Filter;
 
 
 use ObjectivePHP\Application\ApplicationInterface;
-use ObjectivePHP\Application\Exception;
+use ObjectivePHP\Application\Exception\ApplicationException;
 use ObjectivePHP\Primitives\Collection\Collection;
 
 class ContentTypeFilter extends AbstractFilter
@@ -21,7 +21,7 @@ class ContentTypeFilter extends AbstractFilter
 
         if(!$response)
         {
-            throw new Exception(sprintf('Cannot filter response ContentType against "%s" because no response has been set', $this->getFilter()->join(', ')));
+            throw new ApplicationException(sprintf('Cannot filter response ContentType against "%s" because no response has been set', $this->getFilter()->join(', ')));
         }
 
         $contentTypes = $response->getHeader('Content-Type');
