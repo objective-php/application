@@ -116,6 +116,7 @@ abstract class AbstractEngine implements DirectivesProviderInterface, Parameters
 
         $application = new $applicationClass($this);
         $this->setApplication($application);
+        $this->triggerWorkflowEvent(WorkflowEvent::BOOTSTRAP_INIT);
         $this->servicesFactory->registerRawService(['id' => 'application', 'instance' => $application]);
 
         // add default objective-php/application cli command path
