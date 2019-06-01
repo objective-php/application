@@ -19,6 +19,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Stream;
+use ObjectivePHP\Application\Exception\WorkflowException;
 
 /**
  * Class AbstractApplication

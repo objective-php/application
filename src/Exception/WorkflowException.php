@@ -2,7 +2,7 @@
 
 namespace ObjectivePHP\Application\Exception;
 
-class FilterException extends WorkflowException
+class WorkflowException extends ApplicationException
 {
 
 }
