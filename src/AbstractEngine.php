@@ -119,14 +119,6 @@ abstract class AbstractEngine implements DirectivesProviderInterface, Parameters
         $this->triggerWorkflowEvent(WorkflowEvent::BOOTSTRAP_INIT);
         $this->servicesFactory->registerRawService(['id' => 'application', 'instance' => $application]);
 
-        // add default objective-php/application cli command path
-        if($application instanceof CliApplicationInterface)
-        {
-            $application->getConfig()->hydrate([
-              CliCommandsPaths::class => ['application' => __DIR__ . '/Cli']
-            ]);
-        }
-
         $this->triggerWorkflowEvent(WorkflowEvent::BOOTSTRAP_DONE);
         $this->init();
 
@@ -166,6 +158,14 @@ abstract class AbstractEngine implements DirectivesProviderInterface, Parameters
 
         // register default configuration directives
         $this->getConfig()->registerDirective(...$application->getDirectives());
+
+        if($cli) {
+            // add default objective-php/application cli commands path
+            $this->getConfig()->hydrate([
+                CliCommandsPaths::KEY => ['application' => __DIR__ . '/Cli']
+            ]);
+        }
+
 
         // load default configuration parameters
         $this->getConfig()->hydrate($this->getParameters());

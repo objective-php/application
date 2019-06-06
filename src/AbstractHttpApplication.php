@@ -158,11 +158,15 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
 
             $response = $this->handleException($request);
 
+            $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::RESPONSE_READY, $this, ['response' => $response]);
+
             if ($response->getStatusCode() == 200) {
                 $response = $response->withStatus(500);
             }
 
             $emitter->emit($response);
+
+            $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::RESPONSE_SENT);
         }
     }
 

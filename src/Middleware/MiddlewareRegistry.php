@@ -70,11 +70,9 @@ class MiddlewareRegistry extends Collection
         while ($middleware = $this->current()) {
             $this->next();
             // filter step
-
             if (($middleware instanceof FiltersProviderInterface) && !$middleware->getFilterEngine()->run()) {
                 continue;
             }
-
             return $middleware;
         }
     }
