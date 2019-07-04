@@ -37,7 +37,6 @@ class Serve extends AbstractCliAction
         $cmdLine .= ' -t ' . $this->getParam('root', 'public') . ' ' . $this->getParam('router', is_file('router.php') ? 'router.php' : '');
         $c->out('Launching web server using command line: ' . $cmdLine);
         passthru($cmdLine);
-
     }
 
 }

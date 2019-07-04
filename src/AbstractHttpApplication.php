@@ -135,7 +135,7 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
 
             $response = $this->handle($this->getRequest());
 
-            $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_DONE, $this);
+            $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::REQUEST_HANDLING_DONE, $this, ['response' => $response]);
             $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::RESPONSE_READY, $this, ['response' => $response]);
 
             if ($buffer = $this->cleanBuffer()) {
@@ -198,7 +198,7 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
 
         $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::MIDDLEWARE_START, $middleware);
 
-        $response = $middleware->process($request, $this);
+        $response = $this->getServicesFactory()->autorun([$middleware, 'process'], [$request, $this]);
 
         $this->getEngine()->triggerWorkflowEvent(WorkflowEvent::MIDDLEWARE_DONE, $middleware);
 
@@ -216,6 +216,7 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
     {
         /** @var MiddlewareInterface $middleware */
         $middleware = $this->getExceptionHandlers()->getNextMiddleware();
+        
         if (!$middleware) {
             throw new WorkflowException(
                 'No suitable middleware was found to handle the uncaught exception.',
@@ -224,9 +225,7 @@ abstract class AbstractHttpApplication extends AbstractApplication implements Ht
             );
         }
 
-        $this->getServicesFactory()->injectDependencies($middleware);
-
-        $response = $middleware->process($request, $this);
+        $response = $this->getServicesFactory()->autorun([$middleware, 'process'], [$request, $this]);
 
         return $response;
     }

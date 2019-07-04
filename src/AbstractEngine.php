@@ -21,6 +21,7 @@ use ObjectivePHP\Filter\FiltersProviderInterface;
 use ObjectivePHP\Primitives\Collection\Collection;
 use ObjectivePHP\ServicesFactory\Config\ServiceDefinition;
 use ObjectivePHP\ServicesFactory\ServicesFactory;
+use Project\Engine;
 use ReflectionObject;
 
 abstract class AbstractEngine implements DirectivesProviderInterface, ParametersProviderInterface
@@ -103,6 +104,8 @@ abstract class AbstractEngine implements DirectivesProviderInterface, Parameters
         // register default local packages storage
         $reflectionObject = new \ReflectionObject($this);
         $this->getAutoloader()->addPsr4($reflectionObject->getNamespaceName() . '\\Package\\', 'app/packages/');
+
+        $this->getServicesFactory()->registerService(['id' => Engine::class, 'instance' =>$this]);
 
     }
 
